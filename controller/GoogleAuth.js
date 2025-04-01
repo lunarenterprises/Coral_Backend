@@ -1,4 +1,4 @@
-let admin = require('../util/firebaseConfig')
+let {admin} = require('../util/firebaseConfig')
 
 module.exports.GoogleLogin = async (req, res) => {
     try {

@@ -15,7 +15,7 @@ module.exports.StatusChange = async (req, res) => {
                 message: "Access Denied,try with authorized account"
             })
         }
-        var { contract_status, contract_id, activate_user_id, activate_admin_id, invest_req_id, invest_req_status } = req.body
+        var { contract_status, contract_id, activate_user_id, activate_user_status, activate_admin_id, activate_admin_status, invest_req_id, invest_req_status, payout_id, payout_status, withdrawel_status, withdrawel_id } = req.body
 
 
         if (contract_status && contract_id) {
@@ -47,15 +47,14 @@ module.exports.StatusChange = async (req, res) => {
             }
         }
 
-        if (activate_user_id) {
+        if (activate_user_id && activate_user_status) {
 
             var getuser = await model.GetUser(activate_user_id)
             if (getuser.length > 0) {
                 var previous_status = getuser[0]?.u_status
-
                 await notification.addNotification(admin_id, `${admin_role}`, `Verifying user ${getuser[0]?.u_name}`, `User status verifiyed from ${previous_status} to active`)
 
-                let changeuserstatus = await model.ChangeUserStatus(activate_user_id)
+                let changeuserstatus = await model.ChangeUserStatus(activate_user_status, activate_user_id)
 
                 if (changeuserstatus.affectedRows > 0) {
                     return res.send({
@@ -83,10 +82,11 @@ module.exports.StatusChange = async (req, res) => {
                 var previous_status = getuser[0]?.u_status
                 var role = getuser[0]?.u_role
 
+                let activate_admin_status = 'active'
 
                 await notification.addNotification(admin_id, `${admin_role}`, `Verifying ${role} ${getuser[0]?.u_name}`, `User status verifiyed from ${previous_status} to active`)
 
-                let changeuserstatus = await model.ChangeUserStatus(activate_admin_id)
+                let changeuserstatus = await model.ChangeUserStatus(activate_admin_status, activate_admin_id)
 
                 if (changeuserstatus.affectedRows > 0) {
                     return res.send({
@@ -133,12 +133,72 @@ module.exports.StatusChange = async (req, res) => {
             } else {
                 return res.send({
                     result: false,
-                    message: "Failed to get subadmin Details"
+                    message: "Failed to get Invest Request Details"
+                })
+            }
+        }
+
+        if (payout_id && payout_status) {
+
+            var getpayout = await model.GetPayout(payout_id)
+            if (getpayout.length > 0) {
+                var previous_status = getpayout[0]?.ph_status
+
+
+                await notification.addNotification(admin_id, `${admin_role}`, `Payout Status updation for Id ${payout_id} `, `Payout Status  updated from ${previous_status} to ${payout_status}`)
+
+                let changepayoutstatus = await model.ChangePayoutStatus(payout_status, payout_id)
+
+                if (changepayoutstatus.affectedRows > 0) {
+                    return res.send({
+                        result: true,
+                        message: "Payout Status Updated Sucessfully"
+                    })
+                } else {
+                    return res.send({
+                        result: false,
+                        message: "Failed to Update Payout Status"
+                    })
+                }
+            } else {
+                return res.send({
+                    result: false,
+                    message: "Failed to get Payout Details"
                 })
             }
         }
 
 
+
+        if (withdrawel_status && withdrawel_id) {
+
+            var getwithdrawel = await model.GetWithdrawel(withdrawel_id)
+            if (getwithdrawel.length > 0) {
+                var previous_status = getwithdrawel[0]?.wr_action_status
+
+
+                await notification.addNotification(admin_id, `${admin_role}`, `Withdrawel Request updated for id ${withdrawel_id} `, `Withdrawel Request status updated from ${previous_status} to ${withdrawel_status}`)
+
+                let changeInveststatus = await model.ChangeWithdrawelStatus(withdrawel_status, withdrawel_id)
+
+                if (changeInveststatus.affectedRows > 0) {
+                    return res.send({
+                        result: true,
+                        message: "Withdrawel Request Status Updated Sucessfully"
+                    })
+                } else {
+                    return res.send({
+                        result: false,
+                        message: "Failed to Update Withdrawel Request Status"
+                    })
+                }
+            } else {
+                return res.send({
+                    result: false,
+                    message: "Failed to get Withdrawel Request Details"
+                })
+            }
+        }
     } catch (error) {
 
         return res.send({

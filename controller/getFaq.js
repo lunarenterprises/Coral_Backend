@@ -19,7 +19,6 @@ module.exports.GetFaq = async (req, res) => {
             })
         }
         let faqData = await model.GetFaq()
-        console.log(faqData)
         await SendMessage(user_id, "Fetch FAQ", "Fetched FAQ Successfully.!")
         if (faqData.length === 0) {
             return res.send({

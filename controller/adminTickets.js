@@ -5,7 +5,7 @@ module.exports.ListAllTickets = async (req, res) => {
     try {
         let { admin_id, role } = req.user
         let adminData = await adminModel.CheckAdmin(admin_id, role)
-        if (adminData.length == 0||adminData[0]?.u_role == 'user') {
+        if (adminData.length == 0 || adminData[0]?.u_role == 'user') {
             return res.send({
                 result: false,
                 message: "Access Denied,try with authorized account"
@@ -40,14 +40,14 @@ module.exports.EditTicket = async (req, res) => {
     try {
         let { admin_id, role } = req.user
         let adminData = await adminModel.CheckAdmin(admin_id, role)
-        if (adminData.length == 0||adminData[0]?.u_role == 'user') {
+        if (adminData.length == 0 || adminData[0]?.u_role == 'user') {
             return res.send({
                 result: false,
                 message: "Access Denied,try with authorized account"
             })
         }
         let { ticket_id, status } = req.body
-        if (!ticket_id, status) {
+        if (!ticket_id || !status) {
             return res.send({
                 result: false,
                 message: "Ticket id and status is required"
@@ -77,7 +77,7 @@ module.exports.DeleteTicket = async (req, res) => {
     try {
         let { admin_id, role } = req.user
         let adminData = await adminModel.CheckAdmin(admin_id, role)
-        if (adminData.length == 0||adminData[0]?.u_role == 'user') {
+        if (adminData.length == 0 || adminData[0]?.u_role == 'user') {
             return res.send({
                 result: false,
                 message: "Access Denied,try with authorized account"
@@ -91,15 +91,15 @@ module.exports.DeleteTicket = async (req, res) => {
             })
         }
         let deletedData = await ticketModel.deleteTicket(ticket_id)
-        if(deletedData.affectedRows>0){
+        if (deletedData.affectedRows > 0) {
             return res.send({
-                result:true,
-                message:"Deleted ticket Successfully"
+                result: true,
+                message: "Deleted ticket Successfully"
             })
-        }else{
+        } else {
             return res.send({
-                result:false,
-                message:"Failed to delete ticket"
+                result: false,
+                message: "Failed to delete ticket"
             })
         }
     } catch (error) {

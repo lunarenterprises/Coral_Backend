@@ -78,9 +78,9 @@ module.exports.getUserNotification = async (user_id) => {
 
     if (user_id) {
         condition = ` and user_id = ${user_id} `
-
     }
-    var Query = `SELECT * FROM notifications where role='user' ${condition} `;
+    var Query = `SELECT n.*, us.u_name FROM notifications n LEFT JOIN users us ON n.user_id = us.u_id WHERE n.role = 'user'${condition} `;
+
     var data = await query(Query);
     return data;
 };
@@ -90,9 +90,8 @@ module.exports.getAdminNotification = async (user_id) => {
 
     if (user_id) {
         condition = ` and user_id= ${user_id} `
-
     }
-    var Query = `SELECT * FROM notifications where role <> 'user' ${condition} `;
+    var Query = `SELECT n.*, us.u_name FROM notifications n LEFT JOIN users us ON n.user_id = us.u_id WHERE n.role <> 'user'${condition} `;
     var data = await query(Query);
     return data;
 };
