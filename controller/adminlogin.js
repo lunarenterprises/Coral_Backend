@@ -7,7 +7,7 @@ var jwt = require('jsonwebtoken');
 module.exports.AdminLogin = async (req, res) => {
     try {
 
-        let { device_id, device_os, device_token, password, email, app_version } = req.body;
+        let { device_id, device_os, device_token, password, email, app_version, fcm_token } = req.body;
 
         if (!password || !email) {
             return res.send({
@@ -16,6 +16,7 @@ module.exports.AdminLogin = async (req, res) => {
             });
         }
         var SECRET_KEY = process.env.JWT_SECRET_KEY
+
 
         var CheckUser = await model.CheckUserQuery(email);
         console.log(CheckUser, "eee");
@@ -55,6 +56,7 @@ module.exports.AdminLogin = async (req, res) => {
                     await model.UpdateUserAppsQuery(
                         device_token,
                         api_key,
+                        fcm_token,
                         app_version,
                         CheckUserapps[0].user_apps_id)
                 } else {
@@ -65,6 +67,7 @@ module.exports.AdminLogin = async (req, res) => {
                         device_token,
                         CheckUser[0].u_id,
                         api_key,
+                        fcm_token,
                         app_version
                     )
                 }
@@ -94,8 +97,6 @@ module.exports.AdminLogin = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log(error);
-
         return res.send({
             result: false,
             message: error.message,

@@ -39,8 +39,6 @@ module.exports.AdminList = async (req, res) => {
             })
         }
 
-
-
     } catch (error) {
         console.log(error, "errr");
 

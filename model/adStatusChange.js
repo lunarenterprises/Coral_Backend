@@ -25,9 +25,9 @@ module.exports.GetUser = async (contract_id) => {
     var data = await query(Query, [contract_id]);
     return data;
 }
-module.exports.ChangeUserStatus = async (contract_status, contract_id) => {
-    var Query = `UPDATE users SET u_status = 'active' WHERE u_id = ?`;
-    var data = await query(Query, [contract_status, contract_id]);
+module.exports.ChangeUserStatus = async (activate_status, activate_user_id) => {
+    var Query = `UPDATE users SET u_status = ? WHERE u_id = ?`;
+    var data = await query(Query, [activate_status, activate_user_id]);
     return data;
 }
 
@@ -36,5 +36,31 @@ module.exports.ChangeUserStatus = async (contract_status, contract_id) => {
 module.exports.ChangeInvestReqStatus = async (invest_req_status, invest_req_id) => {
     var Query = `UPDATE user_invest SET ui_request_status = ? WHERE ui_id = ?`;
     var data = await query(Query, [invest_req_status, invest_req_id]);
+    return data;
+}
+
+//------------------------------------
+
+module.exports.GetPayout = async (payout_id) => {
+    var Query = `SELECT * FROM payout_history where ph_id = ?`;
+    var data = await query(Query, [payout_id]);
+    return data;
+}
+module.exports.ChangePayoutStatus = async (payout_status, payout_id) => {
+    var Query = `UPDATE payout_history SET ph_status = ? WHERE ph_id = ?`;
+    var data = await query(Query, [payout_status, payout_id]);
+    return data;
+}
+
+//------------------------------------
+
+module.exports.GetWithdrawel = async (withdrawel_id) => {
+    var Query = `SELECT * FROM withdraw_request where wr_id = ?`;
+    var data = await query(Query, [withdrawel_id]);
+    return data;
+}
+module.exports.ChangeWithdrawelStatus = async (withdrawel_status, withdrawel_id) => {
+    var Query = `UPDATE withdraw_request SET wr_status = ? WHERE wr_id = ?`;
+    var data = await query(Query, [withdrawel_status, withdrawel_id]);
     return data;
 }

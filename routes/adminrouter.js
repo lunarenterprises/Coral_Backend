@@ -44,8 +44,29 @@ route.post('/dashboard', verifyToken, require('../controller/adDashboard').Dashb
 
 route.get('/ticket/list', verifyToken, require('../controller/adminTickets').ListAllTickets)
 
-route.get('/ticket/edit', verifyToken, require('../controller/adminTickets').EditTicket)
+route.put('/ticket/edit', verifyToken, require('../controller/adminTickets').EditTicket)
 
 route.delete('/ticket/delete', verifyToken, require('../controller/adminTickets').DeleteTicket)
+
+
+route.get('/payout-history', verifyToken, require('../controller/adPayoutHistory').PayoutHistory)
+
+route.post('/edit/share-dilution', verifyToken, require('../controller/adEditinvestmentShare').EditSharedilution)
+
+route.post('/edit/investment-calculator', verifyToken, require('../controller/adEditinvestmentShare').EditInvestmentCalculater)
+
+
+
+
+// route.post('/payout', require('../controller/adPayoutCycle').PayoutCycle)
+
+// route.post('/next-payout', require('../controller/adPayoutCycle').CheckAndCreateNextPayout)
+
+// route.post('/payout_status', require('../controller/adPayoutCycle').CheckAndUpdatePayoutStatus)
+
+
+
+
+
 
 module.exports = route

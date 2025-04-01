@@ -17,6 +17,7 @@ module.exports.CheckUserAppsQuery = async (user_id, device_id, device_os) => {
 module.exports.UpdateUserAppsQuery = async (
     device_token,
     api_key,
+    fcm_token,
     app_version,
     user_apps_id
 ) => {
@@ -26,10 +27,11 @@ module.exports.UpdateUserAppsQuery = async (
         appVersion = `,user_apps_version`
         appVers = `='${app_version}'`
     }
-    var Query = `update user_apps set user_apps_device_token = ?,user_apps_key = ?${appVersion}${appVers} where user_apps_id = ?`;
+    var Query = `update user_apps set user_apps_device_token = ?,user_apps_key = ?,fcm_token=?${appVersion}${appVers} where user_apps_id = ?`;
     var data = query(Query, [
         device_token,
         api_key,
+        fcm_token,
         user_apps_id,
     ]);
     return data;
@@ -41,6 +43,7 @@ module.exports.InsertUserAppsQuery = async (
     device_token,
     user_id,
     api_key,
+    fcm_token,
     app_version
 ) => {
     let appVersion = '';
@@ -49,8 +52,8 @@ module.exports.InsertUserAppsQuery = async (
         appVersion = `,user_apps_version`
         appVers = `,'${app_version}'`
     }
-    var Query = `insert into user_apps(user_apps_user_id,user_apps_device_token,user_apps_device_id,user_apps_device_os,user_apps_key${appVersion})values(?,?,?,?,?${appVers})`;
-    var data = query(Query, [user_id, device_token, device_id, device_os, api_key]);
+    var Query = `insert into user_apps(user_apps_user_id,user_apps_device_token,user_apps_device_id,user_apps_device_os,user_apps_key,fcm_token${appVersion})values(?,?,?,?,?,?${appVers})`;
+    var data = query(Query, [user_id, device_token, device_id, device_os, fcm_token, api_key]);
     return data;
 };
 
