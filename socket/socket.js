@@ -145,6 +145,7 @@ module.exports = function (io) {
     let tickets = [];  // List of active tickets with chat history
 
     io.on('connection', (socket) => {
+        console.log("socket : ", socket)
         console.log('A user or admin connected:', socket.id);
 
         // Admin Login & Availability
