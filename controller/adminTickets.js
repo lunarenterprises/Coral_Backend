@@ -11,11 +11,8 @@ module.exports.ListAllTickets = async (req, res) => {
                 message: "Access Denied,try with authorized account"
             })
         }
-        // Get the page and limit parameters from the request query
-        let page = parseInt(req.query.page) || 1;   // Default to page 1 if not provided
-        let limit = parseInt(req.query.limit) || 5; // Default to 10 records per page
 
-        let tickets = await ticketModel.getAllTickets(page, limit)
+        let tickets = await ticketModel.getAllTickets()
         if (tickets.length > 0) {
             return res.send({
                 result: true,

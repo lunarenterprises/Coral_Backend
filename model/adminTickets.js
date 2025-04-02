@@ -2,15 +2,13 @@ var db = require("../db/db");
 var util = require("util")
 const query = util.promisify(db.query).bind(db);
 
-module.exports.getAllTickets = async (page = 1, limit = 10) => {
-    const offset = (page - 1) * limit;
+module.exports.getAllTickets = async () => {
     var Query = `
         SELECT tickets.*, users.*
         FROM tickets
         INNER JOIN users ON tickets.user_id = users.u_id
-        LIMIT ? OFFSET ?
     `;
-    return await query(Query, [limit, offset]);
+    return await query(Query);
 };
 
 module.exports.updateStatus = async (ticket_id, status) => {
