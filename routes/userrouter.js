@@ -137,7 +137,7 @@ route.post('/google/login', require('../controller/GoogleAuth').GoogleLogin)
 
 route.post('/message/sendMessage',require('../controller/userMessages').SendMessage)
 
-route.get('/message/listMessages',require('../controller/userMessages').ListMessages)
+route.post('/message/listMessages',require('../controller/userMessages').ListMessages)
 
 
 /// Payment Routes
