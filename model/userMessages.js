@@ -1,0 +1,22 @@
+var db = require("../db/db");
+var util = require("util")
+const query = util.promisify(db.query).bind(db);
+
+module.exports.SendMessage = async (ticket_id, user_id, admin_id, message) => {
+    var Query = `insert into messages(ticket_id,user_id,admin_id,message)values(?,?,?,?)`;
+    return await query(Query, [ticket_id, user_id, admin_id, message]);;
+};
+
+module.exports.ListMessages = async (user_id, ticket_id, admin_id) => {
+    var Query = `select * from messages where user_id=? and ticket_id=? and admin_id=?`
+    return await query(Query, [user_id, ticket_id, admin_id])
+}
+
+module.exports.UpdateAdmin = async (user_id, ticket_id, to_admin_id) => {
+    var Query = `UPDATE messages 
+        SET 
+            admin_id = ?
+            where user_id = ? and ticket_id=?;
+    `;
+    return await query(Query, [to_admin_id, user_id, ticket_id])
+}

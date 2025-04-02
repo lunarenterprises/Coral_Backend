@@ -66,6 +66,10 @@ route.post('/edit/investment-calculator', verifyToken, require('../controller/ad
 
 
 
+route.post('/message/listMessages',verifyToken,require("../controller/adminMessage").ListMessages)
+route.post('/message/sendMessage',verifyToken,require("../controller/adminMessage").SendMessage)
+route.put('/message/updateMessage',verifyToken,require('../controller/adminMessage').UpdateAdminId)
+
 
 
 
