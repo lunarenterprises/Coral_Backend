@@ -9,7 +9,7 @@ module.exports.createTicket = async (user_id, purpose, category) => {
 };
 
 module.exports.listTickets = async (user_id) => {
-    var Query = `select * from tickets where user_id=?`
+    var Query = `select * from tickets where user_id=? ORDER BY createdAt DESC`
     return await query(Query, [user_id])
 }
 
