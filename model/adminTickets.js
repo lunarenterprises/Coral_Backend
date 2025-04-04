@@ -7,6 +7,7 @@ module.exports.getAllTickets = async () => {
         SELECT tickets.*, users.*
         FROM tickets
         INNER JOIN users ON tickets.user_id = users.u_id
+        ORDER BY tickets.createdAt DESC
     `;
     return await query(Query);
 };
