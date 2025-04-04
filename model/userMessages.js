@@ -13,7 +13,7 @@ module.exports.UserSendMessage = async (ticket_id, user_id, admin_id, message) =
 };
 
 module.exports.ListMessages = async (ticket_id) => {
-    var Query = `select * from messages where ticket_id=? ORDER BY createdAt DESC`
+    var Query = `select * from messages where ticket_id=?`
     return await query(Query, [ticket_id])
 }
 
