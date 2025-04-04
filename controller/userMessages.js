@@ -18,7 +18,7 @@ module.exports.SendMessage = async (req, res) => {
                 message: "User not found"
             })
         }
-        let data = await model.SendMessage(ticket_id, user_id, admin_id, message)
+        let data = await model.UserSendMessage(ticket_id, user_id, admin_id, message)
         if (data.affectedRows == 1) {
             return res.send({
                 result: true,

@@ -18,7 +18,7 @@ module.exports.SendMessage = async (req, res) => {
                 message: "Please provide all the required data"
             })
         }
-        let data = await model.SendMessage(ticket_id, user_id, admin_id, message)
+        let data = await model.AdminSendMessage(ticket_id, user_id, admin_id, message)
         if (data.affectedRows == 1) {
             return res.send({
                 result: true,
