@@ -61,7 +61,7 @@ module.exports.ListMessages = async (req, res) => {
                 message: "User not found"
             })
         }
-        let messageData = await model.ListMessages(user_id, ticket_id, admin_id)
+        let messageData = await model.ListMessages(ticket_id)
         if (messageData.length > 0) {
             return res.send({
                 result: true,
