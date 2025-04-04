@@ -18,6 +18,11 @@ module.exports.updateStatus = async (ticket_id, status) => {
 }
 
 module.exports.deleteTicket = async (ticket_id) => {
-    var Query = `delete from tickets where id=?`
-    return await query(Query, [ticket_id])
-}
+    // First, delete all messages that reference the ticket
+    var deleteMessagesQuery = `DELETE FROM messages WHERE ticket_id = ?`;
+    await query(deleteMessagesQuery, [ticket_id]);
+
+    // Now, delete the ticket
+    var deleteTicketQuery = `DELETE FROM tickets WHERE id = ?`;
+    return await query(deleteTicketQuery, [ticket_id]);
+};
