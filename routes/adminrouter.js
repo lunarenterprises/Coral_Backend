@@ -49,12 +49,14 @@ route.put('/ticket/edit', verifyToken, require('../controller/adminTickets').Edi
 route.delete('/ticket/delete', verifyToken, require('../controller/adminTickets').DeleteTicket)
 
 
+
 route.get('/payout-history', verifyToken, require('../controller/adPayoutHistory').PayoutHistory)
 
 route.post('/edit/share-dilution', verifyToken, require('../controller/adEditinvestmentShare').EditSharedilution)
 
 route.post('/edit/investment-calculator', verifyToken, require('../controller/adEditinvestmentShare').EditInvestmentCalculater)
 
+route.get('/download/contract', verifyToken, require('../controller/adContractDownload').ContractDownload)
 
 
 
@@ -69,6 +71,7 @@ route.post('/edit/investment-calculator', verifyToken, require('../controller/ad
 route.post('/message/listMessages',verifyToken,require("../controller/adminMessage").ListMessages)
 route.post('/message/sendMessage',verifyToken,require("../controller/adminMessage").SendMessage)
 route.put('/message/updateMessage',verifyToken,require('../controller/adminMessage').UpdateAdminId)
+
 
 
 
