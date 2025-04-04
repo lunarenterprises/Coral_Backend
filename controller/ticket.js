@@ -27,7 +27,8 @@ module.exports.CreateTicket = async (req, res) => {
             await notification.addNotification(user_id, userData[0].u_role, `Ticket for ${category}`, `Your requested to ${category} has been send to the admin!.`)
             return res.send({
                 result: true,
-                message: "Ticket created successfully"
+                message: "Ticket created successfully",
+                ticket_id: ticket.insertId
             })
         } else {
             return res.send({
