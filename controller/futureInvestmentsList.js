@@ -23,7 +23,7 @@ module.exports.FutureInvestmentList = async (req, res) => {
         if (FutureInvestmentList.length === 0) {
             return res.send({
                 result: false,
-                message: "Faq not found"
+                message: "Data not found"
             })
         } else {
             return res.send({

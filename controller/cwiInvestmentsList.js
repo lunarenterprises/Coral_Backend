@@ -23,8 +23,8 @@ module.exports.cwiInvestmentList = async (req, res) => {
             return {
                 id: item.tc_id,
                 name: item.tc_name,
-                totalAmount: tc_current_year,
-                return_value: tc_growth_percentage,
+                totalAmount:item.tc_current_year,
+                return_value: item.tc_growth_percentage,
             }
         })
         if (cwiList.length > 0) {
