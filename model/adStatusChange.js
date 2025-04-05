@@ -64,3 +64,17 @@ module.exports.ChangeWithdrawelStatus = async (withdrawel_status, withdrawel_id)
     var data = await query(Query, [withdrawel_status, withdrawel_id]);
     return data;
 }
+
+//--------------------------------------
+
+module.exports.ChangeKycStatus = async (kyc_status, kyc_user_id) => {
+    var Query = `UPDATE users SET u_kyc = ? WHERE u_id = ?`;
+    var data = await query(Query, [kyc_status, kyc_user_id]);
+    return data;
+}
+
+module.exports.AddKycMessage = async (kyc_message, kyc_user_id) => {
+    var Query = `UPDATE user_kyc SET uk_reject_message = ? WHERE uk_u_id = ?`;
+    var data = await query(Query, [kyc_message, kyc_user_id]);
+    return data;
+}
