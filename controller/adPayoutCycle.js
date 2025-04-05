@@ -41,21 +41,21 @@ module.exports.PayoutCycle = async (req, res) => {
                             console.log(`Monthly payout for ${ui_id}: ${return_amount}, payout date: ${payoutDate.format('YYYY-MM-DD')}`);
                             break;
 
-                        case 'quarterly':
+                        case 'Quarterly':
                             totalPeriods = endDate.diff(investDate, 'months') / 3;
                             payoutDate = moment(investDate).add(3, 'months');
                             return_amount = ui_return / totalPeriods;
                             console.log(`Quarterly payout for ${ui_id}: ${return_amount}, payout date: ${payoutDate.format('YYYY-MM-DD')}`);
                             break;
 
-                        case 'Half-yearly':
+                        case 'Half-Yearly':
                             totalPeriods = endDate.diff(investDate, 'months') / 6;
                             payoutDate = moment(investDate).add(6, 'months');
                             return_amount = ui_return / totalPeriods;
                             console.log(`Half-yearly payout for ${ui_id}: ${return_amount}, payout date: ${payoutDate.format('YYYY-MM-DD')}`);
                             break;
 
-                        case 'yearly':
+                        case 'Yearly':
                             totalPeriods = endDate.diff(investDate, 'years');
                             payoutDate = moment(investDate).add(1, 'year');
                             return_amount = ui_return / totalPeriods;
@@ -162,7 +162,7 @@ module.exports.CheckAndCreateNextPayout = async (req, res) => {
                                     console.log(`Monthly payout for ${ui_id}: ${return_amount}, next payout date: ${nextPayoutDate.format('YYYY-MM-DD')}`);
                                     break;
 
-                                case 'quarterly':
+                                case 'Quarterly':
                                     totalPeriods = endDate.diff(investDate, 'months') / 3;
                                     nextPayoutDate = moment(payoutDate).add(3, 'months');
                                     return_amount = ui_return / totalPeriods;
@@ -176,7 +176,7 @@ module.exports.CheckAndCreateNextPayout = async (req, res) => {
                                     console.log(`Half-yearly payout for ${ui_id}: ${return_amount}, next payout date: ${nextPayoutDate.format('YYYY-MM-DD')}`);
                                     break;
 
-                                case 'yearly':
+                                case 'Yearly':
                                     totalPeriods = endDate.diff(investDate, 'years');
                                     nextPayoutDate = moment(payoutDate).add(1, 'year');
                                     return_amount = ui_return / totalPeriods;
