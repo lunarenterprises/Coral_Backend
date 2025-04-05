@@ -9,7 +9,7 @@ module.exports.getInvestedData = async (u_id) => {
 }
 
 module.exports.getCWIIvestments = async () => {
-    var Query = `select * from cwi_investments`
+    var Query = `select * from top_company`
     var data = await query(Query);
     return data;
 }
