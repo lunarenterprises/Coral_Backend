@@ -7,7 +7,7 @@ module.exports.GetContract = async (ph_invest_id) => {
     if (ph_invest_id) {
         condition = ` and ui_id =${ph_invest_id} `
     }
-    var Query = `SELECT * FROM user_invest where ui_type = 'fixed' ${condition}`;
+    var Query = `SELECT * FROM user_invest where ui_type = 'Fixed' ${condition}`;
     var data = await query(Query);
     console.log(Query, "queryyyyyyyyyyyyyyyy");
 
