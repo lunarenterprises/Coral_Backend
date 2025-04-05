@@ -15,7 +15,8 @@ module.exports.StatusChange = async (req, res) => {
                 message: "Access Denied,try with authorized account"
             })
         }
-        var { contract_status, contract_id, activate_user_id, activate_user_status, activate_admin_id, invest_req_id, invest_req_status, payout_id, payout_status, withdrawel_status, withdrawel_id, kyc_status, kyc_user_id, kyc_message, pay_invest_id, pay_invest_status } = req.body
+        var currentdate = moment().format('YYYY-MM-DD')
+        var { contract_status, contract_id, activate_user_id, activate_user_status, activate_admin_id, invest_req_id, invest_req_status, payout_id, payout_status, payout_amount, withdrawel_status, withdrawel_id, withdraw_amount, kyc_status, kyc_user_id, kyc_message, pay_invest_id, pay_invest_status } = req.body
 
 
         if (contract_status && contract_id) {
@@ -138,18 +139,24 @@ module.exports.StatusChange = async (req, res) => {
             }
         }
 
-        if (payout_id && payout_status) {
+        if (payout_id && payout_status && payout_amount) {
 
             var getpayout = await model.GetPayout(payout_id)
             if (getpayout.length > 0) {
                 var previous_status = getpayout[0]?.ph_status
-
+                var user_id = getpayout[0]?.ph_invest_u_id
 
                 await notification.addNotification(admin_id, `${admin_role}`, `Payout Status updation for Id ${payout_id} `, `Payout Status  updated from ${previous_status} to ${payout_status}`)
 
                 let changepayoutstatus = await model.ChangePayoutStatus(payout_status, payout_id)
+                let addwalletamount = await model.AddWalletAmount(payout_amount, user_id)
 
-                if (changepayoutstatus.affectedRows > 0) {
+                await notification.addNotification(user_id, `user`, `Payout amount added to user[${user_id}] wallet`, `Payout amount ${payout_amount} added to user[${user_id}] wallet`)
+
+                let addwallethistory = await model.AddWalletHistory(user_id, payout_amount, currentdate)
+
+
+                if (changepayoutstatus.affectedRows > 0 && addwalletamount.affectedRows > 0 && addwallethistory.affectedRows > 0) {
                     return res.send({
                         result: true,
                         message: "Payout Status Updated Sucessfully"
@@ -169,19 +176,22 @@ module.exports.StatusChange = async (req, res) => {
         }
 
 
-
-        if (withdrawel_status && withdrawel_id) {
+        if (withdrawel_status && withdrawel_id && withdraw_amount) {
 
             var getwithdrawel = await model.GetWithdrawel(withdrawel_id)
             if (getwithdrawel.length > 0) {
                 var previous_status = getwithdrawel[0]?.wr_action_status
+                var user_id = getwithdrawel[0]?.wr_u_id
+
 
 
                 await notification.addNotification(admin_id, `${admin_role}`, `Withdrawel Request updated for id ${withdrawel_id} `, `Withdrawel Request status updated from ${previous_status} to ${withdrawel_status}`)
+                let changewallet = await model.UpdateWallet(withdraw_amount, user_id)
+                await notification.addNotification(user_id, `user`, `User ${user_id} withdra from Wallet`, `withdraw sucessfully ${withdraw_amount} from user[ ${user_id}] wallet`)
 
                 let changeInveststatus = await model.ChangeWithdrawelStatus(withdrawel_status, withdrawel_id)
 
-                if (changeInveststatus.affectedRows > 0) {
+                if (changeInveststatus.affectedRows > 0 && changewallet.affectedRows > 0) {
                     return res.send({
                         result: true,
                         message: "Withdrawel Request Status Updated Sucessfully"
