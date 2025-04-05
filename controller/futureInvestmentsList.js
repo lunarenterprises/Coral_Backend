@@ -29,7 +29,7 @@ module.exports.FutureInvestmentList = async (req, res) => {
             return res.send({
                 result: true,
                 message: "Data retrived successfully",
-                data: []
+                data: FutureInvestmentList
             })
         }
     } catch (error) {
