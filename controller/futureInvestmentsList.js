@@ -19,7 +19,7 @@ module.exports.FutureInvestmentList = async (req, res) => {
             })
         }
         let FutureInvestmentList = await model.GetFutureInvestmentList()
-        await SendMessage(user_id, "Fetch FAQ", "Fetched FAQ Successfully.!")
+        // await SendMessage(user_id,userData[0].u_role, "Fetch FAQ", "Fetched FAQ Successfully.!")
         if (FutureInvestmentList.length === 0) {
             return res.send({
                 result: false,
@@ -29,7 +29,7 @@ module.exports.FutureInvestmentList = async (req, res) => {
             return res.send({
                 result: true,
                 message: "Data retrived successfully",
-                data: FutureInvestmentList
+                data: []
             })
         }
     } catch (error) {

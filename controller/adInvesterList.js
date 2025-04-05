@@ -36,12 +36,13 @@ module.exports.InvestersList = async (req, res) => {
 
         var investersData = await model.GetInvester(condition)
 
-        var investeruserData = await model.GetInvesterUser(condition)
+        // var investeruserData = await model.GetInvesterUser(condition)
 
         var allusersData = await model.GetSAllUsers()
 
+        console.log(investersData, allusersData);
 
-        if (investersData.length > 0) {
+        if (investersData.length > 0 || allusersData.length > 0) {
 
 
             let serverName = req.protocol + "://" + req.get("host");
@@ -195,12 +196,12 @@ module.exports.InvestersList = async (req, res) => {
                 message: "data retrieved successfully",
                 investerusers: allusersData,
                 data: investersData,
-                users: allusersData
+                // users: allusersData
             })
         } else {
             return res.send({
                 result: false,
-                message: "failed to get data"
+                message: "No data found"
             })
         }
     } catch (error) {
