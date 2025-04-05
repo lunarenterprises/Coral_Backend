@@ -21,8 +21,25 @@ module.exports.AdminDeleteSection = async (req, res) => {
         var subadmin_id = req.body.subadmin_id;
         var invest_id = req.body.invest_id;
         var withdraw_id = req.body.withdraw_id;
+        var invester_id = req.body.invester_id;
 
 
+        if (invester_id) {
+            let checkinvester = await model.CheckInvesterQuery(invester_id);
+
+            var username = checkinvester[0]?.u_name
+            if (checkinvester.length == 0) {
+                return res.send({
+                    result: false,
+                    message: "invester not found"
+                });
+            } else {
+                let data = await notification.addNotification(admin_id, `${admin_role}`, "User Removed", `User [${username}] Removed deleted successfully`)
+                console.log(data)
+                var deletesection = await model.RemoveInvesterQuery(invester_id);
+
+            }
+        }
 
         if (tc_id) {
             let checkpartners = await model.CheckTopcompanyQuery(tc_id);
