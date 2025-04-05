@@ -22,16 +22,16 @@ module.exports.InvestersList = async (req, res) => {
 
         var condition = ''
         if (user_id) {
-            condition = `WHERE ui.ui_u_id ='${user_id}'`
+            condition = `and ui.ui_u_id ='${user_id}'`
         }
         if (user_name) {
-            condition = ` where (us.u_name like '%${user_name}%')`
+            condition = ` and (us.u_name like '%${user_name}%')`
         }
         if (user_number) {
-            condition = ` where (us.u_mobile like '%${user_number}%')`
+            condition = ` and (us.u_mobile like '%${user_number}%')`
         }
         if (user_name && user_number) {
-            condition = ` where (us.u_name like '%${user_name}%' or us.u_mobile like '%${user_number}%')`
+            condition = ` and (us.u_name like '%${user_name}%' or us.u_mobile like '%${user_number}%')`
         }
 
         var investersData = await model.GetInvester(condition)
@@ -193,7 +193,7 @@ module.exports.InvestersList = async (req, res) => {
             return res.send({
                 result: true,
                 message: "data retrieved successfully",
-                investerusers: investeruserData,
+                investerusers: allusersData,
                 data: investersData,
                 users: allusersData
             })

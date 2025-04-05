@@ -67,7 +67,6 @@ route.get('/download/contract', verifyToken, require('../controller/adContractDo
 // route.post('/payout_status', require('../controller/adPayoutCycle').CheckAndUpdatePayoutStatus)
 
 
-
 route.post('/message/listMessages',verifyToken,require("../controller/adminMessage").ListMessages)
 route.post('/message/sendMessage',verifyToken,require("../controller/adminMessage").SendMessage)
 route.put('/message/updateMessage',verifyToken,require('../controller/adminMessage').UpdateAdminId)
