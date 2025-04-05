@@ -1,4 +1,4 @@
-let {admin} = require('../util/firebaseConfig')
+let {Admin} = require('../util/firebaseConfig')
 
 module.exports.GoogleLogin = async (req, res) => {
     try {
@@ -9,13 +9,13 @@ module.exports.GoogleLogin = async (req, res) => {
             return res.status(400).send('ID Token is required');
         }
         // Verify the ID token using Firebase Admin SDK
-        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        const decodedToken = await Admin.auth().verifyIdToken(idToken);
         console.log("decodedToken : ", decodedToken)
         const uid = decodedToken.uid;  // Extract the user UID from the decoded token
         console.log("uid : ", uid)
 
         // Optionally, you can fetch user details from Firebase Auth (if needed)
-        const userRecord = await admin.auth().getUser(uid);
+        const userRecord = await Admin.auth().getUser(uid);
         console.log("userRecord : ", userRecord)
         // After verification, you can return a response (e.g., user data, JWT, etc.)
         return res.status(200).json({

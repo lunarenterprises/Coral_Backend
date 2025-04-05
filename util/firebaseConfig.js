@@ -1,4 +1,4 @@
-var admin = require("firebase-admin");
+let admin = require("firebase-admin");
 let Notification = require('../util/saveNotification')
 
 let serviceAccount = {
@@ -68,4 +68,4 @@ module.exports.sendNotificationToAdmins = async (type, message) => {
     }
 }
 
-module.exports.admin = admin
+module.exports.Admin = admin
