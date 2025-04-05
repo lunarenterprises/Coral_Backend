@@ -43,10 +43,11 @@ module.exports.GetInvesterUser = async (condition) => {
 
 module.exports.GetSAllUsers = async (con) => {
     var Query = `SELECT us.u_id,us.u_name, us.u_email, us.u_mobile, us.u_status,us.u_kyc,us.u_joining_date,us.u_easy_pin,us.u_joining_date ,
-    ua.*,b.*,uk.*
+    ua.*,b.*,uk.*,n.*
                 FROM users us LEFT JOIN user_apps ua ON us.u_id = ua.user_apps_user_id
                 LEFT JOIN bank b ON us.u_id = b.b_u_id 
-                LEFT JOIN user_kyc uk ON us.u_id = uk.uk_u_id ${con} GROUP BY us.u_id`;
+                LEFT JOIN user_kyc uk ON us.u_id = uk.uk_u_id
+                LEFT JOIN nominee n ON us.u_id = n.n_u_id ${con} GROUP BY us.u_id`;
     var data = await query(Query);
     return data;
 };

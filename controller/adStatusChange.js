@@ -15,7 +15,7 @@ module.exports.StatusChange = async (req, res) => {
                 message: "Access Denied,try with authorized account"
             })
         }
-        var { contract_status, contract_id, activate_user_id, activate_user_status, activate_admin_id, activate_admin_status, invest_req_id, invest_req_status, payout_id, payout_status, withdrawel_status, withdrawel_id } = req.body
+        var { contract_status, contract_id, activate_user_id, activate_user_status, activate_admin_id, invest_req_id, invest_req_status, payout_id, payout_status, withdrawel_status, withdrawel_id, kyc_status, kyc_user_id, kyc_message } = req.body
 
 
         if (contract_status && contract_id) {
@@ -196,6 +196,43 @@ module.exports.StatusChange = async (req, res) => {
                 return res.send({
                     result: false,
                     message: "Failed to get Withdrawel Request Details"
+                })
+            }
+        }
+
+        if (kyc_status && kyc_user_id || kyc_message) {
+
+            var getuser = await model.GetUser(kyc_user_id)
+            if (getuser.length > 0) {
+                var previous_status = getuser[0]?.u_kyc
+
+
+                await notification.addNotification(admin_id, `${admin_role}`, `KYC status updated for user ${kyc_user_id} `, `KYC status updated from ${previous_status} to ${kyc_status}`)
+                if (kyc_status == 'verified') {
+                    var changekycstatus = await model.ChangeKycStatus(kyc_status, kyc_user_id)
+
+                } else {
+                    var addkycmessage = await model.AddKycMessage(kyc_message, kyc_user_id)
+
+                    var changekycstatus = await model.ChangeKycStatus(kyc_status, kyc_user_id)
+
+                }
+
+                if (changekycstatus.affectedRows > 0) {
+                    return res.send({
+                        result: true,
+                        message: "KYC Status Updated Sucessfully"
+                    })
+                } else {
+                    return res.send({
+                        result: false,
+                        message: "Failed to Update KYC status"
+                    })
+                }
+            } else {
+                return res.send({
+                    result: false,
+                    message: "Failed to get user Details"
                 })
             }
         }
