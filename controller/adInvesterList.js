@@ -21,8 +21,10 @@ module.exports.InvestersList = async (req, res) => {
         }
 
         var condition = ''
+        var con = ''
         if (user_id) {
             condition = `and ui.ui_u_id ='${user_id}'`
+            con = `where us.u_id ='${user_id}' `
         }
         if (user_name) {
             condition = ` and (us.u_name like '%${user_name}%')`
@@ -38,7 +40,7 @@ module.exports.InvestersList = async (req, res) => {
 
         // var investeruserData = await model.GetInvesterUser(condition)
 
-        var allusersData = await model.GetSAllUsers()
+        var allusersData = await model.GetSAllUsers(con)
 
         console.log(investersData, allusersData);
 
