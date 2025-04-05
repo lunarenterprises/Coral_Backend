@@ -27,7 +27,7 @@ module.exports.GetInvester = async (condition) => {
 LEFT JOIN users us ON ui.ui_u_id = us.u_id
 LEFT JOIN nominee n ON ui.ui_u_id = n.n_u_id 
 LEFT JOIN bank b ON ui.ui_u_id = b.b_u_id
-LEFT JOIN user_kyc uk ON ui.ui_u_id = uk.uk_u_id  ${condition}`;
+LEFT JOIN user_kyc uk ON ui.ui_u_id = uk.uk_u_id where ui.ui_action_status <> 'removed'  ${condition}`;
     var data = await query(Query);
     return data;
 }
@@ -35,7 +35,7 @@ LEFT JOIN user_kyc uk ON ui.ui_u_id = uk.uk_u_id  ${condition}`;
 module.exports.GetInvesterUser = async (condition) => {
     var Query = `SELECT us.u_id,us.u_name, us.u_email, us.u_mobile, us.u_status,us.u_kyc,us.u_joining_date,us.u_easy_pin,us.u_joining_date,uap.user_apps_device_os
     FROM user_invest ui LEFT JOIN users us ON ui.ui_u_id = us.u_id 
-    LEFT JOIN user_apps uap ON ui.ui_u_id = uap.user_apps_user_id ${condition} GROUP BY us.u_id `;
+    LEFT JOIN user_apps uap ON ui.ui_u_id = uap.user_apps_user_id  where ui.ui_action_status <> 'removed' ${condition} GROUP BY us.u_id `;
     var data = await query(Query);
     return data;
 };
@@ -43,7 +43,7 @@ module.exports.GetInvesterUser = async (condition) => {
 
 module.exports.GetSAllUsers = async () => {
     var Query = `SELECT us.u_id,us.u_name, us.u_email, us.u_mobile, us.u_status,us.u_kyc,us.u_joining_date,us.u_easy_pin,us.u_joining_date ,ua.*
-                FROM users us LEFT JOIN user_apps ua ON us.u_id = ua.user_apps_user_id `;
+                FROM users us LEFT JOIN user_apps ua ON us.u_id = ua.user_apps_user_id GROUP BY us.u_id `;
     var data = await query(Query);
     return data;
 };
