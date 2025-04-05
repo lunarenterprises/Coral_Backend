@@ -15,7 +15,7 @@ module.exports.StatusChange = async (req, res) => {
                 message: "Access Denied,try with authorized account"
             })
         }
-        var { contract_status, contract_id, activate_user_id, activate_user_status, activate_admin_id, invest_req_id, invest_req_status, payout_id, payout_status, withdrawel_status, withdrawel_id, kyc_status, kyc_user_id, kyc_message } = req.body
+        var { contract_status, contract_id, activate_user_id, activate_user_status, activate_admin_id, invest_req_id, invest_req_status, payout_id, payout_status, withdrawel_status, withdrawel_id, kyc_status, kyc_user_id, kyc_message, pay_invest_id, pay_invest_status } = req.body
 
 
         if (contract_status && contract_id) {
@@ -236,6 +236,38 @@ module.exports.StatusChange = async (req, res) => {
                 })
             }
         }
+
+
+        if (pay_invest_id && pay_invest_status) {
+
+            var getinvest = await model.GetContract(pay_invest_id)
+            if (getinvest.length > 0) {
+                var previous_status = getinvest[0]?.ui_payment_status
+
+
+                await notification.addNotification(admin_id, `${admin_role}`, `Investment Payment Status updated for id ${pay_invest_id} `, `Investment Payment Status updated  from ${previous_status} to ${pay_invest_status}`)
+
+                let changeInveststatus = await model.ChangeInvestPatmentStatus(pay_invest_id, pay_invest_status)
+
+                if (changeInveststatus.affectedRows > 0) {
+                    return res.send({
+                        result: true,
+                        message: "Investment Payment Status updated Sucessfully"
+                    })
+                } else {
+                    return res.send({
+                        result: false,
+                        message: "Failed to Update Investment Payment Status "
+                    })
+                }
+            } else {
+                return res.send({
+                    result: false,
+                    message: "Failed to get Investment Details"
+                })
+            }
+        }
+
     } catch (error) {
 
         return res.send({

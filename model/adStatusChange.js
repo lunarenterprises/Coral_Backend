@@ -78,3 +78,12 @@ module.exports.AddKycMessage = async (kyc_message, kyc_user_id) => {
     var data = await query(Query, [kyc_message, kyc_user_id]);
     return data;
 }
+//--------------------------------------------
+
+module.exports.ChangeInvestPatmentStatus = async (pay_invest_id, pay_invest_status) => {
+    var Query = `UPDATE user_invest SET ui_payment_status = ? WHERE ui_id = ?`;
+    var data = await query(Query, [pay_invest_status, pay_invest_id]);
+    return data;
+}
+
+//-------------------------------
