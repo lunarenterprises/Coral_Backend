@@ -38,12 +38,11 @@ module.exports.cwiInvestment = async (req, res) => {
             })
         }
 
-        let cwiInvestmentData = await model.getCWIInvestmentDetails(id)
-
-        if (cwiInvestmentData.length == 0) {
+        let topCompanyData = await model.getTopCompanyData(id)
+        if (topCompanyData.length === 0) {
             return res.send({
                 result: false,
-                message: "No investment found"
+                message: "Company data not found."
             })
         }
 
