@@ -46,7 +46,7 @@ module.exports.cwiInvestment = async (req, res) => {
             })
         }
 
-        let project_name = cwiInvestmentData[0].name
+        let project_name = topCompanyData[0].tc_name
         let investment_amount = Number(amount)
         let investment_duration = moment().add(2, 'years').format("YYYY-MM-DD");
         let profit_model = 'fixed'
@@ -60,8 +60,8 @@ module.exports.cwiInvestment = async (req, res) => {
         let relationship = nomineeDetails?.relationship
         let contactNumber = nomineeDetails?.contactNumber
         let nominee_residentialAddress = nomineeDetails?.residentialAddress
-        let percentage = cwiInvestmentData[0]?.return_value
-        let return_amount = (cwiInvestmentData[0]?.totalAmount * cwiInvestmentData[0]?.return_value) / 100
+        let percentage = topCompanyData[0]?.tc_growth_percentage
+        let return_amount = (investment_amount * percentage) / 100
         let bankaccount = await model.getBankDetails(user_id)
         if (nomineeFullName) {
             let nomineeData = await model.getnomineeDetails(user_id)
