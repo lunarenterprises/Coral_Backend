@@ -1,5 +1,5 @@
 var model = require('../model/terminatecontract')
-let ticketModel=require('../model/ticket')
+let ticketModel = require('../model/ticket')
 var nodemailer = require('nodemailer')
 let notification = require('../util/saveNotification')
 
@@ -25,7 +25,7 @@ module.exports.TerminateContract = async (req, res) => {
             })
         }
         let terminate = await model.updateContract(ui_id, reason)
-        let ticket=await ticketModel.createTicket(ui_id,"Requested for terminate contract","Terminate contract")
+        let ticket = await ticketModel.createTicket(usersdata[0]?.u_id, "Requested for terminate contract", "Terminate contract")
         if (terminate.affectedRows > 0) {
             let transporter = nodemailer.createTransport({
                 host: "smtp.hostinger.com",
@@ -85,7 +85,7 @@ module.exports.TerminateContract = async (req, res) => {
             });
 
             nodemailer.getTestMessageUrl(info);
-            await notification.addNotification(usersdata[0].ui_u_id,usersdata[0].u_role, 'Contract Terminate Request', 'Your contract termination request has been sent to our representative, they will contact you soon.')
+            await notification.addNotification(usersdata[0].ui_u_id, usersdata[0].u_role, 'Contract Terminate Request', 'Your contract termination request has been sent to our representative, they will contact you soon.')
             return res.send({
                 result: true,
                 message: "Your termination request has been sent to our representative,they will contact you soon."
