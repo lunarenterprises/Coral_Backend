@@ -38,7 +38,13 @@ module.exports.cwiInvestment = async (req, res) => {
             })
         }
 
-        let cwiInvestmentData = await model.getCWIInvestmentDetails(id)
+        let topCompanyData = await model.getTopCompanyData(id)
+        if (topCompanyData.length === 0) {
+            return res.send({
+                result: false,
+                message: "Company data not found."
+            })
+        }
 
         let project_name = cwiInvestmentData[0].name
         let investment_amount = Number(amount)
