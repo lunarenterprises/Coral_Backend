@@ -40,13 +40,6 @@ module.exports.cwiInvestment = async (req, res) => {
 
         let cwiInvestmentData = await model.getCWIInvestmentDetails(id)
 
-        if (cwiInvestmentData.length == 0) {
-            return res.send({
-                result: false,
-                message: "No investment found"
-            })
-        }
-
         let project_name = cwiInvestmentData[0].name
         let investment_amount = Number(amount)
         let investment_duration = moment().add(2, 'years').format("YYYY-MM-DD");
