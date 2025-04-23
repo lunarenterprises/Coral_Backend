@@ -20,8 +20,8 @@ module.exports.getInvestedData=async(u_id)=>{
     return data;
 }
 
-module.exports.requestTransfer = async (u_id) => {
-    var Query = `update user_invest set ui_status=? where ui_u_id = ?`;
-    var data = await query(Query, ["requestedForTransfer",u_id]);
+module.exports.requestTransfer = async (ui_id) => {
+    var Query = `update user_invest set ui_status=? where ui_id = ?`;
+    var data = await query(Query, ["requestedForTransfer",ui_id]);
     return data;
 }
