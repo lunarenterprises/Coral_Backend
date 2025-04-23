@@ -21,6 +21,12 @@ module.exports.ContractTransfer = async (req, res) => {
             })
         }
         let investedData = await model.getInvestedData(user_id)
+        if(investedData[0].ui_status ==="completed"){
+            return res.send({
+                result:false,
+                message:"Investment period already completed."
+            })
+        }
         if (investedData[0].ui_status === "requestedForTransfer") {
             return res.send({
                 result: false,
@@ -34,7 +40,7 @@ module.exports.ContractTransfer = async (req, res) => {
             })
         }
 
-        let update = await model.requestTransfer(ui_id, n_id)
+        let update = await model.requestTransfer(ui_id)
         let ticket = await ticketModel.createTicket(user_id, "Requested for transfer contract", "Transfer contract")
         let users = await model.getUser(user_id)
         if (update.affectedRows > 0) {
