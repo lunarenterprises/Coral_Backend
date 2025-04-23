@@ -23,6 +23,7 @@ module.exports.AddOrder = async (req, res) => {
             })
         }
         let { investment, securityOption, clientInfo, bankAccount, nomineeDetails } = req.body
+        console.log("Body : ", req.body)
         // if(!investment.project_name){
         //     return res.send({
         //         result:false,
