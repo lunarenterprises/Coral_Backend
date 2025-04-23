@@ -15,13 +15,14 @@ module.exports.GetUserContractList = async (user_id) => {
     // Then fetch the updated contract list
     var Query = `
         SELECT 
-            *
-        FROM 
-            user_invest ui 
-        LEFT JOIN 
-            nominee n ON ui.ui_nominee_id = n.n_id
-        WHERE 
-            ui.ui_u_id = ?;
+    u.*, 
+    n.*
+    FROM 
+    nominee n
+    JOIN 
+    users u ON n.n_u_id = u.u_id
+    WHERE 
+    n.n_u_id = ?;
     `;
     var data = await query(Query, [user_id]);
 
