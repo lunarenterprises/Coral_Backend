@@ -24,14 +24,16 @@ module.exports.AddSubAdmin = async (req, res) => {
             console.log(user_id, admin_role, "lllll");
 
 
-            let { name, email, mobile, password, role, } = fields
+            let { name, email, mobile, password, role, u_access } = fields
 
-            if (!name || !email || !mobile || !password || !role) {
+            if (!name || !email || !mobile || !password || !role || !u_access) {
                 return res.send({
                     result: false,
                     message: "Please fill all the fields"
                 })
             }
+            console.log(u_access, "access");
+
             var adminData = await model.getAdmin(user_id, admin_role)
             if (adminData[0]?.u_role !== 'superadmin') {
                 return res.send({
@@ -54,10 +56,10 @@ module.exports.AddSubAdmin = async (req, res) => {
 
                 fs.writeFileSync(newPath, rawData)
                 var image = "uploads/profile/admin/" + files.image.originalFilename
-                let addadmin = await model.AddAdminwithpic(name, email, mobile, image, hashedPassword, role)
+                let addadmin = await model.AddAdmin(name, email, mobile, image, hashedPassword, role, u_access)
 
                 if (addadmin.affectedRows > 0) {
-                    await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.u_name} Added Subadmin`, "Subadmin added sucessfully")
+                    await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.u_name} Added Subadmin`, `Subadmin ${name} with role ${role} added sucessfully`)
 
                     return res.send({
                         result: true,
@@ -71,10 +73,10 @@ module.exports.AddSubAdmin = async (req, res) => {
                 }
 
             }
-            let addadmin = await model.AddAdmin(name, email, mobile, hashedPassword, role)
+            let addadmin = await model.AddAdmin(name, email, mobile, hashedPassword, role, u_access)
 
             if (addadmin.affectedRows > 0) {
-                await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.u_name} Added Subadmin`, "Subadmin added sucessfully")
+                await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.u_name} Added Subadmin`, `Subadmin ${name} with role ${role} added sucessfully`)
 
                 return res.send({
                     result: true,

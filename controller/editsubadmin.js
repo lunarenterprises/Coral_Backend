@@ -24,7 +24,7 @@ module.exports.EditSubAdmin = async (req, res) => {
                 })
             }
 
-            let { subadmin_id, name, email, mobile, role } = fields
+            let { subadmin_id, name, email, mobile, role, u_access } = fields
 
             if (!subadmin_id) {
                 return res.send({
@@ -67,6 +67,13 @@ module.exports.EditSubAdmin = async (req, res) => {
                         condition = `set u_role ='${role}' `
                     } else {
                         condition += `,u_role='${role}'`
+                    }
+                }
+                if (u_access) {
+                    if (condition == '') {
+                        condition = `set u_access ='${u_access}' `
+                    } else {
+                        condition += `,u_access='${u_access}'`
                     }
                 }
 
