@@ -59,17 +59,22 @@ route.post('/edit/investment-calculator', verifyToken, require('../controller/ad
 route.get('/download/contract', verifyToken, require('../controller/adContractDownload').ContractDownload)
 
 
-
-// route.post('/payout', require('../controller/adPayoutCycle').PayoutCycle)
-
-// route.post('/next-payout', require('../controller/adPayoutCycle').CheckAndCreateNextPayout)
-
-// route.post('/payout_status', require('../controller/adPayoutCycle').CheckAndUpdatePayoutStatus)
-
-
 route.post('/message/listMessages',verifyToken,require("../controller/adminMessage").ListMessages)
 route.post('/message/sendMessage',verifyToken,require("../controller/adminMessage").SendMessage)
 route.put('/message/updateMessage',verifyToken,require('../controller/adminMessage').UpdateAdminId)
+
+route.post('/add/hgfs', verifyToken, require('../controller/adHgfs').AddHGFS)
+
+route.put('/edit/hgfs', verifyToken, require('../controller/adHgfs').EditHGFS)
+
+route.post('/add/future-investments', verifyToken, require('../controller/adFutureInvestments').AddFutureInvestment)
+
+route.put('/edit/future-investments', verifyToken, require('../controller/adFutureInvestments').EditFutureInvestment)
+
+
+
+
+
 
 
 
