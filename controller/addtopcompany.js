@@ -12,14 +12,14 @@ module.exports.AddTopCompany = async (req, res) => {
                 message: "Access Denied,try with authorized account"
             })
         }
-        var { tc_name, tc_current_year, tc_previous_year, tc_growth_percentage, tc_expected_CAGR, tc_priority } = req.body
-        if (!tc_name || !tc_name || !tc_current_year || !tc_previous_year || !tc_growth_percentage) {
+        var { tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage, tc_expected_CAGR, tc_priority } = req.body
+        if (!tc_name || !tc_name || !tc_current_year || !tc_minimum_investment || !tc_growth_percentage) {
             return res.send({
                 result: false,
                 message: "insufficent parameter"
             })
         }
-        let addTopCompany = await model.AddTopCompanyQuery(tc_name, tc_current_year, tc_previous_year, tc_growth_percentage, tc_expected_CAGR, tc_priority)
+        let addTopCompany = await model.AddTopCompanyQuery(tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage, tc_expected_CAGR, tc_priority)
 
         if (addTopCompany.affectedRows > 0) {
 

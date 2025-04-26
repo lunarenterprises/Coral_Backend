@@ -16,7 +16,7 @@ module.exports.EditTopCompany = async (req, res) => {
             })
         }
 
-        let { tc_id, tc_name, tc_current_year, tc_previous_year, tc_growth_percentage, tc_expected_CAGR } = req.body
+        let { tc_id, tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage, tc_expected_CAGR } = req.body
 
         if (!tc_id) {
             return res.send({
@@ -46,11 +46,11 @@ module.exports.EditTopCompany = async (req, res) => {
                     condition += `,tc_current_year='${tc_current_year}'`
                 }
             }
-            if (tc_previous_year) {
+            if (tc_minimum_investment) {
                 if (condition == '') {
-                    condition = `set tc_previous_year ='${tc_previous_year}' `
+                    condition = `set tc_minimum_investment ='${tc_minimum_investment}' `
                 } else {
-                    condition += `,tc_previous_year='${tc_previous_year}'`
+                    condition += `,tc_minimum_investment='${tc_minimum_investment}'`
                 }
             }
 
