@@ -412,7 +412,7 @@ const CheckFlexiblePayoutHistory = async (ui_id, ui_type) => {
     return await query(Query, [ui_id, ui_type]);
 }
 const GetPayoutHistory = async () => {
-    var Query = `SELECT * FROM payout_history `;
+    var Query = `SELECT * FROM payout_history where ph_status <> 'completed' `;
     return await query(Query);
 
 }
