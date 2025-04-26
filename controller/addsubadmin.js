@@ -73,7 +73,7 @@ module.exports.AddSubAdmin = async (req, res) => {
                 }
 
             }
-            let addadmin = await model.AddAdmin(name, email, mobile, hashedPassword, role, u_access)
+            let addadmin = await model.AddAdmin(name, email, mobile,null, hashedPassword, role, u_access)
 
             if (addadmin.affectedRows > 0) {
                 await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.u_name} Added Subadmin`, `Subadmin ${name} with role ${role} added sucessfully`)
