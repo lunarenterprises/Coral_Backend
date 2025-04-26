@@ -5,7 +5,7 @@ var bodyparser = require("body-parser");
 var https = require("https")
 var http = require('http')
 const fs = require('fs');
-const dotenv=require('dotenv')
+const dotenv = require('dotenv')
 dotenv.config()
 // var privateKey = fs.readFileSync('/etc/ssl/private.key', 'utf8').toString();
 
@@ -58,7 +58,7 @@ var io = require("socket.io")(server, {
         methods: ["GET", "POST"]
     }
 });
-
+require('./util/crone')
 require('./socket/socket')(io)
 
 server.listen(6017, () => {

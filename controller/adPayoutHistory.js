@@ -17,7 +17,7 @@ module.exports.PayoutHistory = async (req, res) => {
 
         var condition = ''
         if (user_id) {
-            condition = `WHERE ph_invest_u_id ='${user_id}'`
+            condition = `WHERE payout_history.ph_invest_u_id ='${user_id}'`
         }
 
         var payouthistorylist = await model.getPayoutHistory(condition)
@@ -31,7 +31,7 @@ module.exports.PayoutHistory = async (req, res) => {
         } else {
             return res.send({
                 result: false,
-                message: "failed to get data"
+                message: "No payout cycle found"
             })
         }
     } catch (error) {
