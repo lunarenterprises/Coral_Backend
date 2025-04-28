@@ -4,7 +4,11 @@ var moment = require('moment')
 module.exports.LockList = async (req, res) => {
     try {
         let { user_id } = req.headers
-        let lockdata = await model.getinvest(user_id)
+        let condition = ''
+        if (user_id) {
+            condition = `where lp_u_id ='${user_id}'`
+        }
+        let lockdata = await model.getinvest(condition)
         var total = 0
         lockdata.forEach(element => {
             total += element.lp_amount
