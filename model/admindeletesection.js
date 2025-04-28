@@ -72,4 +72,31 @@ module.exports.RemoveInvesterQuery = async (invest_id) => {
 
 //-----------------------------------------
 
+module.exports.CheckHGFSQuery = async (hgfs_id) => {
+    var Query = `select * from hgfs where u_id = ?`;
+    var data = await query(Query, [hgfs_id]);
+    return data;
+};
+module.exports.RemoveHGFSQuery = async (hgfs_id) => {
+    var Query = `update hgfs set h_status ='removed' where h_id = ?`;
+    var data = await query(Query, [hgfs_id]);
+    return data;
+};
+
+//-----------------------------------------
+
+module.exports.CheckFutureInvestmentQuery = async (fi_id) => {
+    var Query = `select * from future_investments where fi_id = ?`;
+    var data = await query(Query, [fi_id]);
+    return data;
+};
+module.exports.RemoveFutureInvestmentQuery = async (fi_id) => {
+    var Query = `update future_investments set fi_status ='removed' where fi_id = ?`;
+    var data = await query(Query, [fi_id]);
+    return data;
+};
+
+//-----------------------------------------
+
+
 

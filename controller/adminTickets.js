@@ -53,7 +53,7 @@ module.exports.EditTicket = async (req, res) => {
                 message: "Ticket id, Status and Staff Id is required"
             })
         }
-        let checkStaff = await Model.CheckStaff(assigned_to)
+        let checkStaff = await ticketModel.CheckStaff(assigned_to)
         let assigned_staff = checkStaff[0]?.u_name
         let updatedData = await ticketModel.updateStatus(ticket_id, status, assigned_to, assigned_staff)
         if (updatedData.affectedRows > 0) {
