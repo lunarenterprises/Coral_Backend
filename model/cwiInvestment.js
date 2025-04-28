@@ -10,7 +10,7 @@ module.exports.getBankDetails = async (user_id) => {
 };
 
 module.exports.getFutureCompanyData=async(id)=>{
-    var Query = `SELECT * FROM futue_investments where fi_id=?`;
+    var Query = `SELECT * FROM future_investments where fi_id=?`;
     var data = await query(Query, [id]);
     return data;
 }
