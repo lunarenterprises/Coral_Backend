@@ -71,6 +71,7 @@ route.post('/add/future-investments', verifyToken, require('../controller/adFutu
 
 route.put('/edit/future-investments', verifyToken, require('../controller/adFutureInvestments').EditFutureInvestment)
 
+route.post('/upload/contract-invoice',verifyToken,require('../controller/adContractInvoice').ContractInvoice)
 
 
 
