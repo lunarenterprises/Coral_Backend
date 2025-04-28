@@ -115,10 +115,8 @@ module.exports.EditHGFS = async (req, res) => {
             })
         }
         var checkHGFS = await model.GetHgfs(h_id)
-        console.log(checkHGFS);
 
         if (checkHGFS.length > 0) {
-            console.log(h_id);
 
             let condition = ``;
 

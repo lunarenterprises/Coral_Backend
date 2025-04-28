@@ -1,141 +1,3 @@
-// module.exports = function (io) {
-//     // In-memory structures for managing available admins, user queues, and tickets
-//     let availableAdmins = [];  // List of available admin IDs
-//     let userQueue = [];  // Queue of users waiting for admin help
-//     let tickets = [];  // List of active tickets with chat history
-
-//     io.on('connection', (socket) => {
-//         console.log('A user or admin connected:', socket.id);
-
-//         // Admin Login & Availability
-//         socket.on('admin:login', (adminId) => {
-//             console.log(`Admin ${adminId} logged in`);
-//             availableAdmins.push(adminId);
-//             io.to(adminId).emit('admin:status', { available: true });
-
-//             // If there are any users in the queue, assign them to this admin
-//             if (userQueue.length > 0) {
-//                 const nextUser = userQueue.shift();
-//                 const ticketId = Date.now();  // Generate a unique ticket ID
-//                 tickets.push({
-//                     ticketId,
-//                     userId: nextUser.userId,
-//                     adminId,
-//                     messages: [{ sender: 'admin', message: nextUser.message }]  // Include the user's initial message
-//                 });
-//                 io.to(adminId).emit('admin:newChat', { ticketId, userId: nextUser.userId, message: nextUser.message });
-//                 io.to(nextUser.userId).emit('user:receiveMessage', { adminId, message: "An admin is available to help you!" });
-//             }
-//         });
-
-//         // User Sends Message (Goes to Queue or Admin)
-//         socket.on('user:sendMessage', (data) => {
-//             const { userId, message } = data;
-//             console.log(`User ${userId} sent message: ${message}`);
-
-//             // If there are available admins, assign the user to an admin
-//             if (availableAdmins.length > 0) {
-//                 const adminId = availableAdmins.pop();
-//                 const ticketId = Date.now();  // Generate a unique ticket ID
-//                 tickets.push({
-//                     ticketId,
-//                     userId,
-//                     adminId,
-//                     messages: [{ sender: 'user', message }]
-//                 });
-
-//                 io.to(adminId).emit('admin:newChat', { ticketId, userId, message });
-//                 io.to(userId).emit('user:receiveMessage', { adminId, message: "An admin is available to help you!" });
-//             } else {
-//                 userQueue.push({ userId, message });
-//                 console.log(`User ${userId} added to the queue`);
-//             }
-//         });
-
-//         // Admin Sends Message to User (NEW EVENT)
-//         socket.on('admin:sendMessage', (data) => {
-//             const { adminId, userId, ticketId, message } = data;
-//             console.log(`Admin ${adminId} sent message to user ${userId}: ${message}`);
-
-//             // Find the ticket and add the admin's message to the history
-//             const ticket = tickets.find(t => t.ticketId === ticketId);
-//             if (ticket) {
-//                 ticket.messages.push({ sender: 'admin', message });
-//                 io.to(userId).emit('user:receiveMessage', { adminId, message });
-//             }
-//         });
-
-//         // Admin Toggles Availability
-//         socket.on('admin:toggleAvailability', (adminId, isAvailable) => {
-//             if (isAvailable) {
-//                 availableAdmins.push(adminId);
-//                 if (userQueue.length > 0) {
-//                     const nextUser = userQueue.shift();
-//                     const ticketId = Date.now();
-//                     tickets.push({
-//                         ticketId,
-//                         userId: nextUser.userId,
-//                         adminId,
-//                         messages: [{ sender: 'admin', message: nextUser.message }]
-//                     });
-//                     io.to(adminId).emit('admin:newChat', { ticketId, userId: nextUser.userId, message: nextUser.message });
-//                     io.to(nextUser.userId).emit('user:receiveMessage', { adminId, message: "An admin is available to help you!" });
-//                 }
-//             } else {
-//                 const index = availableAdmins.indexOf(adminId);
-//                 if (index > -1) availableAdmins.splice(index, 1);
-//             }
-//         });
-
-//         // Admin Finishes Chat (Ticket Complete)
-//         socket.on('admin:finishChat', (adminId, ticketId) => {
-//             const ticket = tickets.find(t => t.ticketId === ticketId);
-//             if (ticket) {
-//                 io.to(ticket.userId).emit('user:receiveMessage', { adminId, message: "Thank you for chatting with us!" });
-
-//                 // Mark the admin as available again
-//                 availableAdmins.push(adminId);
-
-//                 // If there are users in the queue, assign the next one
-//                 if (userQueue.length > 0) {
-//                     const nextUser = userQueue.shift();
-//                     const newTicketId = Date.now();
-//                     tickets.push({
-//                         ticketId: newTicketId,
-//                         userId: nextUser.userId,
-//                         adminId,
-//                         messages: [{ sender: 'admin', message: nextUser.message }]
-//                     });
-//                     io.to(adminId).emit('admin:newChat', { ticketId: newTicketId, userId: nextUser.userId, message: nextUser.message });
-//                     io.to(nextUser.userId).emit('user:receiveMessage', { adminId, message: "An admin is available to help you!" });
-//                 }
-//             }
-//         });
-
-//         // Admin Invites Another Expert (Transfer the Ticket)
-//         socket.on('admin:inviteExpert', (fromAdminId, toAdminId, ticketId) => {
-//             const ticket = tickets.find(t => t.ticketId === ticketId);
-//             if (ticket && ticket.adminId === fromAdminId) {
-//                 // Transfer the ticket to the new admin
-//                 ticket.adminId = toAdminId;
-
-//                 // Notify both the new admin and the user
-//                 io.to(toAdminId).emit('admin:loadChat', ticket.messages);
-//                 io.to(ticket.userId).emit('user:receiveMessage', { adminId: toAdminId, message: "Another expert admin is joining your chat." });
-//                 io.to(fromAdminId).emit('admin:status', { available: true });  // Make original admin available again
-//             }
-//         });
-
-//         // Admin Leaves Chat (Disconnect)
-//         socket.on('disconnect', () => {
-//             const adminIndex = availableAdmins.indexOf(socket.id);
-//             if (adminIndex > -1) availableAdmins.splice(adminIndex, 1);
-
-//             // Remove any user waiting for this admin
-//             userQueue = userQueue.filter(user => user.userId !== socket.id);
-//         });
-//     });
-// };
 
 
 module.exports = function (io) {
@@ -145,24 +7,20 @@ module.exports = function (io) {
     let tickets = [];  // List of active tickets with chat history
 
     io.on('connection', (socket) => {
-        console.log('A user or admin connected:', socket.id);
 
         // Admin Login & Availability
         socket.on('admin:login', (adminId) => {
-            console.log(`Admin ${adminId} logged in`);
 
             // Add admin to available list if not already there
             if (!availableAdmins.includes(adminId)) {
                 availableAdmins.push(adminId);
             }
-            console.log("availableAdmins : ", availableAdmins)
 
             io.to(adminId).emit('admin:status', { available: true });
 
             // Send list of active tickets to admin on login
             const adminTickets = tickets.filter(ticket => ticket.status === 'active');
             io.to(adminId).emit('admin:ticketList', adminTickets);
-            console.log("adminTickets : ", adminTickets)
 
             // If there are any users in the queue, assign them to this admin
             if (userQueue.length > 0) {
@@ -182,31 +40,24 @@ module.exports = function (io) {
                         timestamp: new Date()
                     }]  // Include the user's initial message
                 };
-                console.log("newTicket : ", newTicket)
 
                 tickets.push(newTicket);
-                console.log("tickets : ", tickets)
 
                 io.to(adminId).emit('admin:newChat', newTicket);
-                console.log("newTicket : ", newTicket)
                 io.to(nextUser.userId).emit('user:connected', {
                     ticketId,
                     adminId,
                     message: "An admin is available to help you!"
                 });
-                console.log("next userr : ", nextUser)
             }
         });
 
         // User Creates New Ticket
         socket.on('user:createTicket', (data) => {
-            console.log("data : ", data)
             const { userId, message, category } = data; // Added category for ticket type
-            console.log(`User ${userId} created ticket: ${message}`);
 
             // Add to queue with initial message
             userQueue.push({ userId, message, category, timestamp: new Date() });
-            console.log("userQueue : ", userQueue)
             // Notify user their ticket is in queue
             io.to(userId).emit('user:ticketStatus', {
                 status: 'queued',
@@ -223,13 +74,10 @@ module.exports = function (io) {
 
         // User Sends Message in Existing Ticket
         socket.on('user:sendMessage', (data) => {
-            console.log('user:sendMessage : ', data)
             const { userId, ticketId, message } = data;
-            console.log(`User ${userId} sent message in ticket ${ticketId}: ${message}`);
 
             // Find the ticket and add the message
             const ticket = tickets.find(t => t.ticketId === ticketId);
-            console.log("user:Sendmessageticket : ", ticket)
             if (ticket) {
                 const newMessage = {
                     sender: 'user',
@@ -256,12 +104,9 @@ module.exports = function (io) {
 
         // Admin Views a Ticket
         socket.on('admin:viewTicket', (data) => {
-            console.log('admin:viewTicket data :', data)
             const { adminId, ticketId } = data;
-            console.log(`Admin ${adminId} viewing ticket ${ticketId}`);
 
             const ticket = tickets.find(t => t.ticketId === ticketId);
-            console.log('admin:viewTicket ticket: ', ticket)
             if (ticket) {
                 // Send the complete ticket data with chat history to admin
                 io.to(adminId).emit('admin:ticketData', ticket);
@@ -274,13 +119,10 @@ module.exports = function (io) {
 
         // Admin Sends Message to User
         socket.on('admin:sendMessage', (data) => {
-            console.log('admin:sendMessage data : ', data)
             const { adminId, ticketId, message } = data;
-            console.log(`Admin ${adminId} sent message in ticket ${ticketId}: ${message}`);
 
             // Find the ticket and add the admin's message to the history
             const ticket = tickets.find(t => t.ticketId === ticketId);
-            console.log('admin:sendMessage ticket : ', ticket)
             if (ticket) {
                 const newMessage = {
                     sender: 'admin',
@@ -306,7 +148,6 @@ module.exports = function (io) {
 
         // Admin Toggles Availability
         socket.on('admin:toggleAvailability', (data) => {
-            console.log('admin:toggleAvailability data: ', data)
             const { adminId, isAvailable } = data;
 
             if (isAvailable) {
@@ -328,12 +169,9 @@ module.exports = function (io) {
 
         // Admin Transfers Ticket to Another Admin
         socket.on('admin:transferTicket', (data) => {
-            console.log('admin:transferTicket : data ', data)
             const { fromAdminId, toAdminId, ticketId, reason } = data;
-            console.log(`Admin ${fromAdminId} transferring ticket ${ticketId} to admin ${toAdminId}`);
 
             const ticket = tickets.find(t => t.ticketId === ticketId);
-            console.log('admin:transferTicket tickets : ', ticket)
             if (ticket && ticket.adminId === fromAdminId) {
                 // Record the transfer in chat history
                 ticket.messages.push({
@@ -372,12 +210,9 @@ module.exports = function (io) {
 
         // Admin Closes Ticket
         socket.on('admin:closeTicket', (data) => {
-            console.log('admin:closeTicket data : ', data)
             const { adminId, ticketId, resolution } = data;
-            console.log(`Admin ${adminId} closing ticket ${ticketId}`);
 
             const ticket = tickets.find(t => t.ticketId === ticketId);
-            console.log('admin:closeTicket ticket : ', ticket)
             if (ticket && ticket.adminId === adminId) {
                 // Update ticket status
                 ticket.status = 'closed';
@@ -413,7 +248,6 @@ module.exports = function (io) {
 
         // Disconnect Handler
         socket.on('disconnect', () => {
-            console.log('User or admin disconnected:', socket.id);
 
             // If an admin disconnects, remove from available list
             const adminIndex = availableAdmins.indexOf(socket.id);

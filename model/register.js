@@ -32,7 +32,6 @@ module.exports.CheckVerificationQuery = async (user_id) => {
 };
 
 module.exports.InsertVerificationQuery = async (user_id, token) => {
-    console.log(user_id);
     var Query = `insert into user_email_verification(user_email_verification_user_id,user_email_verification_token)values(?,?)`;
     var data = await query(Query, [user_id, token]);
     return data;

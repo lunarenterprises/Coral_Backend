@@ -23,7 +23,6 @@ module.exports.EditSharedilution = async (req, res) => {
             })
         }
         var checksharedilution = await model.CheckSharedilutionQuery(invest_id)
-        console.log(checksharedilution);
 
         if (checksharedilution.length > 0) {
 
@@ -103,7 +102,6 @@ module.exports.EditInvestmentCalculater = async (req, res) => {
             })
         }
         var checksharedilution = await model.CheckInvestmentCalculaterQuery(ri_id)
-        console.log(checksharedilution);
 
         if (checksharedilution.length > 0) {
 

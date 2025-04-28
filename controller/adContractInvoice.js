@@ -17,7 +17,6 @@ module.exports.ContractInvoice = async (req, res) => {
                     data: err,
                 });
             }
-            console.log(files.image);
 
             let user_id = req.user.admin_id
             let admin_role = req.user.role

@@ -115,10 +115,8 @@ module.exports.EditFutureInvestment = async (req, res) => {
             })
         }
         var checkFutureInvestment = await model.GetFutureInvestmentList(fi_id)
-        console.log(checkFutureInvestment);
 
         if (checkFutureInvestment.length > 0) {
-            console.log(fi_id);
 
             let condition = ``;
 

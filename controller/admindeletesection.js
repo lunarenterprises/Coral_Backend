@@ -39,7 +39,6 @@ module.exports.AdminDeleteSection = async (req, res) => {
                 });
             } else {
                 let data = await notification.addNotification(admin_id, `${admin_role}`, "User Removed", `User [${username}] Removed deleted successfully`)
-                console.log(data)
                 var deletesection = await model.RemoveInvesterQuery(invester_id);
 
             }
@@ -56,7 +55,6 @@ module.exports.AdminDeleteSection = async (req, res) => {
                 });
             } else {
                 let data = await notification.addNotification(admin_id, `${admin_role}`, "Top company Deleted", `Top company [${companyname}] deleted successfully`)
-                console.log(data)
                 var deletesection = await model.RemoveTopcompanyQuery(tc_id);
 
             }

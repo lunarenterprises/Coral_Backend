@@ -45,7 +45,6 @@ module.exports.InvestersList = async (req, res) => {
 
         var allusersData = await model.GetSAllUsers(con)
 
-        console.log(investersData, allusersData);
 
         if (investersData.length > 0 || allusersData.length > 0) {
 
@@ -80,7 +79,6 @@ module.exports.InvestersList = async (req, res) => {
                         '<td>' + data.ui_status + '</td>' +
                         '</tr>'
                 }
-                console.log(datahtml, "html");
 
                 let html = `<!DOCTYPE html>
 <html lang="en">
