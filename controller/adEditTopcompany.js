@@ -25,10 +25,8 @@ module.exports.EditTopCompany = async (req, res) => {
             })
         }
         var checkTopCompany = await model.CheckTopCompanyQuery(tc_id)
-        console.log(checkTopCompany);
 
         if (checkTopCompany.length > 0) {
-            console.log(tc_id);
 
             let condition = ``;
 
@@ -72,7 +70,6 @@ module.exports.EditTopCompany = async (req, res) => {
             if (condition !== '') {
                 var EditTopCompany = await model.ChangeTopCompany(condition, tc_id)
             }
-            console.log(EditTopCompany);
 
             if (EditTopCompany.affectedRows > 0) {
                 return res.send({

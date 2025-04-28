@@ -16,7 +16,6 @@ LEFT JOIN users us ON ui.ui_u_id = us.u_id
 LEFT JOIN bank b ON us.u_id = b.b_u_id ${condition} GROUP BY us.u_id `;
 
     var data = await query(Query);
-    console.log(Query);
 
     return data;
 };

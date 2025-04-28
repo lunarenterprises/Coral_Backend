@@ -19,7 +19,6 @@ module.exports.AdminLogin = async (req, res) => {
 
 
         var CheckUser = await model.CheckUserQuery(email);
-        console.log(CheckUser, "eee");
 
         if (CheckUser[0]?.u_status !== 'active') {
             return res.send({

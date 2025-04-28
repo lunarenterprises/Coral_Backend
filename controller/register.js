@@ -20,7 +20,6 @@ module.exports.UserRegistration = async (req, res) => {
         var date = moment().format("YYYY-MM-DD")
 
         let { name, email, mobile, currency, password, referralCode } = req.body
-        console.log("req.body : ", req.body)
         if (!name || !mobile || !email || !password) {
             return res.send({
                 result: false,
@@ -44,7 +43,6 @@ module.exports.UserRegistration = async (req, res) => {
                     subject: 'Verification Otp',
                     html: `<p>Your OTP for registration is <b>${token}</b>. It is valid for 5 minutes.</p>`
                 })
-                console.log('Email sent to client:', email, info.messageId);
                 return res.send({
                     status: true,
                     message: "otp send to your mail",

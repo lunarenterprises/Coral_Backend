@@ -33,10 +33,8 @@ module.exports.EditSubAdmin = async (req, res) => {
                 })
             }
             var checksubadmin = await model.ChecksubadminQuery(subadmin_id)
-            console.log(checksubadmin);
 
             if (checksubadmin.length > 0) {
-                console.log(subadmin_id);
 
                 let condition = ``;
 
@@ -89,7 +87,6 @@ module.exports.EditSubAdmin = async (req, res) => {
                             process.cwd() +
                             "/uploads/profile/admin/" + files.image.originalFilename
                         let rawData = fs.readFileSync(oldPath);
-                        console.log(oldPath);
 
                         fs.writeFileSync(newPath, rawData)
                         var image = "uploads/profile/admin/" + files.image.originalFilename

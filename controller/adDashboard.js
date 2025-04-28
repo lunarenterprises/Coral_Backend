@@ -36,9 +36,6 @@ module.exports.Dashboard = async (req, res) => {
 
 
 
-        console.log(todaysinvestment, getpendinguser.length, "jjjjjjjjjjjjjjj");
-
-
         if (getuser.length > 0) {
             return res.send({
                 result: true,

@@ -21,7 +21,6 @@ module.exports.AddSubAdmin = async (req, res) => {
             let admin_role = req.user.role
 
 
-            console.log(user_id, admin_role, "lllll");
 
 
             let { name, email, mobile, password, role, u_access } = fields
@@ -32,7 +31,6 @@ module.exports.AddSubAdmin = async (req, res) => {
                     message: "Please fill all the fields"
                 })
             }
-            console.log(u_access, "access");
 
             var adminData = await model.getAdmin(user_id, admin_role)
             if (adminData[0]?.u_role !== 'superadmin') {
@@ -52,7 +50,6 @@ module.exports.AddSubAdmin = async (req, res) => {
                     process.cwd() +
                     "/uploads/profile/admin/" + files.image.originalFilename
                 let rawData = fs.readFileSync(oldPath);
-                console.log(oldPath);
 
                 fs.writeFileSync(newPath, rawData)
                 var image = "uploads/profile/admin/" + files.image.originalFilename

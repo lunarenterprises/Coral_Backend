@@ -5,6 +5,13 @@ module.exports.Calculator = async (req, res) => {
     try {
         let { amount, year, wf, project, platform, name, mobile } = req.body
 
+        if(amount<52000){
+            return res.send({
+                result:false,
+                message:"Amount should be greater than 52000 AED"
+            })
+        }
+
         let condition = ``
         if (amount < 100000) {
             if (condition !== '') {
@@ -68,10 +75,8 @@ module.exports.Calculator = async (req, res) => {
                 condition += ` where ri_project = '${project}'`
             }
         }
-        console.log(condition, "conidtion");
 
         let returns_data = await model.getinvest(condition)
-        console.log(returns_data.length, "returns_data.length");
 
         if (returns_data.length > 0) {
             if (project == 'any') {

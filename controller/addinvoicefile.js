@@ -41,7 +41,6 @@ module.exports.AddInvoiceFile = async (req, res) => {
                         let filepathh = "wealth/uploads/invoice/" + 'INV' + '_' + username + '_' + date + '.' + files.invoice.mimetype.replace('application/', '')
                         let addproductss = await model.Updateinvest(filepathh, c_id)
                         if (addproductss.affectedRows > 0) {
-                            console.log(process.cwd() + '/' + investdetails[0]?.ui_contract_file.replace('wealth/', ''));
 
 
                             let info = await transporter.sendMail({
@@ -75,8 +74,6 @@ Client Details:
                                 subject: 'Verification in Process',
                                 text: `Hello ${investdetails[0]?.u_name},\n\nYour verification is currently being processed. After 24 hours, you will be able to track your growth using our platform.\n\nIf you have any questions, feel free to contact us.\n\nBest regards,\n Coral Wealth`
                             });
-
-                            console.log('Email sent to Client:', info.messageId, infos.messageId);
 
                             return res.send({
                                 result: true,

@@ -5,11 +5,9 @@ var query = util.promisify(db.query).bind(db)
 
 module.exports.PayoutCycle = async (req, res) => {
     try {
-        console.log('First Payout');
 
         // var { inv_id } = req.body;
         var getinvest = await GetContract();
-        // console.log(getinvest, "investments fetched");
 
         var currentDate = moment(); // Current date for comparison
         if (getinvest.length > 0) {
@@ -20,9 +18,6 @@ module.exports.PayoutCycle = async (req, res) => {
                     ui_wf = ui_wf.toLowerCase()
                     ui_type = ui_type.toLowerCase()
 
-                    console.log(ui_wf, "ui_wf data");
-
-                    console.log(ui_id, ui_u_id, ui_date, ui_duration, ui_return, ui_type, ui_wf, "investment details");
 
                     if (!ui_id || !ui_date || !ui_duration || !ui_type) {
                         console.warn(`Skipping investment with missing data for ui_id: ${ui_id}`);
@@ -61,28 +56,24 @@ module.exports.PayoutCycle = async (req, res) => {
                                 totalPeriods = endDate.diff(investDate, 'months');
                                 payoutDate = getBasePayoutDate(investDate, 1);
                                 return_amount = ui_return / totalPeriods;
-                                console.log(`Monthly payout for ${ui_id}: ${return_amount}, payout date: ${payoutDate.format('YYYY-MM-DD')}`);
                                 break;
 
                             case 'quarterly':
                                 totalPeriods = endDate.diff(investDate, 'months') / 3;
                                 payoutDate = getBasePayoutDate(investDate, 3);
                                 return_amount = ui_return / totalPeriods;
-                                console.log(`Quarterly payout for ${ui_id}: ${return_amount}, payout date: ${payoutDate.format('YYYY-MM-DD')}`);
                                 break;
 
                             case 'half-yearly':
                                 totalPeriods = endDate.diff(investDate, 'months') / 6;
                                 payoutDate = getBasePayoutDate(investDate, 6);
                                 return_amount = ui_return / totalPeriods;
-                                console.log(`Half-yearly payout for ${ui_id}: ${return_amount}, payout date: ${payoutDate.format('YYYY-MM-DD')}`);
                                 break;
 
                             case 'yearly':
                                 totalPeriods = endDate.diff(investDate, 'years');
                                 payoutDate = getBasePayoutDate(investDate, 12);
                                 return_amount = ui_return / totalPeriods;
-                                console.log(`Yearly payout for ${ui_id}: ${return_amount}, payout date: ${payoutDate.format('YYYY-MM-DD')}`);
                                 break;
 
                             default:
@@ -100,7 +91,6 @@ module.exports.PayoutCycle = async (req, res) => {
                             // Insert the calculated payout into the database
                             var insertPayout = await AddFixedPayout(ui_id, ui_u_id, ui_type, ui_wf, payoutDate.format('YYYY-MM-DD'), return_amount);
                         }
-                        console.log(`Payout for ${ui_id} scheduled for ${payoutDate.format('YYYY-MM-DD')} with amount: ${return_amount}`);
                     } else {
 
                         let checkpayouthistory = await CheckFlexiblePayoutHistory(ui_id, ui_type)
@@ -139,11 +129,9 @@ module.exports.PayoutCycle = async (req, res) => {
 
 module.exports.CheckAndCreateNextPayout = async (req, res) => {
     try {
-        console.log('Second Payout');
 
         // Fetch all the previous payouts from the database
         var payoutsHistory = await GetPayoutHistory();
-        // console.log(payoutsHistory, "Payout history fetched");
 
         var currentDate = moment();
         var currentMonth = currentDate.month();
@@ -154,7 +142,6 @@ module.exports.CheckAndCreateNextPayout = async (req, res) => {
                 try {
                     var { ph_invest_id, ph_invest_type, ph_payout_date, } = payout;
 
-                    console.log(ph_invest_id, ph_invest_type, ph_payout_date, "Payout details");
 
                     if (!ph_invest_id || !ph_invest_type) {
                         console.warn(`Skipping payout with missing data for invest_id: ${ph_invest_id}`);
@@ -168,8 +155,6 @@ module.exports.CheckAndCreateNextPayout = async (req, res) => {
                         ui_wf = ui_wf.toLowerCase()
                         ui_type = ui_type.toLowerCase()
 
-                        console.log(ui_wf, "ui_wf data");
-                        console.log(ui_id, ui_u_id, ui_date, ui_duration, ui_return, ui_type, ui_wf, "Investment details");
 
                         var investDate = moment(ui_date);
                         var endDate = moment(ui_duration);
@@ -178,7 +163,6 @@ module.exports.CheckAndCreateNextPayout = async (req, res) => {
 
                             // Skip if the investment has already ended
                             if (endDate.isBefore(currentDate, 'day')) {
-                                console.log(`Investment ${ui_id} has already ended, skipping.`);
                                 continue; // Skip if the investment has already ended
                             }
 
@@ -214,28 +198,24 @@ module.exports.CheckAndCreateNextPayout = async (req, res) => {
                                         totalPeriods = endDate.diff(investDate, 'months');
                                         nextPayoutDate = getNextPayoutDate(payoutDate, 1);
                                         return_amount = ui_return / totalPeriods;
-                                        console.log(`Monthly payout for ${ui_id}: ${return_amount}, next payout date: ${nextPayoutDate.format('YYYY-MM-DD')}`);
                                         break;
 
                                     case 'quarterly':
                                         totalPeriods = endDate.diff(investDate, 'months') / 3;
                                         nextPayoutDate = getNextPayoutDate(payoutDate, 3);
                                         return_amount = ui_return / totalPeriods;
-                                        console.log(`Quarterly payout for ${ui_id}: ${return_amount}, next payout date: ${nextPayoutDate.format('YYYY-MM-DD')}`);
                                         break;
 
                                     case 'half-yearly':
                                         totalPeriods = endDate.diff(investDate, 'months') / 6;
                                         nextPayoutDate = getNextPayoutDate(payoutDate, 6);
                                         return_amount = ui_return / totalPeriods;
-                                        console.log(`Half-yearly payout for ${ui_id}: ${return_amount}, next payout date: ${nextPayoutDate.format('YYYY-MM-DD')}`);
                                         break;
 
                                     case 'yearly':
                                         totalPeriods = endDate.diff(investDate, 'years');
                                         nextPayoutDate = getNextPayoutDate(payoutDate, 12);
                                         return_amount = ui_return / totalPeriods;
-                                        console.log(`Yearly payout for ${ui_id}: ${return_amount}, next payout date: ${nextPayoutDate.format('YYYY-MM-DD')}`);
                                         break;
 
                                     default:
@@ -253,7 +233,6 @@ module.exports.CheckAndCreateNextPayout = async (req, res) => {
                                     var insertPayout = await AddFixedPayout(ui_id, ui_u_id, ui_type, ui_wf, nextPayoutDate.format('YYYY-MM-DD'), return_amount);
                                 }
 
-                                console.log(`New payout for ${ui_id} scheduled for ${nextPayoutDate.format('YYYY-MM-DD')} with amount: ${return_amount}`);
                             } else {
                                 console.log(`No payout needed for ${ui_id} in the current month.`);
                             }
@@ -289,10 +268,8 @@ module.exports.CheckAndCreateNextPayout = async (req, res) => {
 
 module.exports.CheckAndUpdatePayoutStatus = async (req, res) => {
     try {
-        console.log('Payout Status Change');
 
         var payoutsHistory = await GetPayoutHistory();
-        // console.log(payoutsHistory, "Payout history fetched");
 
         var currentDate = moment();
         var currentMonth = currentDate.month(); // Get the current month (0-11)
@@ -304,7 +281,6 @@ module.exports.CheckAndUpdatePayoutStatus = async (req, res) => {
                 try {
                     var { ph_id, ph_invest_id, ph_payout_date, ph_status } = payout;
 
-                    console.log(ph_id, ph_invest_id, ph_payout_date, ph_status, "Payout details");
 
                     if (!ph_id || !ph_payout_date) {
                         console.warn(`Skipping payout with missing data for invest_id: ${ph_invest_id}`);
@@ -314,41 +290,34 @@ module.exports.CheckAndUpdatePayoutStatus = async (req, res) => {
                     var payoutDate = moment(ph_payout_date);
                     var payoutMonth = payoutDate.month(); // Payout month (0-11)
                     var payoutDay = payoutDate.date(); // Payout day
-                    console.log(payoutDay, "dayyy");
-
                     if (ph_status !== 'completed') {
                         if (payoutMonth === currentMonth) {
                             if (payoutDay >= currentDay) {
 
                                 await UpdatePayoutStatus(ph_id, 'pending');
-                                console.log(`Payout for ${ph_id} updated to 'pending'.`);
 
                             }
 
                             if (payoutDay <= 15 && currentDay > 15) {
 
                                 await UpdatePayoutStatus(ph_id, 'due');
-                                console.log(`Payout for ${ph_invest_id} updated to 'due' because the current date is past the 15th.`);
 
                             }
 
                             // if (payoutDay > 15 && currentDay >= 28) {
 
                             //     await UpdatePayoutStatus(ph_invest_id, 'due');
-                            //     console.log(`Payout for ${ph_invest_id} updated to 'due' because the current date is past the 28th.`);
 
                             // }
                             if (currentMonth === 1) { // February (0-11, 1 is February)
                                 // For February, handle the last day (28th or 29th)
                                 if (currentDay >= (daysInMonth - 1) && payoutDay > 15) {
                                     await UpdatePayoutStatus(ph_id, 'due');
-                                    console.log(`Payout for ${ph_invest_id} updated to 'due' because the current date is past the end of February.`);
                                 }
                             } else {
                                 // Handle other months where the 28th or 29th (for February) would be relevant
                                 if (currentDay >= 30 && payoutDay > 15) {
                                     await UpdatePayoutStatus(ph_id, 'due');
-                                    console.log(`Payout for ${ph_invest_id} updated to 'due' because the current date is past the 28th.`);
                                 }
                             }
                         }

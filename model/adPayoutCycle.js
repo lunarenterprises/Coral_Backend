@@ -9,7 +9,6 @@ module.exports.GetContract = async (ph_invest_id) => {
     }
     var Query = `SELECT * FROM user_invest where ui_type = 'Fixed' ${condition}`;
     var data = await query(Query);
-    console.log(Query, "queryyyyyyyyyyyyyyyy");
 
     return data;
 }
@@ -34,7 +33,6 @@ module.exports.GetPayoutHistory = async () => {
 module.exports.UpdatePayoutStatus = async (ph_id, status) => {
     var Query = `update payout_history set ph_status= ? where ph_id =? `;
     var data = await query(Query, [status, ph_id]);
-    console.log(Query, "qqqqqqqqqqqqq");
 
     return data;
 }
