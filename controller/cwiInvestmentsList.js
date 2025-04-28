@@ -18,12 +18,13 @@ module.exports.cwiInvestmentList = async (req, res) => {
                 message: 'user not found'
             })
         }
-        let cwiList = await model.getCWIIvestments()
+        let cwiList = await model.getCWIIvestments(user_id)
+        console.log("cwi list : ", cwiList)
         let updatedData = cwiList.map(item => {
             return {
                 id: item.tc_id,
                 name: item.tc_name,
-                totalAmount:item.tc_current_year,
+                totalAmount: item.tc_current_year,
                 return_value: item.tc_growth_percentage,
             }
         })
