@@ -15,6 +15,8 @@ module.exports.GetInvester = async (condition) => {
     us.u_name,
     us.u_email,
     us.u_mobile,
+    us.u_wallet,
+    us.u_joining_date,
     us.u_status,
     us.u_kyc,
     us.u_joining_date,

@@ -46,14 +46,16 @@ module.exports.EditTicket = async (req, res) => {
                 message: "Access Denied,try with authorized account"
             })
         }
-        let { ticket_id, status } = req.body
-        if (!ticket_id || !status) {
+        let { ticket_id, status, assigned_to } = req.body
+        if (!ticket_id || !status || !assigned_to) {
             return res.send({
                 result: false,
-                message: "Ticket id and status is required"
+                message: "Ticket id, Status and Staff Id is required"
             })
         }
-        let updatedData = await ticketModel.updateStatus(ticket_id, status)
+        let checkStaff = await Model.CheckStaff(assigned_to)
+        let assigned_staff = checkStaff[0]?.u_name
+        let updatedData = await ticketModel.updateStatus(ticket_id, status, assigned_to, assigned_staff)
         if (updatedData.affectedRows > 0) {
             return res.send({
                 result: true,
