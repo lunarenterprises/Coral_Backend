@@ -1,10 +1,7 @@
 var cron = require('node-cron');
 
-var { PayoutCycle } = require('../controller/adPayoutCycle')
-cron.schedule('*/1 * * * *', PayoutCycle)
+cron.schedule("*/5 * * * *", require('./adPayoutCycle').PayoutCycle)
 
-var { CheckAndCreateNextPayout } = require('../controller/adPayoutCycle')
-cron.schedule('*/1 * * * *', CheckAndCreateNextPayout)
+cron.schedule("*/5 * * * *", require('./adPayoutCycle').CheckAndCreateNextPayout)
 
-var { CheckAndUpdatePayoutStatus } = require('../controller/adPayoutCycle')
-cron.schedule('*/1 * * * *', CheckAndUpdatePayoutStatus)
+cron.schedule("*/5 * * * *", require('./adPayoutCycle').CheckAndUpdatePayoutStatus)
