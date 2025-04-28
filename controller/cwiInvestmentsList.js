@@ -19,15 +19,6 @@ module.exports.cwiInvestmentList = async (req, res) => {
             })
         }
         let cwiList = await model.getCWIIvestments(user_id)
-        console.log("cwi list : ", cwiList)
-        // let updatedData = cwiList.map(item => {
-        //     return {
-        //         id: item.tc_id,
-        //         name: item.tc_name,
-        //         totalAmount: item.tc_current_year,
-        //         return_value: item.tc_growth_percentage,
-        //     }
-        // })
         if (cwiList.length > 0) {
             await notification.addNotification(user_id, userData[0].u_role, "CWI_Investment List", "User has checked cwi investment list", "success")
             return res.send({

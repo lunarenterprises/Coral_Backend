@@ -38,15 +38,15 @@ module.exports.cwiInvestment = async (req, res) => {
             })
         }
 
-        let topCompanyData = await model.getTopCompanyData(id)
-        if (topCompanyData.length === 0) {
+        let futureCompanyData = await model.getFutureCompanyData(id)
+        if (futureCompanyData.length === 0) {
             return res.send({
                 result: false,
                 message: "Company data not found."
             })
         }
 
-        let project_name = topCompanyData[0].tc_name
+        let project_name = futureCompanyData[0].fi_industries
         let investment_amount = Number(amount)
         let investment_duration = moment().add(2, 'years').format("YYYY-MM-DD");
         let profit_model = 'fixed'
@@ -60,8 +60,12 @@ module.exports.cwiInvestment = async (req, res) => {
         let relationship = nomineeDetails?.relationship
         let contactNumber = nomineeDetails?.contactNumber
         let nominee_residentialAddress = nomineeDetails?.residentialAddress
-        let percentage = topCompanyData[0]?.tc_growth_percentage
-        let return_amount = (investment_amount * percentage) / 100
+        let percentage = futureCompanyData[0]?.fi_expected_return
+        let rangeParts = percentage.split('-');
+        let lower = parseFloat(rangeParts[0]);
+        let upper = parseFloat(rangeParts[1]);
+        let avgPercentage = (lower + upper) / 2;
+        let return_amount = (investment_amount * avgPercentage) / 100;
         let bankaccount = await model.getBankDetails(user_id)
         if (nomineeFullName) {
             let nomineeData = await model.getnomineeDetails(user_id)
