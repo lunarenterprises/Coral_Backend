@@ -18,9 +18,9 @@ module.exports.AddHGFSQuery = async (h_industry, h_previous_years, h_last_year, 
 module.exports.GetHgfs = async (h_id) => {
     let condition = ''
     if (h_id) {
-        condition = `where h_id = '${h_id}'`
+        condition = `and h_id = '${h_id}'`
     }
-    var Query = `select * from hgfs ${condition}`;
+    var Query = `select * from hgfs where h_status='active' ${condition}`;
     var data = await query(Query);
     return data;
 };

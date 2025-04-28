@@ -5,10 +5,10 @@ const query = util.promisify(db.query).bind(db);
 module.exports.GetFutureInvestmentList = async (fi_id) => {
     let condition = ''
     if (fi_id) {
-        condition = `where fi_id ='${fi_id}'`
+        condition = `and fi_id ='${fi_id}'`
 
     }
-    var Query = `select * from future_investments ${condition}`;
+    var Query = `select * from future_investments where fi_status='active' ${condition}`;
     var data = await query(Query);
     return data;
 };
