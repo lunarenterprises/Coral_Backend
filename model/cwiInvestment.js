@@ -9,8 +9,8 @@ module.exports.getBankDetails = async (user_id) => {
     return data;
 };
 
-module.exports.getTopCompanyData=async(id)=>{
-    var Query = `SELECT * FROM top_company where tc_id=?`;
+module.exports.getFutureCompanyData=async(id)=>{
+    var Query = `SELECT * FROM futue_investments where fi_id=?`;
     var data = await query(Query, [id]);
     return data;
 }
