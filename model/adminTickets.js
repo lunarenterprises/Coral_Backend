@@ -27,3 +27,9 @@ module.exports.deleteTicket = async (ticket_id) => {
     var deleteTicketQuery = `DELETE FROM tickets WHERE id = ?`;
     return await query(deleteTicketQuery, [ticket_id]);
 }
+
+module.exports.CheckStaff = async (assigned_to) => {
+    var Query = `select * from users where u_id =?`;
+    var data = await query(Query, [assigned_to]);
+    return data;
+}

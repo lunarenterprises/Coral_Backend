@@ -59,9 +59,9 @@ route.post('/edit/investment-calculator', verifyToken, require('../controller/ad
 route.get('/download/contract', verifyToken, require('../controller/adContractDownload').ContractDownload)
 
 
-route.post('/message/listMessages',verifyToken,require("../controller/adminMessage").ListMessages)
-route.post('/message/sendMessage',verifyToken,require("../controller/adminMessage").SendMessage)
-route.put('/message/updateMessage',verifyToken,require('../controller/adminMessage').UpdateAdminId)
+route.post('/message/listMessages', verifyToken, require("../controller/adminMessage").ListMessages)
+route.post('/message/sendMessage', verifyToken, require("../controller/adminMessage").SendMessage)
+route.put('/message/updateMessage', verifyToken, require('../controller/adminMessage').UpdateAdminId)
 
 route.post('/add/hgfs', verifyToken, require('../controller/adHgfs').AddHGFS)
 
@@ -71,7 +71,10 @@ route.post('/add/future-investments', verifyToken, require('../controller/adFutu
 
 route.put('/edit/future-investments', verifyToken, require('../controller/adFutureInvestments').EditFutureInvestment)
 
-route.post('/upload/contract-invoice',verifyToken,require('../controller/adContractInvoice').ContractInvoice)
+route.post('/upload/contract-invoice', verifyToken, require('../controller/adContractInvoice').ContractInvoice)
+
+route.put('/edit/payout', verifyToken, require('../controller/adPayoutHistory').EditPayout)
+
 
 
 

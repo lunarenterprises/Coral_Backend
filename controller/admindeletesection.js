@@ -22,6 +22,10 @@ module.exports.AdminDeleteSection = async (req, res) => {
         var invest_id = req.body.invest_id;
         var withdraw_id = req.body.withdraw_id;
         var invester_id = req.body.invester_id;
+        var hgfs_id = req.body.hgfs_id;
+        var fi_id = req.body.fi_id;
+
+
 
 
         if (invester_id) {
@@ -105,6 +109,40 @@ module.exports.AdminDeleteSection = async (req, res) => {
                 await notification.addNotification(admin_id, `${admin_role}`, "Withdraw Request Removed", `Withdraw Request of [${withdraw_id}] removed successfully`)
 
                 var deletesection = await model.RemoveWithdrawQuery(withdraw_id);
+
+            }
+        }
+
+        if (hgfs_id) {
+            let checkHGFS = await model.CheckHGFSQuery(hgfs_id);
+
+            // var username = checkinvest[0]?.ui_id
+            if (checkHGFS.length == 0) {
+                return res.send({
+                    result: false,
+                    message: "HGFS Details not found"
+                });
+            } else {
+                await notification.addNotification(admin_id, `${admin_role}`, "HGFS Details Removed", `HGFS Details of [${hgfs_id}] removed successfully`)
+
+                var deletesection = await model.RemoveHGFSQuery(hgfs_id);
+
+            }
+        }
+
+        if (fi_id) {
+            let checkFutureInvestment = await model.CheckFutureInvestmentQuery(fi_id);
+
+            // var username = checkinvest[0]?.ui_id
+            if (checkFutureInvestment.length == 0) {
+                return res.send({
+                    result: false,
+                    message: "Future Investment Details not found"
+                });
+            } else {
+                await notification.addNotification(admin_id, `${admin_role}`, "Future Investment Details Removed", `Future Investment Details of [${fi_id}] removed successfully`)
+
+                var deletesection = await model.RemoveFutureInvestmentQuery(fi_id);
 
             }
         }

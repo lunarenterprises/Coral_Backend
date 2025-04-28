@@ -14,3 +14,16 @@ module.exports.getPayoutHistory = async (condition) => {
     var data = await query(Query);
     return data;
 }
+
+
+module.exports.ChangepayoutDataQuery = async (condition, payout_id) => {
+    var Query = `update payout_history ${condition} where ph_id = ?`;
+    var data = query(Query, [payout_id]);
+    return data;
+};
+
+module.exports.CheckpayoutDataQuery = async (payout_id) => {
+    var Query = `SELECT  * FROM payout_history WHERE ph_id = ? `;
+    var data = await query(Query, [payout_id]);
+    return data;
+}
