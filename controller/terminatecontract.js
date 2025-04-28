@@ -13,12 +13,12 @@ module.exports.TerminateContract = async (req, res) => {
             })
         }
         let usersdata = await model.getusersdata(ui_id)
-        if (usersdata[0].ui_status === "requestedForTermination") {
+        if (usersdata[0].ui_request === "termination") {
             return res.send({
                 result: false,
                 message: "Your contract is already requested for termination"
             })
-        } else if (usersdata[0].ui_status === "terminated") {
+        } else if (usersdata[0].ui_request_status === "terminated") {
             return res.send({
                 result: false,
                 message: "Your contract is already terminated"

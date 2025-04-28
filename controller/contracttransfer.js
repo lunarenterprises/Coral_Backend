@@ -21,16 +21,22 @@ module.exports.ContractTransfer = async (req, res) => {
             })
         }
         let investedData = await model.getInvestedData(user_id)
-        if(investedData[0].ui_status ==="completed"){
+        if (investedData[0].ui_status === "completed") {
             return res.send({
-                result:false,
-                message:"Investment period already completed."
+                result: false,
+                message: "Investment period already completed."
             })
         }
-        if (investedData[0].ui_status === "requestedForTransfer") {
+        if (investedData[0].ui_request === "transfer") {
             return res.send({
                 result: false,
                 message: "Investment already requested for transfer"
+            })
+        }
+        if (investedData[0].ui_request_status === "terminated") {
+            return res.send({
+                result: false,
+                message: "Your Investment is terminated"
             })
         }
         if (investedData[0].ui_transfer) {
