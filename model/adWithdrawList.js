@@ -11,7 +11,7 @@ module.exports.getAdmin = async (user_id, admin_role) => {
 
 module.exports.GetUserWithdraw = async (condition) => {
     var Query = `SELECT wr.*,b.*, 
-    uk.uk_bank_statement
+    uk.uk_bank_statement,
     us.u_id, 
     us.u_name, 
     us.u_email, 

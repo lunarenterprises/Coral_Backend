@@ -6,7 +6,7 @@ var pdfdownload = require('../util/pdfGeneration')
 
 module.exports.InvestersList = async (req, res) => {
     try {
-        var { user_id, user_name, user_number, format } = req.body
+        var { user_id, user_name, user_number, request, format } = req.body
 
         let admin_id = req.user.admin_id
         let admin_role = req.user.role
@@ -34,6 +34,9 @@ module.exports.InvestersList = async (req, res) => {
         }
         if (user_name && user_number) {
             condition = ` and (us.u_name like '%${user_name}%' or us.u_mobile like '%${user_number}%')`
+        }
+        if (request) {
+            condition = ` and ui_request <> 'NULL' `
         }
 
         var investersData = await model.GetInvester(condition)

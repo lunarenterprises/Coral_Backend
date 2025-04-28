@@ -146,6 +146,7 @@ module.exports.StatusChange = async (req, res) => {
             if (getpayout.length > 0) {
                 var previous_status = getpayout[0]?.ph_status
                 var user_id = getpayout[0]?.ph_invest_u_id
+                var contract_type = getpayout[0]?.ph_invest_type
 
                 await notification.addNotification(admin_id, `${admin_role}`, `Payout Status updation for Id ${payout_id} `, `Payout Status  updated from ${previous_status} to ${payout_status}`)
 
@@ -154,7 +155,7 @@ module.exports.StatusChange = async (req, res) => {
 
                 await notification.addNotification(user_id, `user`, `Payout amount added to user[${user_id}] wallet`, `Payout amount ${payout_amount} added to user[${user_id}] wallet`)
 
-                let addwallethistory = await model.AddWalletHistory(user_id, payout_amount, currentdate)
+                let addwallethistory = await model.AddWalletHistory(user_id, contract_type, payout_amount, currentdate)
 
 
                 if (changepayoutstatus.affectedRows > 0 && addwalletamount.affectedRows > 0 && addwallethistory.affectedRows > 0) {
@@ -220,6 +221,8 @@ module.exports.StatusChange = async (req, res) => {
 
                 await notification.addNotification(admin_id, `${admin_role}`, `KYC status updated for user ${kyc_user_id} `, `KYC status updated from ${previous_status} to ${kyc_status}`)
                 if (kyc_status == 'verified') {
+                    var changeBankstatus = await model.ChangeBankStatus(kyc_user_id)
+
                     var changekycstatus = await model.ChangeKycStatus(kyc_status, kyc_user_id)
 
                 } else {

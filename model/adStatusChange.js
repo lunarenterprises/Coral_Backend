@@ -53,14 +53,14 @@ module.exports.ChangePayoutStatus = async (payout_status, payout_id) => {
 }
 
 module.exports.AddWalletAmount = async (payout_amount, user_id) => {
-    var Query = `UPDATE users SET u_wallet = u_wallet +${payout_amount} WHERE u_id = ?`;
+    var Query = `UPDATE users SET u_wallet = u_wallet + ? WHERE u_id = ?`;
     var data = await query(Query, [payout_amount, user_id]);
     return data;
 }
 
-module.exports.AddWalletHistory = async (user_id, payout_amount, currentdate) => {
-    var Query = `insert into wallet (w_u_id,w_contract_type,w_amount,w_date) values (?,'fixed',?,?)`;
-    var data = await query(Query, [user_id, payout_amount, currentdate]);
+module.exports.AddWalletHistory = async (user_id, contract_type, payout_amount, currentdate) => {
+    var Query = `insert into wallet (w_u_id,w_contract_type,w_amount,w_date) values (?,?,?,?)`;
+    var data = await query(Query, [user_id, contract_type, payout_amount, currentdate]);
     return data;
 }
 
