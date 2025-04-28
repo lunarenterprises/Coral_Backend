@@ -73,7 +73,7 @@ module.exports.RemoveInvesterQuery = async (invest_id) => {
 //-----------------------------------------
 
 module.exports.CheckHGFSQuery = async (hgfs_id) => {
-    var Query = `select * from hgfs where u_id = ?`;
+    var Query = `select * from hgfs where h_id = ?`;
     var data = await query(Query, [hgfs_id]);
     return data;
 };

@@ -115,13 +115,22 @@ module.exports.StatusChange = async (req, res) => {
             var getinvest = await model.GetContract(invest_req_id)
             if (getinvest.length > 0) {
                 var previous_status = getinvest[0]?.ui_request_status
-
+                let request = getinvest[0]?.ui_request
+                let nominee_id = getinvest[0]?.ui_nominee_id
 
                 await notification.addNotification(admin_id, `${admin_role}`, `Invest Request ${invest_req_status} `, `Invest Request status updated from ${previous_status} to ${invest_req_status}`)
 
                 let changeInveststatus = await model.ChangeInvestReqStatus(invest_req_status, invest_req_id)
 
                 if (changeInveststatus.affectedRows > 0) {
+
+                    if (request == 'termination') {
+                        var removecontract = await model.RemoveInvestQuery(invest_req_id);
+                    }
+                    if (request == 'transfer') {
+                        var transfercontract = await model.TransferInvestQuery(nominee_id, invest_req_id);
+                    }
+
                     return res.send({
                         result: true,
                         message: "Invest Request Status Updated Sucessfully"

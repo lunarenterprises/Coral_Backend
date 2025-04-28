@@ -19,18 +19,19 @@ module.exports.GetInvester = async (condition) => {
     us.u_joining_date,
     us.u_status,
     us.u_kyc,
-    us.u_joining_date,
     us.u_easy_pin,
     ui.*, 
     n.*, 
     b.*, 
-    uk.*
-    FROM user_invest ui
+    uk.*,
+    ci.*
+FROM user_invest ui
 LEFT JOIN users us ON ui.ui_u_id = us.u_id
 LEFT JOIN nominee n ON ui.ui_u_id = n.n_u_id 
 LEFT JOIN bank b ON ui.ui_u_id = b.b_u_id
-LEFT JOIN user_kyc uk ON ui.ui_u_id = uk.uk_u_id where ui.ui_action_status <> 'removed'  ${condition}`;
-    console.log(condition, "ccc");
+LEFT JOIN user_kyc uk ON ui.ui_u_id = uk.uk_u_id 
+LEFT JOIN contract_invoice ci ON ui.ui_id = ci.cni_contract_id
+WHERE ui.ui_action_status NOT IN ('removed', 'terminated')  ${condition}`;
 
     var data = await query(Query);
     return data;

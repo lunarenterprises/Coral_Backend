@@ -30,6 +30,7 @@
     "rand-token": "^1.0.1",
     "socket.io": "^4.8.1",
     "stripe": "^17.7.0",
+    "xlsx": "^0.18.5",
     "yahoo-finance2": "^2.13.2"
   }
 }
