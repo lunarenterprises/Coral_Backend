@@ -6,10 +6,10 @@ module.exports.ListTopcompany = async (req, res) => {
         let { tc_id, filter, hgfs } = req.body
         var condition = ''
         if (tc_id) {
-            condition = ` where tc_id ='${tc_id}'`
+            condition = ` and tc_id ='${tc_id}'`
         }
         if (filter) {
-            condition = ` where tc_name LIKE '%${filter}%' `
+            condition = ` and tc_name LIKE '%${filter}%' `
         }
         if (hgfs) {
             condition = ` ORDER BY tc_growth_percentage DESC `
