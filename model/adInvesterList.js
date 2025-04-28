@@ -28,6 +28,8 @@ LEFT JOIN users us ON ui.ui_u_id = us.u_id
 LEFT JOIN nominee n ON ui.ui_u_id = n.n_u_id 
 LEFT JOIN bank b ON ui.ui_u_id = b.b_u_id
 LEFT JOIN user_kyc uk ON ui.ui_u_id = uk.uk_u_id where ui.ui_action_status <> 'removed'  ${condition}`;
+    console.log(condition, "ccc");
+
     var data = await query(Query);
     return data;
 }
