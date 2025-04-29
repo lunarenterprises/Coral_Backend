@@ -65,7 +65,7 @@ module.exports.CheckInvesterQuery = async (invester_id) => {
     return data;
 };
 module.exports.RemoveInvesterQuery = async (invest_id) => {
-    var Query = `update users set ui_action_status ='removed' where u_id = ?`;
+    var Query = `update users set u_status ='removed' where u_id = ?`;
     var data = await query(Query, [invest_id]);
     return data;
 };
