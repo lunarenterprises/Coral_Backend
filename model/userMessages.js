@@ -13,7 +13,7 @@ module.exports.UserSendMessage = async (ticket_id, user_id, admin_id, message) =
 };
 
 module.exports.ListMessages = async (ticket_id) => {
-    var Query = `select * from messages where ticket_id=?`
+    var Query = `SELECT m.*, us.u_name FROM messages m LEFT JOIN users us ON m.sendBy = us.u_id WHERE m.ticket_id =?`
     return await query(Query, [ticket_id])
 }
 
