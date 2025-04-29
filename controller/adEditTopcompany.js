@@ -16,7 +16,7 @@ module.exports.EditTopCompany = async (req, res) => {
             })
         }
 
-        let { tc_id, tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage, tc_expected_CAGR } = req.body
+        let { tc_id, tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage, tc_current_CAGR, tc_expected_CAGR } = req.body
 
         if (!tc_id) {
             return res.send({
@@ -57,6 +57,13 @@ module.exports.EditTopCompany = async (req, res) => {
                     condition = `set tc_growth_percentage ='${tc_growth_percentage}' `
                 } else {
                     condition += `,tc_growth_percentage='${tc_growth_percentage}' `
+                }
+            }
+            if (tc_current_CAGR) {
+                if (condition == '') {
+                    condition = `set tc_current_CAGR ='${tc_current_CAGR}' `
+                } else {
+                    condition += `,tc_current_CAGR='${tc_current_CAGR}'`
                 }
             }
             if (tc_expected_CAGR) {
