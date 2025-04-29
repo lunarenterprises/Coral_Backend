@@ -76,6 +76,9 @@ route.post('/upload/contract-invoice', verifyToken, require('../controller/adCon
 route.put('/edit/payout', verifyToken, require('../controller/adPayoutHistory').EditPayout)
 
 
+route.post('/upload/file',verifyToken,require('../controller/uploadExcel').UploadExcelIntoDB)
+
+
 
 
 
