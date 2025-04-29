@@ -76,7 +76,7 @@ LEFT JOIN
 LEFT JOIN 
     nominee n ON us.u_id = n.n_u_id
 WHERE 
-    us.u_role = 'user' ${con}
+    us.u_role = 'user' and u_status <>'removed' ${con}
 GROUP BY 
     us.u_id `;
     var data = await query(Query);
