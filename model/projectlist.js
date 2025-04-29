@@ -3,7 +3,7 @@ var util = require("util")
 const query = util.promisify(db.query).bind(db);
 
 module.exports.getCompanyInvest = async () => {
-    var Query = `select distinct(ri_project) as ci_industry,ri_id,ri_amount_from,ri_amount_to,ri_return_year from return_invest ORDER BY ri_amount_from ASC,ri_id ASC limit 15`;
+    var Query = `SELECT ri_project AS ci_industry, MIN(ri_amount_from) AS min_amount_from, MAX(ri_amount_to) AS max_amount_to, MIN(ri_return_year) AS earliest_return_year FROM return_invest GROUP BY ri_project ORDER BY min_amount_from ASC`;
     var data = await query(Query);
     return data;
 };
