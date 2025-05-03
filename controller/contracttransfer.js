@@ -1,4 +1,5 @@
 var model = require('../model/contracttransfer')
+let ticketModel = require('../model/ticket')
 var nodemailer = require('nodemailer')
 let notification = require('../util/saveNotification')
 
@@ -20,10 +21,22 @@ module.exports.ContractTransfer = async (req, res) => {
             })
         }
         let investedData = await model.getInvestedData(user_id)
-        if (investedData[0].ui_status === "requestedForTransfer") {
+        if (investedData[0].ui_status === "completed") {
+            return res.send({
+                result: false,
+                message: "Investment period already completed."
+            })
+        }
+        if (investedData[0].ui_request === "transfer") {
             return res.send({
                 result: false,
                 message: "Investment already requested for transfer"
+            })
+        }
+        if (investedData[0].ui_request_status === "terminated") {
+            return res.send({
+                result: false,
+                message: "Your Investment is terminated"
             })
         }
         if (investedData[0].ui_transfer) {
@@ -33,7 +46,8 @@ module.exports.ContractTransfer = async (req, res) => {
             })
         }
 
-        let update = await model.requestTransfer(ui_id, n_id)
+        let update = await model.requestTransfer(ui_id)
+        let ticket = await ticketModel.createTicket(user_id, "Requested for transfer contract", "Transfer contract")
         let users = await model.getUser(user_id)
         if (update.affectedRows > 0) {
             let transporter = nodemailer.createTransport({
@@ -95,7 +109,7 @@ module.exports.ContractTransfer = async (req, res) => {
             });
 
             nodemailer.getTestMessageUrl(info);
-            await notification.addNotification(user_id,users[0].u_role, 'Investment Transfer', 'Your investment has been successfully transferred to nominee')
+            await notification.addNotification(user_id, users[0].u_role, 'Investment Transfer', 'Your investment has been successfully transferred to nominee')
             return res.send({
                 result: true,
                 message: "assgined to nominee successfully"

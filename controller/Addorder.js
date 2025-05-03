@@ -1,9 +1,11 @@
 var model = require('../model/Addorder')
+let nomineeModel = require('../model/cwiInvestment')
 var moment = require('moment')
 var puppeteer = require('puppeteer');
 var fs = require('fs');
 const { createPdfWithPuppeteer } = require('../util/pdfGeneration');
 const notification = require('../util/saveNotification');
+const { sendNotificationToAdmins } = require('../util/firebaseConfig');
 
 
 module.exports.AddOrder = async (req, res) => {
@@ -14,6 +16,12 @@ module.exports.AddOrder = async (req, res) => {
         var date = moment().format("YYYY-MM-DD")
         var moddate = moment().format("DD_MM_YYYY")
         let { user_id } = req.headers
+        if (!user_id) {
+            return res.send({
+                result: false,
+                message: "User id is required"
+            })
+        }
         let { investment, securityOption, clientInfo, bankAccount, nomineeDetails } = req.body
         // if(!investment.project_name){
         //     return res.send({
@@ -88,7 +96,6 @@ module.exports.AddOrder = async (req, res) => {
         //     }) 
         // }
 
-        console.log("bankAccount : ", bankAccount)
 
         let project_name = investment.project_name
         let investment_amount = investment.investment_amount
@@ -108,15 +115,19 @@ module.exports.AddOrder = async (req, res) => {
         let percentage = investment.percentage
         let return_amount = investment.return_amount
         let bankaccount = await model.getBankaccount(bankAccount)
+        let nomineeData = null
+        let createdNominee = null
         if (nomineeFullName) {
-            let nominee = await model.AddNominee(user_id, nomineeFullName, relationship, contactNumber, nominee_residentialAddress)
-            var nominee_id = nominee.insertId
+            nomineeData = await nomineeModel.getnomineeDetails(user_id)
+            if (nomineeData.length === 0) {
+                createdNominee = await model.AddNominee(user_id, nomineeFullName, relationship, contactNumber, nominee_residentialAddress)
+            }
         }
         var userdetails = await model.getUser(user_id)
-        if(userdetails[0].u_kyc!=="verified"){
+        if (userdetails[0].u_kyc !== "verified") {
             return res.send({
-                result:false,
-                message:"KYC needs to be verified before investing"
+                result: false,
+                message: "KYC needs to be verified before investing"
             })
         }
         let usernme = userdetails[0]?.u_name.toUpperCase().substring(0, 3)
@@ -1434,9 +1445,11 @@ module.exports.AddOrder = async (req, res) => {
 
 </html>`
         // var save = await model.getBankaccount(bankAccount)
-        var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount)
         var pdf = await createPdfWithPuppeteer(html, path);
-        await notification.addNotification(user_id,userdetails[0].u_role, 'Investment', 'Investment added successfully')
+        let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
+        var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId)
+        await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest`)
+        await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Investment added successfully')
         return res.send({
             result: true,
             message: "order success",

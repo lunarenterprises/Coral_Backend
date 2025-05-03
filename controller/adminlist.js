@@ -26,18 +26,18 @@ module.exports.AdminList = async (req, res) => {
 
         var getadmin = await model.getAdminList(condition)
 
-        if (getadmin.length > 0) {
-            return res.send({
-                result: true,
-                message: "data retrived",
-                data: getadmin
-            })
-        } else {
-            return res.send({
-                result: false,
-                message: "admins list details not found"
-            })
-        }
+        let data = await Promise.all(getadmin.map(async (el) => {
+            let adminaccess = el.u_access;
+            let access = await JSON.parse(adminaccess);
+            el.u_access = access;
+            return el;
+        }));
+
+        return res.send({
+            result: true,
+            message: "data retrieved",
+            data: data
+        });
 
 
 

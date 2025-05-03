@@ -19,20 +19,29 @@ module.exports.NestEggList = async (req, res) => {
         } else {
             var profit = (latest_return / previous_return) * 100
         }
-        if (data.length > 0) {
-            return res.send({
-                result: true,
-                message: "data retrieved",
-                balance: balance[0]?.u_wallet,
-                profit: profit,
-                data: data
-            })
-        } else {
-            return res.send({
-                result: false,
-                message: "data not found"
-            })
-        }
+        return res.send({
+            result: true,
+            message: "data retrieved",
+            balance: balance[0]?.u_wallet || 0,
+            profit: profit || 0,
+            data: data
+        })
+        // if (data.length > 0) {
+        //     return res.send({
+        //         result: true,
+        //         message: "data retrieved",
+        //         balance: balance[0]?.u_wallet,
+        //         profit: profit,
+        //         data: data
+        //     })
+        // } else {
+        //     return res.send({
+        //         result: false,
+        //         balance: balance[0]?.u_wallet,
+        //         profit: profit || 0,
+        //         message: "data not found"
+        //     })
+        // }
     } catch (error) {
         return res.send({
             result: false,

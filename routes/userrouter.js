@@ -87,7 +87,7 @@ route.get('/kyc', require('../controller/UserKycData').GetUserKycData)
 
 route.post('/contractList', require('../controller/userContractList').UserContractList)
 
-route.get('/hfs/list', require('../controller/hgfslist').HgfsList)
+route.get('/hgfs/list', require('../controller/adHgfs').HgfsList)
 
 route.post('/admin/offer/add', require('../controller/offeradd').OfferAdd)
 
@@ -123,9 +123,21 @@ route.get('/faq', require('../controller/getFaq').GetFaq)
 
 route.get('/cwiInvestments', require('../controller/cwiInvestmentsList').cwiInvestmentList)
 
-route.get('/futureInvestments', require('../controller/futureInvestmentsList').FutureInvestmentList)
+route.get('/list/futureInvestments', require('../controller/adFutureInvestments').FutureInvestmentList)
 
+route.post('/ticket/create', require('../controller/ticket').CreateTicket)
 
+route.get('/ticket/list', require('../controller/ticket').ListTickets)
+
+route.put('/ticket/edit', require('../controller/ticket').EditTicket)
+
+route.delete('/ticket/delete', require('../controller/ticket').DeleteTicket)
+
+route.post('/google/login', require('../controller/GoogleAuth').GoogleLogin)
+
+route.post('/message/sendMessage',require('../controller/userMessages').SendMessage)
+
+route.post('/message/listMessages',require('../controller/userMessages').ListMessages)
 
 
 /// Payment Routes

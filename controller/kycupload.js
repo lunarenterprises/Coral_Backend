@@ -202,6 +202,7 @@ module.exports.KycUpload = async (req, res) => {
                         console.log('Email sent to OperationTeam:', info.messageId);
                         await model.UpdateUserKyc(user_id, country, currency)
                         await notifiaction.addNotification(user_id,
+                            finduser[0]?.u_role,
                             "KYC Verification Request",
                             "Your KYC verification request has been submitted successfully"
                         )

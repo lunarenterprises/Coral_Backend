@@ -6,7 +6,7 @@ var pdfdownload = require('../util/pdfGeneration')
 
 module.exports.InvestersList = async (req, res) => {
     try {
-        var { user_id, user_name, user_number, format } = req.body
+        var { user_id, user_name, user_number, request, format } = req.body
 
         let admin_id = req.user.admin_id
         let admin_role = req.user.role
@@ -21,27 +21,29 @@ module.exports.InvestersList = async (req, res) => {
         }
 
         var condition = ''
+        var con = ''
         if (user_id) {
-            condition = `WHERE ui.ui_u_id ='${user_id}'`
+            condition = `and ui.ui_u_id ='${user_id}'`
+            con = `and us.u_id ='${user_id}' `
         }
         if (user_name) {
-            condition = ` where (us.u_name like '%${user_name}%')`
+            condition = ` and (us.u_name like '%${user_name}%')`
         }
         if (user_number) {
-            condition = ` where (us.u_mobile like '%${user_number}%')`
+            condition = ` and (us.u_mobile like '%${user_number}%')`
         }
         if (user_name && user_number) {
-            condition = ` where (us.u_name like '%${user_name}%' or us.u_mobile like '%${user_number}%')`
+            condition = ` and (us.u_name like '%${user_name}%' or us.u_mobile like '%${user_number}%')`
         }
 
         var investersData = await model.GetInvester(condition)
 
-        var investeruserData = await model.GetInvesterUser(condition)
+        var investRequest = await model.GetInvestRequest(condition)
 
-        var allusersData = await model.GetSAllUsers()
+        var allusersData = await model.GetSAllUsers(con)
 
 
-        if (investersData.length > 0) {
+        if (investersData.length > 0 || allusersData.length > 0) {
 
 
             let serverName = req.protocol + "://" + req.get("host");
@@ -74,7 +76,6 @@ module.exports.InvestersList = async (req, res) => {
                         '<td>' + data.ui_status + '</td>' +
                         '</tr>'
                 }
-                console.log(datahtml, "html");
 
                 let html = `<!DOCTYPE html>
 <html lang="en">
@@ -193,14 +194,14 @@ module.exports.InvestersList = async (req, res) => {
             return res.send({
                 result: true,
                 message: "data retrieved successfully",
-                investerusers: investeruserData,
+                investerusers: allusersData,
                 data: investersData,
-                users: allusersData
+                investRequest: investRequest
             })
         } else {
             return res.send({
                 result: false,
-                message: "failed to get data"
+                message: "No data found"
             })
         }
     } catch (error) {

@@ -1,4 +1,5 @@
 var model = require('../model/terminatecontract')
+let ticketModel = require('../model/ticket')
 var nodemailer = require('nodemailer')
 let notification = require('../util/saveNotification')
 
@@ -12,18 +13,19 @@ module.exports.TerminateContract = async (req, res) => {
             })
         }
         let usersdata = await model.getusersdata(ui_id)
-        if (usersdata[0].ui_status === "requestedForTermination") {
+        if (usersdata[0].ui_request === "termination") {
             return res.send({
                 result: false,
                 message: "Your contract is already requested for termination"
             })
-        } else if (usersdata[0].ui_status === "terminated") {
+        } else if (usersdata[0].ui_request_status === "terminated") {
             return res.send({
                 result: false,
                 message: "Your contract is already terminated"
             })
         }
         let terminate = await model.updateContract(ui_id, reason)
+        let ticket = await ticketModel.createTicket(usersdata[0]?.u_id, "Requested for terminate contract", "Terminate contract")
         if (terminate.affectedRows > 0) {
             let transporter = nodemailer.createTransport({
                 host: "smtp.hostinger.com",
@@ -83,7 +85,7 @@ module.exports.TerminateContract = async (req, res) => {
             });
 
             nodemailer.getTestMessageUrl(info);
-            await notification.addNotification(usersdata[0].ui_u_id,usersdata[0].u_role, 'Contract Terminate Request', 'Your contract termination request has been sent to our representative, they will contact you soon.')
+            await notification.addNotification(usersdata[0].ui_u_id, usersdata[0].u_role, 'Contract Terminate Request', 'Your contract termination request has been sent to our representative, they will contact you soon.')
             return res.send({
                 result: true,
                 message: "Your termination request has been sent to our representative,they will contact you soon."

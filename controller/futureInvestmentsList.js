@@ -19,11 +19,11 @@ module.exports.FutureInvestmentList = async (req, res) => {
             })
         }
         let FutureInvestmentList = await model.GetFutureInvestmentList()
-        await SendMessage(user_id, "Fetch FAQ", "Fetched FAQ Successfully.!")
+        // await SendMessage(user_id,userData[0].u_role, "Fetch FAQ", "Fetched FAQ Successfully.!")
         if (FutureInvestmentList.length === 0) {
             return res.send({
                 result: false,
-                message: "Faq not found"
+                message: "Data not found"
             })
         } else {
             return res.send({

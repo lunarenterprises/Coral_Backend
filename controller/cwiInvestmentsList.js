@@ -18,7 +18,7 @@ module.exports.cwiInvestmentList = async (req, res) => {
                 message: 'user not found'
             })
         }
-        let cwiList = await model.getCWIIvestments()
+        let cwiList = await model.getCWIIvestments(user_id)
         if (cwiList.length > 0) {
             await notification.addNotification(user_id, userData[0].u_role, "CWI_Investment List", "User has checked cwi investment list", "success")
             return res.send({

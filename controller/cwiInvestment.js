@@ -5,6 +5,7 @@ let userModel = require('../model/users')
 var fs = require('fs');
 const notification = require('../util/saveNotification');
 const { createPdfWithPuppeteer } = require('../util/pdfGeneration');
+const { SendMessage, sendNotificationToAdmins } = require('../util/firebaseConfig')
 
 
 module.exports.cwiInvestment = async (req, res) => {
@@ -37,16 +38,15 @@ module.exports.cwiInvestment = async (req, res) => {
             })
         }
 
-        let cwiInvestmentData = await model.getCWIInvestmentDetails(id)
-
-        if (cwiInvestmentData.length == 0) {
+        let futureCompanyData = await model.getFutureCompanyData(id)
+        if (futureCompanyData.length === 0) {
             return res.send({
                 result: false,
-                message: "No investment found"
+                message: "Company data not found."
             })
         }
 
-        let project_name = cwiInvestmentData[0].name
+        let project_name = futureCompanyData[0].fi_industries
         let investment_amount = Number(amount)
         let investment_duration = moment().add(2, 'years').format("YYYY-MM-DD");
         let profit_model = 'fixed'
@@ -60,8 +60,12 @@ module.exports.cwiInvestment = async (req, res) => {
         let relationship = nomineeDetails?.relationship
         let contactNumber = nomineeDetails?.contactNumber
         let nominee_residentialAddress = nomineeDetails?.residentialAddress
-        let percentage = cwiInvestmentData[0]?.return_value
-        let return_amount = (cwiInvestmentData[0]?.totalAmount * cwiInvestmentData[0]?.return_value) / 100
+        let percentage = futureCompanyData[0]?.fi_expected_return
+        let rangeParts = percentage.split('-');
+        let lower = parseFloat(rangeParts[0]);
+        let upper = parseFloat(rangeParts[1]);
+        let avgPercentage = (lower + upper) / 2;
+        let return_amount = (investment_amount * avgPercentage) / 100;
         let bankaccount = await model.getBankDetails(user_id)
         if (nomineeFullName) {
             let nomineeData = await model.getnomineeDetails(user_id)
@@ -71,6 +75,12 @@ module.exports.cwiInvestment = async (req, res) => {
             }
         }
         var userdetails = await userModel.getUser(user_id)
+        if (userdetails[0].u_kyc !== "verified") {
+            return res.send({
+                result: false,
+                message: "KYC needs to be verified before investing"
+            })
+        }
         let usernme = userdetails[0]?.u_name.toUpperCase().substring(0, 3)
         // let savedetails = await model.AddInvest()
         var path1 = `${process.cwd()}/uploads/agreement/`;
@@ -1387,7 +1397,8 @@ module.exports.cwiInvestment = async (req, res) => {
         </html>`
         var saveInvest = await orderModel.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankaccount[0].b_id)
         var pdf = await createPdfWithPuppeteer(html, path);
-        await SendMessage(user_id, "'CWI Investment'", "CWI Investment added successfully.!")
+        await SendMessage(user_id, "CWI Investment", "CWI Investment added successfully.!")
+        await sendNotificationToAdmins("CWI Investment", `${userdetails[0].u_name} requested to invest in CWI Investment`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'CWI Investment', 'CWI Investment added successfully')
         return res.send({
             result: true,

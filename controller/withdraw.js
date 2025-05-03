@@ -2,6 +2,7 @@ var model = require('../model/withdraw')
 var nodemailer = require('nodemailer')
 var moment = require('moment')
 let notification=require('../util/saveNotification')
+const { sendNotificationToAdmins } = require('../util/firebaseConfig')
 
 module.exports.Withdraw = async (req, res) => {
     try {
@@ -66,7 +67,7 @@ Mobile Number:${user_details[0]?.u_mobile}
 
         nodemailer.getTestMessageUrl(info);
         await notification.addNotification(user_id, user_details[0].u_role,"Withdrawal Request", "Your Withdrawal request has been submitted & will contact you within 48hrs")
-
+        await sendNotificationToAdmins("Withdraw request",`${user_details[0].u_name} requested to withdraw ${amount}`)
         return res.send({
             result: true,
             message: "Your Withdrawal request has been submitted & will contact you within 48hrs"

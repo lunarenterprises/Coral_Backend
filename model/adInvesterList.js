@@ -15,34 +15,92 @@ module.exports.GetInvester = async (condition) => {
     us.u_name,
     us.u_email,
     us.u_mobile,
+    us.u_wallet,
+    us.u_joining_date,
     us.u_status,
     us.u_kyc,
-    us.u_joining_date,
     us.u_easy_pin,
     ui.*, 
     n.*, 
     b.*, 
-    uk.*
+    uk.*,
+    ci.*
 FROM user_invest ui
 LEFT JOIN users us ON ui.ui_u_id = us.u_id
 LEFT JOIN nominee n ON ui.ui_u_id = n.n_u_id 
 LEFT JOIN bank b ON ui.ui_u_id = b.b_u_id
-LEFT JOIN user_kyc uk ON ui.ui_u_id = uk.uk_u_id  ${condition}`;
+LEFT JOIN user_kyc uk ON ui.ui_u_id = uk.uk_u_id 
+LEFT JOIN contract_invoice ci ON ui.ui_id = ci.cni_contract_id
+WHERE ui.ui_action_status NOT IN ('removed') ${condition}`;
+
     var data = await query(Query);
     return data;
 }
 
 module.exports.GetInvesterUser = async (condition) => {
-    var Query = `SELECT us.u_id,us.u_name, us.u_email, us.u_mobile, us.u_status,us.u_kyc,us.u_joining_date,us.u_easy_pin,us.u_joining_date
-    FROM user_invest ui LEFT JOIN users us ON ui.ui_u_id = us.u_id ${condition} GROUP BY us.u_id `;
+    var Query = `SELECT us.u_id,us.u_name, us.u_email, us.u_mobile, us.u_status,us.u_kyc,us.u_joining_date,us.u_easy_pin,us.u_joining_date,uap.user_apps_device_os
+    FROM user_invest ui LEFT JOIN users us ON ui.ui_u_id = us.u_id 
+    LEFT JOIN user_apps uap ON ui.ui_u_id = uap.user_apps_user_id  where ui.ui_action_status <> 'removed' ${condition} GROUP BY us.u_id `;
     var data = await query(Query);
     return data;
 };
 
 
-module.exports.GetSAllUsers = async () => {
-    var Query = `SELECT us.u_id,us.u_name, us.u_email, us.u_mobile, us.u_status,us.u_kyc,us.u_joining_date,us.u_easy_pin,us.u_joining_date ,ua.*
-                FROM users us LEFT JOIN user_apps ua ON us.u_id = ua.user_apps_user_id `;
+module.exports.GetSAllUsers = async (con) => {
+    var Query = `SELECT 
+    us.u_id,
+    us.u_name,
+    us.u_email,
+    us.u_mobile,
+    us.u_profile_pic,
+    us.u_dob,
+    us.u_address,
+    us.u_wallet,
+    us.u_joining_date,
+    us.u_status,
+    us.u_kyc,
+    us.u_joining_date,
+    us.u_easy_pin,
+    ua.*,
+    b.*,
+    uk.*,
+    n.*
+FROM 
+    users us
+LEFT JOIN 
+    user_apps ua ON us.u_id = ua.user_apps_user_id
+LEFT JOIN 
+    bank b ON us.u_id = b.b_u_id 
+LEFT JOIN 
+    user_kyc uk ON us.u_id = uk.uk_u_id
+LEFT JOIN 
+    nominee n ON us.u_id = n.n_u_id
+WHERE 
+    us.u_role = 'user' and u_status <>'removed' ${con}
+GROUP BY 
+    us.u_id `;
     var data = await query(Query);
     return data;
 };
+
+module.exports.GetInvestRequest = async (condition) => {
+    var Query = `SELECT 
+    us.u_id,
+    us.u_name,
+    us.u_email,
+    us.u_mobile,
+    us.u_wallet,
+    us.u_joining_date,
+    us.u_status,
+    us.u_kyc,
+    us.u_easy_pin,
+    ui.*, 
+    n.* 
+FROM user_invest ui
+LEFT JOIN users us ON ui.ui_u_id = us.u_id
+LEFT JOIN nominee n ON ui.ui_u_id = n.n_u_id 
+WHERE ui.ui_action_status <> 'removed' and ui_request <> 'NULL' ${condition}`;
+
+    var data = await query(Query);
+    return data;
+}

@@ -109,7 +109,7 @@ module.exports.WithdrawHistory = async (req, res) => {
         return res.send({
             result: true,
             message: "data retrieved",
-            total_amount: users[0]?.u_returned_amount,
+            total_amount: users[0]?.u_wallet,
             file: format ? req.protocol + "://" + req.get("host") + path.replace(process.cwd(), '') : '',
             withdrawhistory: withdrawhistory,
             investhistory: investhistory

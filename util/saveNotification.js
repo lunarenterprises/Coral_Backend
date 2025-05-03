@@ -19,3 +19,13 @@ module.exports.getUserTokens = async (userId) => {
         return false
     }
 }
+
+
+////HERE THE FUNCTION TO GET ADMIN FCM TOKEN////
+module.exports.getAdminTokens=async()=>{
+    try{
+        return await UserToken.getAdminTokens()
+    }catch(error){
+        return false
+    }
+}

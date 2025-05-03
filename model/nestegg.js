@@ -9,7 +9,7 @@ module.exports.checkwfa = async (user_id, wfa_password) => {
 };
 
 module.exports.AddNest = async (ne_amount, ne_wallet, ne_duration, ne_u_id, ne_date) => {
-    var Query = `insert into nestegg(ne_amount,ne_wallet,ne_duration,ne_u_id,ne_date)values(?,?,?,?,?)`;
+    var Query = `insert into nestegg(ne_amount,ne_wallet,ne_duration,ne_u_id,ne_start_date)values(?,?,?,?,?)`;
     var data = await query(Query, [ne_amount, ne_wallet, ne_duration, ne_u_id, ne_date]);
     return data;
 };

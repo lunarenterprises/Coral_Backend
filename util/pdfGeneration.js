@@ -4,7 +4,7 @@ module.exports.createPdfWithPuppeteer = async function (htmlContent, path) {
     try {
         let browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: "new",
+            headless: true,
             // executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
             executablePath: "/usr/bin/chromium-browser"
         });
@@ -12,6 +12,8 @@ module.exports.createPdfWithPuppeteer = async function (htmlContent, path) {
 
         await page.setContent(htmlContent, {
             waitUntil: "networkidle0",
+            timeout: 60000,
+
         });
 
         await page.pdf({

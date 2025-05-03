@@ -59,4 +59,44 @@ module.exports.RemoveWithdrawQuery = async (invest_id) => {
 };
 //------------------------------------------------------
 
+module.exports.CheckInvesterQuery = async (invester_id) => {
+    var Query = `select * from users where u_id = ?`;
+    var data = await query(Query, [invester_id]);
+    return data;
+};
+module.exports.RemoveInvesterQuery = async (invest_id) => {
+    var Query = `update users set u_status ='removed' where u_id = ?`;
+    var data = await query(Query, [invest_id]);
+    return data;
+};
+
+//-----------------------------------------
+
+module.exports.CheckHGFSQuery = async (hgfs_id) => {
+    var Query = `select * from hgfs where h_id = ?`;
+    var data = await query(Query, [hgfs_id]);
+    return data;
+};
+module.exports.RemoveHGFSQuery = async (hgfs_id) => {
+    var Query = `update hgfs set h_status ='removed' where h_id = ?`;
+    var data = await query(Query, [hgfs_id]);
+    return data;
+};
+
+//-----------------------------------------
+
+module.exports.CheckFutureInvestmentQuery = async (fi_id) => {
+    var Query = `select * from future_investments where fi_id = ?`;
+    var data = await query(Query, [fi_id]);
+    return data;
+};
+module.exports.RemoveFutureInvestmentQuery = async (fi_id) => {
+    var Query = `update future_investments set fi_status ='removed' where fi_id = ?`;
+    var data = await query(Query, [fi_id]);
+    return data;
+};
+
+//-----------------------------------------
+
+
 

@@ -6,6 +6,8 @@ route.post('/add/top-company', verifyToken, require('../controller/addtopcompany
 
 route.post('/list/top-company', verifyToken, require('../controller/listtopcompany').ListTopcompany)
 
+route.post('/edit/top-company', verifyToken, require('../controller/adEditTopcompany').EditTopCompany)
+
 route.post('/deletesection', verifyToken, require('../controller/admindeletesection').AdminDeleteSection)
 
 route.post('/login', require('../controller/adminlogin').AdminLogin)
@@ -24,7 +26,65 @@ route.post('/list/investers', verifyToken, require('../controller/adInvesterList
 
 route.post('/list/investers-bank', verifyToken, require('../controller/adInvesterbankdetails').InvesterBankDetails)
 
-// route.post('/list/wallet', verifyToken, require('../controller/adwalletlist').WalletList)
+route.post('/list/wallet', verifyToken, require('../controller/adwalletlist').WalletList)
+
+route.post('/update/status', verifyToken, require('../controller/adStatusChange').StatusChange)
+
+route.get('/list/nestegg', verifyToken, require('../controller/adNestEggList').NestEggList)
+
+route.post('/add/investment-calculator', verifyToken, require('../controller/adInvestmentCalculater').AddInvestmentCalculater)
+
+route.get('/list/investment-calculator', verifyToken, require('../controller/adListInvestmentCalculater').InvestmentCalculaterList)
+
+route.post('/list/history', verifyToken, require('../controller/adHistory').History)
+
+route.post('/dashboard', verifyToken, require('../controller/adDashboard').Dashboard)
+
+
+
+route.get('/ticket/list', verifyToken, require('../controller/adminTickets').ListAllTickets)
+
+route.put('/ticket/edit', verifyToken, require('../controller/adminTickets').EditTicket)
+
+route.delete('/ticket/delete', verifyToken, require('../controller/adminTickets').DeleteTicket)
+
+
+
+route.get('/payout-history', verifyToken, require('../controller/adPayoutHistory').PayoutHistory)
+
+route.post('/edit/share-dilution', verifyToken, require('../controller/adEditinvestmentShare').EditSharedilution)
+
+route.post('/edit/investment-calculator', verifyToken, require('../controller/adEditinvestmentShare').EditInvestmentCalculater)
+
+route.get('/download/contract', verifyToken, require('../controller/adContractDownload').ContractDownload)
+
+
+route.post('/message/listMessages', verifyToken, require("../controller/adminMessage").ListMessages)
+route.post('/message/sendMessage', verifyToken, require("../controller/adminMessage").SendMessage)
+route.put('/message/updateMessage', verifyToken, require('../controller/adminMessage').UpdateAdminId)
+
+route.post('/add/hgfs', verifyToken, require('../controller/adHgfs').AddHGFS)
+
+route.put('/edit/hgfs', verifyToken, require('../controller/adHgfs').EditHGFS)
+
+route.post('/add/future-investments', verifyToken, require('../controller/adFutureInvestments').AddFutureInvestment)
+
+route.put('/edit/future-investments', verifyToken, require('../controller/adFutureInvestments').EditFutureInvestment)
+
+route.post('/upload/contract-invoice', verifyToken, require('../controller/adContractInvoice').ContractInvoice)
+
+route.put('/edit/payout', verifyToken, require('../controller/adPayoutHistory').EditPayout)
+
+
+route.post('/upload/file',verifyToken,require('../controller/uploadExcel').UploadExcelIntoDB)
+
+
+
+
+
+
+
+
 
 
 module.exports = route

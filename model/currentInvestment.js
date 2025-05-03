@@ -8,8 +8,8 @@ module.exports.getInvestedData = async (u_id) => {
     return data;
 }
 
-module.exports.getCWIIvestments = async () => {
-    var Query = `select * from cwi_investments`
-    var data = await query(Query);
+module.exports.getCWIIvestments = async (user_id) => {
+    var Query = `select * from user_invest where ui_u_id=?`
+    var data = await query(Query, [user_id]);
     return data;
 }

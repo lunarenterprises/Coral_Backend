@@ -13,25 +13,18 @@ module.exports.HgfsList = async (req, res) => {
         userinvest.forEach(element => {
             share_prices += element.ui_amount
         });
-        if (hgfsList.length > 0) {
-            return res.send({
-                result: true,
-                message: "data retrieved",
-                currency: getbalance[0]?.u_currency,
-                user_status: getbalance[0]?.u_status,
-                user_kyc: getbalance[0]?.u_kyc,
-                balance: getbalance[0]?.u_returned_amount,
-                own_shares: own_shares,
-                share_prices: share_prices,
-                data: hgfsList,
+        return res.send({
+            result: true,
+            message: "data retrieved",
+            currency: getbalance[0]?.u_currency,
+            user_status: getbalance[0]?.u_status,
+            user_kyc: getbalance[0]?.u_kyc,
+            balance: getbalance[0]?.u_returned_amount,
+            own_shares: own_shares,
+            share_prices: share_prices,
+            data: hgfsList,
 
-            })
-        } else {
-            return res.send({
-                result: false,
-                message: "hgfs not found"
-            })
-        }
+        })
     } catch (error) {
         return res.send({
             result: false,
