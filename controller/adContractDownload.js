@@ -20,7 +20,7 @@ module.exports.ContractDownload = async (req, res) => {
 
         var getcontact = await model.getcontact(contract_id)
 
-        var filename = getcontact[0]?.ui_contract_file
+        var filename = getcontact[0]?.cni_file
 
 
         if (getcontact.length > 0) {

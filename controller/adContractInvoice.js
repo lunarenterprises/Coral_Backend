@@ -41,11 +41,13 @@ module.exports.ContractInvoice = async (req, res) => {
             let checkuser = await model.CheckUser(u_id)
             if (checkuser.length > 0) {
                 let checkinvoice = await model.CheckInvoice()
+
                 if (checkinvoice.length > 0) {
                     const lastInvoiceNumber = checkinvoice[0]?.cni_invoice_id
                     var newInvoiceId = generateInvoiceId(lastInvoiceNumber);
+
                 } else {
-                    var newInvoiceId = 'INV000001';
+                    var newInvoiceId = 'INV-000001';
 
                 }
 
@@ -72,8 +74,8 @@ module.exports.ContractInvoice = async (req, res) => {
                         auth: {
                             type: 'custom',
                             method: 'PLAIN',
-                            user: 'noreply@kdpdwct.org',
-                            pass: 'noreply@Kdpdwct2024',
+                            user: 'coraluae@lunarenp.com',
+                            pass: 'Coraluae@2024',
                         },
                     });
 
@@ -153,7 +155,7 @@ module.exports.ContractInvoice = async (req, res) => {
 
                     data.forEach(async (el) => {
                         let infos = await transporter.sendMail({
-                            from: "CORAL WEALTH <noreply@kdpdwct.org>",
+                            from: "CORAL WEALTH <coraluae@lunarenp.com>",
                             to: el.email,
                             subject: el.subject,
                             html: el.html,
@@ -201,7 +203,14 @@ module.exports.ContractInvoice = async (req, res) => {
 }
 
 function generateInvoiceId(lastNumber) {
-    const nextNumber = lastNumber + 1;
+    let numericPart = 0;
+
+    if (lastNumber) {
+        // Extract numeric part from something like "INV-000010"
+        numericPart = parseInt(lastNumber.replace('INV-', ''), 10);
+    }
+
+    const nextNumber = numericPart + 1;
     const paddedNumber = String(nextNumber).padStart(6, '0');
     return `INV-${paddedNumber}`;
 }
