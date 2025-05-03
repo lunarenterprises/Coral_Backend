@@ -35,13 +35,10 @@ module.exports.InvestersList = async (req, res) => {
         if (user_name && user_number) {
             condition = ` and (us.u_name like '%${user_name}%' or us.u_mobile like '%${user_number}%')`
         }
-        if (request) {
-            condition = ` and ui_request <> 'NULL' `
-        }
 
         var investersData = await model.GetInvester(condition)
 
-        // var investeruserData = await model.GetInvesterUser(condition)
+        var investRequest = await model.GetInvestRequest(condition)
 
         var allusersData = await model.GetSAllUsers(con)
 
@@ -199,7 +196,7 @@ module.exports.InvestersList = async (req, res) => {
                 message: "data retrieved successfully",
                 investerusers: allusersData,
                 data: investersData,
-                // users: allusersData
+                investRequest: investRequest
             })
         } else {
             return res.send({

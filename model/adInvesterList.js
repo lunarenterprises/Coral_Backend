@@ -31,7 +31,7 @@ LEFT JOIN nominee n ON ui.ui_u_id = n.n_u_id
 LEFT JOIN bank b ON ui.ui_u_id = b.b_u_id
 LEFT JOIN user_kyc uk ON ui.ui_u_id = uk.uk_u_id 
 LEFT JOIN contract_invoice ci ON ui.ui_id = ci.cni_contract_id
-WHERE ui.ui_action_status NOT IN ('removed', 'terminated')  ${condition}`;
+WHERE ui.ui_action_status NOT IN ('removed') ${condition}`;
 
     var data = await query(Query);
     return data;
@@ -82,3 +82,25 @@ GROUP BY
     var data = await query(Query);
     return data;
 };
+
+module.exports.GetInvestRequest = async (condition) => {
+    var Query = `SELECT 
+    us.u_id,
+    us.u_name,
+    us.u_email,
+    us.u_mobile,
+    us.u_wallet,
+    us.u_joining_date,
+    us.u_status,
+    us.u_kyc,
+    us.u_easy_pin,
+    ui.*, 
+    n.* 
+FROM user_invest ui
+LEFT JOIN users us ON ui.ui_u_id = us.u_id
+LEFT JOIN nominee n ON ui.ui_u_id = n.n_u_id 
+WHERE ui.ui_action_status <> 'removed' and ui_request <> 'NULL' ${condition}`;
+
+    var data = await query(Query);
+    return data;
+}
