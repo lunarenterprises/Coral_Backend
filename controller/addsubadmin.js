@@ -3,7 +3,7 @@ let notification = require('../util/saveNotification')
 var bcrypt = require("bcrypt");
 var formidable = require('formidable')
 var fs = require('fs')
-
+var moment = require('moment')
 module.exports.AddSubAdmin = async (req, res) => {
     try {
 
@@ -20,7 +20,7 @@ module.exports.AddSubAdmin = async (req, res) => {
             let user_id = req.user.admin_id
             let admin_role = req.user.role
 
-
+            let date = moment().format('YYYY-MM-DD')
 
 
             let { name, email, mobile, password, role, u_access } = fields
@@ -53,7 +53,7 @@ module.exports.AddSubAdmin = async (req, res) => {
 
                 fs.writeFileSync(newPath, rawData)
                 var image = "uploads/profile/admin/" + files.image.originalFilename
-                let addadmin = await model.AddAdmin(name, email, mobile, image, hashedPassword, role, u_access)
+                let addadmin = await model.AddAdmin(name, email, hashedPassword, mobile, image, date, role, u_access)
 
                 if (addadmin.affectedRows > 0) {
                     await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.u_name} Added Subadmin`, `Subadmin ${name} with role ${role} added sucessfully`)
@@ -70,7 +70,7 @@ module.exports.AddSubAdmin = async (req, res) => {
                 }
 
             }
-            let addadmin = await model.AddAdmin(name, email, mobile,null, hashedPassword, role, u_access)
+            let addadmin = await model.AddAdmin(name, email, hashedPassword, mobile, null, image, date, role, u_access)
 
             if (addadmin.affectedRows > 0) {
                 await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.u_name} Added Subadmin`, `Subadmin ${name} with role ${role} added sucessfully`)

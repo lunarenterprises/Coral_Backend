@@ -40,38 +40,38 @@ module.exports.EditSubAdmin = async (req, res) => {
 
                 if (name) {
                     if (condition == '') {
-                        condition = `set u_name ='${name}' `
+                        condition = `set ad_name ='${name}' `  				
                     } else {
-                        condition += `,u_name='${name}'`
+                        condition += `,ad_name='${name}'`
                     }
                 }
                 if (email) {
                     if (condition == '') {
-                        condition = `set u_email ='${email}' `
+                        condition = `set ad_email ='${email}' `
                     } else {
-                        condition += `,u_email='${email}'`
+                        condition += `,ad_email='${email}'`
                     }
                 }
                 if (mobile) {
                     if (condition == '') {
-                        condition = `set u_mobile ='${mobile}' `
+                        condition = `set ad_phone ='${mobile}' `
                     } else {
-                        condition += `,u_mobile='${mobile}'`
+                        condition += `,ad_phone='${mobile}'`
                     }
                 }
 
                 if (role) {
                     if (condition == '') {
-                        condition = `set u_role ='${role}' `
+                        condition = `set ad_role ='${role}' `
                     } else {
-                        condition += `,u_role='${role}'`
+                        condition += `,ad_role='${role}'`
                     }
                 }
                 if (u_access) {
                     if (condition == '') {
-                        condition = `set u_access ='${u_access}' `
+                        condition = `set ad_access ='${u_access}' `
                     } else {
-                        condition += `,u_access='${u_access}'`
+                        condition += `,ad_access='${u_access}'`
                     }
                 }
 
