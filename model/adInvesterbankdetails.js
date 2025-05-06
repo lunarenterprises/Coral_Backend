@@ -3,9 +3,9 @@ var util = require("util")
 const query = util.promisify(db.query).bind(db);
 
 
-module.exports.getAdmin = async (user_id) => {
-    var Query = `select * from users where u_id = ? and u_role ='superadmin'`;
-    var data = await query(Query, [user_id]);
+module.exports.getAdmin = async (admin_id, admin_role) => {
+    var Query = `select * from admin where ad_id = ? and ad_role =?`;
+    var data = await query(Query, [admin_id, admin_role]);
     return data;
 };
 

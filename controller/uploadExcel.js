@@ -3,7 +3,7 @@ const XLSX = require('xlsx');
 const { parseAmount } = require('../util/parseAmount')
 const model = require('../model/uploadExcel')
 
-module.exports.UploadExcelIntoDB = async (req, res) => {
+module.exports.UploadInvestmentCalculaterExcel = async (req, res) => {
     try {
         const form = formidable({ multiples: false });
 
@@ -44,7 +44,7 @@ module.exports.UploadExcelIntoDB = async (req, res) => {
 
                     let amountText = row['Amount']
                     const parsedAmount = parseAmount(Array.isArray(amountText) ? amountText.join('-') : amountText);
-                    
+
 
                     return {
                         ri_amount_from: parsedAmount?.from ?? null,
@@ -66,12 +66,12 @@ module.exports.UploadExcelIntoDB = async (req, res) => {
                 if (createdData.affectedRows > 0) {
                     return res.send({
                         result: true,
-                        message: "Data inserted successfully"
+                        message: "Investment Calculater Data inserted successfully"
                     })
                 } else {
                     return res.send({
                         result: false,
-                        message: "Failed to insert data."
+                        message: "Failed to insert Investment Calculater data."
                     })
                 }
             } catch (error) {
@@ -89,3 +89,233 @@ module.exports.UploadExcelIntoDB = async (req, res) => {
         })
     }
 }
+
+
+module.exports.UploadHGFSExcel = async (req, res) => {
+    try {
+        const form = formidable({ multiples: false });
+
+        form.parse(req, async (err, fields, files) => {
+            if (err) {
+                console.error('Error parsing form:', err);
+                return res.status(400).send({
+                    result: false,
+                    message: 'Error parsing form'
+                });
+            }
+
+            const file = files.file;
+
+            if (!file) {
+                return res.status(400).send({
+                    result: false,
+                    message: "No file found."
+                });
+            }
+
+            try {
+                const filePath = file.filepath;
+                const workbook = XLSX.readFile(filePath);
+                const worksheet = workbook.Sheets[workbook.SheetNames[2]]; // Use first sheet
+
+                // Read and convert to JSON
+                const data = XLSX.utils.sheet_to_json(worksheet, { raw: false });
+                console.log(data, "datat");
+
+                // Transform to DB schema
+                const dbData = data.map(row => {
+                    return {
+                        industry: row['Industry']?.trim() || null,
+                        previous_year_growth: parseFloat(row['Previous year growth'].replace('%', '')) || 0,
+                        last_year_growth: parseFloat(row['Last year Growth'].replace('%', '')) || 0,
+                        growth: parseFloat(row['Growth'].replace('%', '')) || 0
+                    };
+                });
+                console.log(dbData, "dbData");
+
+                // Insert into DB
+                const createdData = await model.AddHgfsData(dbData);
+
+                if (createdData.affectedRows > 0 || createdData.insertId) {
+                    return res.send({
+                        result: true,
+                        message: "Data inserted successfully"
+                    });
+                } else {
+                    return res.send({
+                        result: false,
+                        message: "Failed to insert data."
+                    });
+                }
+            } catch (error) {
+                console.error('Processing error:', error);
+                return res.status(500).send({
+                    result: false,
+                    message: error.message
+                });
+            }
+        });
+    } catch (error) {
+        return res.send({
+            result: false,
+            message: error.message
+        });
+    }
+};
+
+
+
+module.exports.UploadCurrentInvestmentExcel = async (req, res) => {
+    try {
+        const form = formidable({ multiples: false });
+
+        form.parse(req, async (err, fields, files) => {
+            if (err) {
+                console.error('Error parsing form:', err);
+                return res.status(400).send({
+                    result: false,
+                    message: 'Error parsing form'
+                });
+            }
+
+            const file = files.file;
+
+            if (!file) {
+                return res.status(400).send({
+                    result: false,
+                    message: "No file found."
+                });
+            }
+
+            try {
+                const filePath = file.filepath;
+                const workbook = XLSX.readFile(filePath);
+                const worksheet = workbook.Sheets[workbook.SheetNames[3]];
+
+                const data = XLSX.utils.sheet_to_json(worksheet, { raw: false });
+
+                const parseAED = (val) => {
+                    if (!val) return 0;
+                    return parseFloat(
+                        val.toString().replace(/[^\d.]/g, '').replace(/,/g, '')
+                    ) || 0;
+                };
+
+                const dbData = data.map(row => ({
+                    company: row['Companies']?.trim() || null,
+                    current_investment: parseAED(row['Current Investment']),
+                    growth_percent: parseFloat(row['Growth %']) || 0,
+                    min_investment: parseAED(row['Minimum Investment (Private investors can join with for Project wise CWI investment pools)']),
+                    tc_current_CAGR: null,
+                    tc_expected_CAGR: null
+
+
+                }));
+
+                const result = await model.AddCurrentInvestmentData(dbData);
+
+                if (result.affectedRows > 0 || result.insertId) {
+                    return res.send({
+                        result: true,
+                        message: "Current investment data inserted successfully"
+                    });
+                } else {
+                    return res.send({
+                        result: false,
+                        message: "Failed to insert current investment data."
+                    });
+                }
+            } catch (error) {
+                console.error('Processing error:', error);
+                return res.status(500).send({
+                    result: false,
+                    message: error.message
+                });
+            }
+        });
+    } catch (error) {
+        return res.status(500).send({
+            result: false,
+            message: error.message
+        });
+    }
+};
+
+
+
+module.exports.UploadFutureInvestmentExcel = async (req, res) => {
+    try {
+        const form = formidable({ multiples: false });
+
+        form.parse(req, async (err, fields, files) => {
+            if (err) {
+                console.error('Error parsing form:', err);
+                return res.status(400).send({
+                    result: false,
+                    message: 'Error parsing form'
+                });
+            }
+
+            const file = files.file;
+
+            if (!file) {
+                return res.status(400).send({
+                    result: false,
+                    message: "No file found."
+                });
+            }
+
+            try {
+                const filePath = file.filepath;
+                const workbook = XLSX.readFile(filePath);
+                const worksheet = workbook.Sheets[workbook.SheetNames[4]]; // Sheet 4
+
+                const data = XLSX.utils.sheet_to_json(worksheet, { raw: false });
+
+                const parseAED = (val) => {
+                    if (!val) return 0;
+                    return parseFloat(val.toString().replace(/[^\d.]/g, '').replace(/,/g, '')) || 0;
+                };
+
+                const dbData = data.map(row => {
+                    const expectedRoi = row['Expected ROI']
+                        ? row['Expected ROI'].toString().replace(/[%\s]/g, '')
+                        : null;
+
+                    return {
+                        industry: row['Industries']?.trim() || null,
+                        planned_investment: parseAED(row['Planned Investments']),
+                        expected_roi: expectedRoi,
+                        min_investment: parseAED(row['Minimum Investment'])
+                    };
+                });
+                console.log(dbData, "dd");
+
+                const result = await model.AddFutureInvestmentData(dbData);
+
+                if (result.affectedRows > 0 || result.insertId) {
+                    return res.send({
+                        result: true,
+                        message: "Future investment data inserted successfully"
+                    });
+                } else {
+                    return res.send({
+                        result: false,
+                        message: "Failed to insert Future investment data."
+                    });
+                }
+            } catch (error) {
+                console.error('Processing error:', error);
+                return res.status(500).send({
+                    result: false,
+                    message: error.message
+                });
+            }
+        });
+    } catch (error) {
+        return res.status(500).send({
+            result: false,
+            message: error.message
+        });
+    }
+};

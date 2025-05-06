@@ -119,4 +119,17 @@ module.exports.ChangeInvestPatmentStatus = async (pay_invest_id, pay_invest_stat
     return data;
 }
 
-//-------------------------------
+//-----------------------------------------
+
+module.exports.GetAdmin = async (activate_admin_id) => {
+    var Query = `SELECT * FROM admin where ad_id = ?`;
+    var data = await query(Query, [activate_admin_id]);
+    return data;
+}
+module.exports.ChangeAdminStatus = async (activate_admin_status, activate_admin_id) => {
+    var Query = `UPDATE admin SET ad_status = ? WHERE ad_id = ? `;
+    var data = await query(Query, [activate_admin_status, activate_admin_id]);
+    return data;
+}
+
+//---------------------------------
