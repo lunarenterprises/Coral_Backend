@@ -5,7 +5,7 @@ module.exports.LockPeriod = async (req, res) => {
     try {
         var date = moment().format('YYYY-MM-DD')
         let { user_id } = req.headers
-        let { amount, year, wf, project } = req.body
+        let { amount, year, wf, project, profit_model } = req.body
         if (!wf) {
             wf = 'Yearly'
         }
@@ -115,7 +115,7 @@ module.exports.LockPeriod = async (req, res) => {
                     var percent = returns_data[0].ri_return_year * year
                 }
             }
-            let lockperiod = await model.lock(user_id, percent, date, amount, year, project, wf, calculate)
+            let lockperiod = await model.lock(user_id, percent, date, amount, year, project, wf, calculate, profit_model)
 
 
             return res.send({
