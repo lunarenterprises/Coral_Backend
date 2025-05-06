@@ -139,6 +139,8 @@ route.post('/message/sendMessage',require('../controller/userMessages').SendMess
 
 route.post('/message/listMessages',require('../controller/userMessages').ListMessages)
 
+route.get('/top_company',require('../controller/top_company').ListTopCompany)
+
 
 /// Payment Routes
 route.post('/createPayment', require('../controller/payment').createClientSecret)
