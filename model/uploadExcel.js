@@ -27,3 +27,54 @@ module.exports.AddToDB = async (data) => {
 
     return await query(insertQuery, [values]);
 }
+
+
+module.exports.AddHgfsData = async (data) => {
+    await query('TRUNCATE TABLE hgfs');
+    const insertQuery = `INSERT INTO hgfs (h_industry,h_previous_years,h_last_year,h_growth) VALUES ? `;
+
+    const values = data.map(row => [
+        row.industry,
+        row.previous_year_growth,
+        row.last_year_growth,
+        row.growth,
+    ]);
+
+    return await query(insertQuery, [values]);
+}
+
+
+
+
+module.exports.AddCurrentInvestmentData = async (data) => {
+    await query('TRUNCATE TABLE top_company');
+    const insertQuery = `INSERT INTO top_company (tc_name, tc_current_year, tc_growth_percentage,tc_minimum_investment,tc_current_CAGR,tc_expected_CAGR) VALUES ? `;
+
+    const values = data.map(row => [
+        row.company,
+        row.current_investment,
+        row.growth_percent,
+        row.min_investment,
+        row.tc_current_CAGR,
+        row.tc_expected_CAGR
+    ]);
+
+    return await query(insertQuery, [values]);
+}
+
+
+module.exports.AddFutureInvestmentData = async (data) => {
+    await query('TRUNCATE TABLE future_investments');
+    const insertQuery = `INSERT INTO future_investments (fi_industries,fi_plan_to_invest,fi_expected_return,fi_minimum_investment) VALUES ? `;
+
+    const values = data.map(row => [
+        row.industry,
+        row.planned_investment,
+        row.expected_roi,
+        row.min_investment
+    ]);
+
+    return await query(insertQuery, [values]);
+}
+
+

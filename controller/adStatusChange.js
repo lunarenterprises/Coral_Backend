@@ -17,7 +17,7 @@ module.exports.StatusChange = async (req, res) => {
             })
         }
         var currentdate = moment().format('YYYY-MM-DD')
-        var { contract_status, contract_id, activate_user_id, activate_user_status, activate_admin_id, invest_req_id, invest_req_status, payout_id, payout_status, payout_amount, withdrawel_status, withdrawel_id, withdraw_amount, kyc_status, kyc_user_id, kyc_message, pay_invest_id, pay_invest_status } = req.body
+        var { contract_status, contract_id, activate_admin_id, activate_admin_status, activate_user_id, activate_user_status, activate_admin_id, invest_req_id, invest_req_status, payout_id, payout_status, payout_amount, withdrawel_status, withdrawel_id, withdraw_amount, kyc_status, kyc_user_id, kyc_message, pay_invest_id, pay_invest_status } = req.body
 
 
         if (contract_status && contract_id) {
@@ -57,6 +57,34 @@ module.exports.StatusChange = async (req, res) => {
                 await notification.addNotification(admin_id, `${admin_role}`, `Verifying user ${getuser[0]?.u_name}`, `User status verifiyed from ${previous_status} to active`)
 
                 let changeuserstatus = await model.ChangeUserStatus(activate_user_status, activate_user_id)
+
+                if (changeuserstatus.affectedRows > 0) {
+                    return res.send({
+                        result: true,
+                        message: "User Status Updated Sucessfully"
+                    })
+                } else {
+                    return res.send({
+                        result: false,
+                        message: "Failed to Update User Status"
+                    })
+                }
+            } else {
+                return res.send({
+                    result: false,
+                    message: "Failed to get user Details"
+                })
+            }
+        }
+
+        if (activate_admin_id && activate_admin_status) {
+
+            var getuser = await model.GetAdmin(activate_admin_id)
+            if (getuser.length > 0) {
+                var previous_status = getuser[0]?.ad_status
+                await notification.addNotification(admin_id, `${admin_role}`, `Verifying admin ${getuser[0]?.ad_name}`, `Admin status verifiyed from ${previous_status} to active`)
+
+                let changeuserstatus = await model.ChangeAdminStatus(activate_admin_status, activate_admin_id)
 
                 if (changeuserstatus.affectedRows > 0) {
                     return res.send({
