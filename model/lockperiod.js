@@ -8,8 +8,8 @@ module.exports.getinvest = async (condition) => {
     return data;
 };
 
-module.exports.lock = async (u_id, percent, date,amount,duration,project,wf,return_amount) => {
-    var Query = `insert into lock_period(lp_u_id,lp_percent,lp_date,lp_amount,lp_duration,lp_project,lp_wf,lp_return)values(?,?,?,?,?,?,?,?)`;
-    var data = await query(Query, [u_id, percent, date,amount,duration,project,wf,return_amount]);
+module.exports.lock = async (u_id, percent, date, amount, duration, project, wf, return_amount, profit_model) => {
+    var Query = `insert into lock_period(lp_u_id,lp_percent,lp_date,lp_amount,lp_duration,lp_project,lp_wf,lp_return,lp_profit_model)values(?,?,?,?,?,?,?,?,?)`;
+    var data = await query(Query, [u_id, percent, date, amount, duration, project, wf, return_amount, profit_model]);
     return data;
 };
