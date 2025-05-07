@@ -67,11 +67,12 @@ module.exports.cwiInvestment = async (req, res) => {
         let avgPercentage = (lower + upper) / 2;
         let return_amount = (investment_amount * avgPercentage) / 100;
         let bankaccount = await model.getBankDetails(user_id)
+        let nomineeData = null
+        let createdNominee = null
         if (nomineeFullName) {
-            let nomineeData = await model.getnomineeDetails(user_id)
+            nomineeData = await model.getnomineeDetails(user_id)
             if (nomineeData.length === 0) {
-                let nominee = await model.AddNominee(user_id, nomineeFullName, relationship, contactNumber, nominee_residentialAddress)
-                var nominee_id = nominee.insertId
+                createdNominee = await model.AddNominee(user_id, nomineeFullName, relationship, contactNumber, nominee_residentialAddress)
             }
         }
         var userdetails = await userModel.getUser(user_id)
@@ -82,7 +83,6 @@ module.exports.cwiInvestment = async (req, res) => {
             })
         }
         let usernme = userdetails[0]?.u_name.toUpperCase().substring(0, 3)
-        // let savedetails = await model.AddInvest()
         var path1 = `${process.cwd()}/uploads/agreement/`;
         var path = `${process.cwd()}/uploads/agreement/CON_${usernme}_${moddate}.pdf`;
 
@@ -1395,7 +1395,8 @@ module.exports.cwiInvestment = async (req, res) => {
         </body>
         
         </html>`
-        var saveInvest = await orderModel.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankaccount[0].b_id)
+        let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
+        var saveInvest = await orderModel.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankaccount[0].b_id, nomineeId,"future_invest")
         var pdf = await createPdfWithPuppeteer(html, path);
         await SendMessage(user_id, "CWI Investment", "CWI Investment added successfully.!")
         await sendNotificationToAdmins("CWI Investment", `${userdetails[0].u_name} requested to invest in CWI Investment`)
