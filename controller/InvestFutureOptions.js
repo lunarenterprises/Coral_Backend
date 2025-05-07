@@ -1,8 +1,18 @@
 let model = require('../model/InvestFutureOptions')
+var moment = require('moment')
+var fs = require('fs');
+const { createPdfWithPuppeteer } = require('../util/pdfGeneration');
+const notification = require('../util/saveNotification');
+const { sendNotificationToAdmins } = require('../util/firebaseConfig');
 
 
 module.exports.InvestFututreOptions = async (req, res) => {
     try {
+        var day = moment().format('DD')
+        var month = moment().format('MMMM')
+        var year = moment().format('YYYY')
+        var date = moment().format("YYYY-MM-DD")
+        var moddate = moment().format("DD_MM_YYYY")
         let { user_id } = req.headers
         if (!user_id) {
             return res.send({
@@ -15,6 +25,13 @@ module.exports.InvestFututreOptions = async (req, res) => {
             return res.send({
                 result: false,
                 message: "Future lock id is required."
+            })
+        }
+        var userdetails = await model.getUser(user_id)
+        if (userdetails[0].u_kyc !== "verified") {
+            return res.send({
+                result: false,
+                message: "KYC needs to be verified before investing"
             })
         }
         let lockData = await model.CheckLockData(lp_id, user_id)
@@ -45,20 +62,12 @@ module.exports.InvestFututreOptions = async (req, res) => {
         let nomineeData = null
         let createdNominee = null
         if (nomineeFullName) {
-            nomineeData = await nomineeModel.getnomineeDetails(user_id)
+            nomineeData = await model.getnomineeDetails(user_id)
             if (nomineeData.length === 0) {
                 createdNominee = await model.AddNominee(user_id, nomineeFullName, relationship, contactNumber, nominee_residentialAddress)
             }
         }
-        var userdetails = await model.getUser(user_id)
-        if (userdetails[0].u_kyc !== "verified") {
-            return res.send({
-                result: false,
-                message: "KYC needs to be verified before investing"
-            })
-        }
         let usernme = userdetails[0]?.u_name.toUpperCase().substring(0, 3)
-        // let savedetails = await model.AddInvest()
         var path1 = `${process.cwd()}/uploads/agreement/`;
         var path = `${process.cwd()}/uploads/agreement/CON_${usernme}_${moddate}.pdf`;
 
@@ -1375,8 +1384,8 @@ module.exports.InvestFututreOptions = async (req, res) => {
         var pdf = await createPdfWithPuppeteer(html, path);
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
         var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId, "lock_invest")
-        await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest`)
-        await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Investment added successfully')
+        await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest future lock`)
+        await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Future lock investment added successfully')
         return res.send({
             result: true,
             message: "order success",
