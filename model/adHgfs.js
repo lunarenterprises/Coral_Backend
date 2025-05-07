@@ -3,10 +3,10 @@ var util = require("util");
 const query = util.promisify(db.query).bind(db);
 
 module.exports.getAdmin = async (user_id) => {
-    var Query = `select * from users where u_id = ?`;
+    var Query = `select * from admin where ad_id = ? `;
     var data = await query(Query, [user_id]);
     return data;
-};
+}
 
 
 module.exports.AddHGFSQuery = async (h_industry, h_previous_years, h_last_year, h_growth) => {

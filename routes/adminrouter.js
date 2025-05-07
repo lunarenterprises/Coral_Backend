@@ -75,8 +75,16 @@ route.post('/upload/contract-invoice', verifyToken, require('../controller/adCon
 
 route.put('/edit/payout', verifyToken, require('../controller/adPayoutHistory').EditPayout)
 
+route.post('/upload/investment-calculater/file', verifyToken, require('../controller/uploadExcel').UploadInvestmentCalculaterExcel)
 
-route.post('/upload/file',verifyToken,require('../controller/uploadExcel').UploadExcelIntoDB)
+route.post('/upload/hgfs/file', verifyToken, require('../controller/uploadExcel').UploadHGFSExcel)
+
+route.post('/upload/current-investment/file', verifyToken, require('../controller/uploadExcel').UploadCurrentInvestmentExcel)
+
+route.post('/upload/future-investment/file', verifyToken, require('../controller/uploadExcel').UploadFutureInvestmentExcel)
+
+
+
 
 
 

@@ -3,7 +3,7 @@ let notification = require('../util/saveNotification')
 var bcrypt = require("bcrypt");
 var formidable = require('formidable')
 var fs = require('fs')
-
+var moment = require('moment')
 module.exports.AddSubAdmin = async (req, res) => {
     try {
 
@@ -20,12 +20,12 @@ module.exports.AddSubAdmin = async (req, res) => {
             let user_id = req.user.admin_id
             let admin_role = req.user.role
 
+            let date = moment().format('YYYY-MM-DD')
 
 
+            let { name, email, mobile, password, role, ad_access } = fields
 
-            let { name, email, mobile, password, role, u_access } = fields
-
-            if (!name || !email || !mobile || !password || !role || !u_access) {
+            if (!name || !email || !mobile || !password || !role || !ad_access) {
                 return res.send({
                     result: false,
                     message: "Please fill all the fields"
@@ -33,7 +33,7 @@ module.exports.AddSubAdmin = async (req, res) => {
             }
 
             var adminData = await model.getAdmin(user_id, admin_role)
-            if (adminData[0]?.u_role !== 'superadmin') {
+            if (adminData[0]?.ad_role !== 'superadmin') {
                 return res.send({
                     result: false,
                     message: "Access Denied,try with authorized account"
@@ -53,10 +53,10 @@ module.exports.AddSubAdmin = async (req, res) => {
 
                 fs.writeFileSync(newPath, rawData)
                 var image = "uploads/profile/admin/" + files.image.originalFilename
-                let addadmin = await model.AddAdmin(name, email, mobile, image, hashedPassword, role, u_access)
+                let addadmin = await model.AddAdmin(name, email, hashedPassword, mobile, image, date, role, ad_access)
 
                 if (addadmin.affectedRows > 0) {
-                    await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.u_name} Added Subadmin`, `Subadmin ${name} with role ${role} added sucessfully`)
+                    await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.ad_name} Added Subadmin`, `Subadmin ${name} with role ${role} added sucessfully`)
 
                     return res.send({
                         result: true,
@@ -70,10 +70,10 @@ module.exports.AddSubAdmin = async (req, res) => {
                 }
 
             }
-            let addadmin = await model.AddAdmin(name, email, mobile,null, hashedPassword, role, u_access)
+            let addadmin = await model.AddAdmin(name, email, hashedPassword, mobile, null, date, role, ad_access)
 
             if (addadmin.affectedRows > 0) {
-                await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.u_name} Added Subadmin`, `Subadmin ${name} with role ${role} added sucessfully`)
+                await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.ad_name} Added Subadmin`, `Subadmin ${name} with role ${role} added sucessfully`)
 
                 return res.send({
                     result: true,

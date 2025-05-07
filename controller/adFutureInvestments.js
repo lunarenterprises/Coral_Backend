@@ -49,7 +49,7 @@ module.exports.AddFutureInvestment = async (req, res) => {
         let user_id = req.user.admin_id
         let admin_role = req.user.role
 
-        var adminData = await model.getAdmin(user_id, admin_role)
+        var adminData = await model.getAdmin(user_id)
         if (adminData[0]?.fi_minimum_investment == 'user') {
             return res.send({
                 result: false,

@@ -6,7 +6,6 @@ module.exports.GetFutureInvestmentList = async (fi_id) => {
     let condition = ''
     if (fi_id) {
         condition = `and fi_id ='${fi_id}'`
-
     }
     var Query = `select * from future_investments where fi_status='active' ${condition}`;
     var data = await query(Query);
@@ -15,10 +14,10 @@ module.exports.GetFutureInvestmentList = async (fi_id) => {
 
 
 module.exports.getAdmin = async (user_id) => {
-    var Query = `select * from users where u_id = ?`;
+    var Query = `select * from admin where ad_id = ? `;
     var data = await query(Query, [user_id]);
     return data;
-};
+}
 
 
 module.exports.AddFutureInvestmentQuery = async (fi_industries, fi_plan_to_invest, fi_expected_return, fi_minimum_investment) => {

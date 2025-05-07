@@ -7,7 +7,7 @@ var jwt = require('jsonwebtoken');
 module.exports.AdminLogin = async (req, res) => {
     try {
 
-        let { device_id, device_os, device_token, password, email, app_version, fcm_token } = req.body;
+        let { device_os, password, email, fcm_token } = req.body;
 
         if (!password || !email) {
             return res.send({
@@ -19,23 +19,24 @@ module.exports.AdminLogin = async (req, res) => {
 
 
         var CheckUser = await model.CheckUserQuery(email);
-
-        if (CheckUser[0]?.u_status !== 'active') {
-            return res.send({
-                result: false,
-                message: "Your Access Denied,Please contact management",
-            });
-        }
+        console.log(CheckUser, "admin");
         if (CheckUser.length > 0) {
+
+            if (CheckUser[0]?.ad_status !== 'active') {
+                return res.send({
+                    result: false,
+                    message: "Your Access Denied,Please contact management",
+                });
+            }
             let Checkpassword = await bcrypt.compare(
                 password,
-                CheckUser[0].u_password
+                CheckUser[0].ad_password
             );
             if (Checkpassword == true) {
                 const payload = {
-                    email: CheckUser[0].u_email,
-                    admin_id: CheckUser[0].u_id,
-                    role: CheckUser[0].u_role
+                    email: CheckUser[0].ad_email,
+                    admin_id: CheckUser[0].ad_id,
+                    role: CheckUser[0].ad_role
 
                 };
 
@@ -45,41 +46,32 @@ module.exports.AdminLogin = async (req, res) => {
                     {}
                 );
                 let CheckUserapps = await model.CheckUserAppsQuery(
-                    CheckUser[0].u_id,
-                    device_id,
+                    CheckUser[0].ad_id,
                     device_os
                 );
-                var api_key = null;
+                // var api_key = null;
                 if (CheckUserapps.length > 0) {
-                    api_key = randtoken.generate(32);
+                    // api_key = randtoken.generate(32);
                     await model.UpdateUserAppsQuery(
-                        device_token,
-                        api_key,
                         fcm_token,
-                        app_version,
                         CheckUserapps[0].user_apps_id)
                 } else {
-                    api_key = randtoken.generate(32);
+                    // api_key = randtoken.generate(32);
                     await model.InsertUserAppsQuery(
-                        device_id,
                         device_os,
-                        device_token,
-                        CheckUser[0].u_id,
-                        api_key,
+                        CheckUser[0].ad_id,
                         fcm_token,
-                        app_version
                     )
                 }
                 return res.send({
                     result: true,
                     message: "you are successfully logged in",
-                    user_id: CheckUser[0].u_id,
-                    user_name: CheckUser[0].u_name,
-                    user_email: CheckUser[0].u_email,
-                    user_mobile: CheckUser[0].u_mobile,
-                    user_role: CheckUser[0].u_role,
-                    user_api_key: api_key,
-                    user_status: CheckUser[0].u_status,
+                    user_id: CheckUser[0].ad_id,
+                    user_name: CheckUser[0].ad_name,
+                    user_email: CheckUser[0].ad_email,
+                    user_mobile: CheckUser[0].ad_phone,
+                    user_role: CheckUser[0].ad_role,
+                    user_status: CheckUser[0].ad_status,
                     user_token: token
 
                 })
