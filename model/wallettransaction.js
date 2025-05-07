@@ -7,3 +7,9 @@ module.exports.Getwallet = async (user_id) => {
     var data = await query(Query, [user_id]);
     return data;
 };
+
+
+module.exports.GetUser = async (user_id) => {
+    let Query = `select * from users where u_id=?`
+    return await query(Query, [user_id])
+}
