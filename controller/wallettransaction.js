@@ -17,7 +17,7 @@ module.exports.WalletTransaction = async (req, res) => {
             })
         }
         var data = await model.Getwallet(user_id)
-        if (data.length > 0) {
+        if (data.length) {
             return res.send({
                 result: true,
                 message: "data retrieved",
