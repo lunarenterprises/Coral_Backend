@@ -8,7 +8,7 @@ module.exports.AddHGFS = async (req, res) => {
         let admin_role = req.user.role
 
         var adminData = await model.getAdmin(user_id, admin_role)
-        if (adminData[0]?.u_role == 'user') {
+        if (adminData[0]?.ad_role == 'user') {
             return res.send({
                 result: false,
                 message: "Access Denied,try with authorized account"
@@ -99,7 +99,7 @@ module.exports.EditHGFS = async (req, res) => {
         // let admin_role = req.user.role
 
         var adminData = await model.getAdmin(user_id)
-        if (adminData[0]?.u_role == 'user') {
+        if (adminData[0]?.ad_role == 'user') {
             return res.send({
                 result: false,
                 message: "Access Denied,try with authorized account"

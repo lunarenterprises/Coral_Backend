@@ -10,14 +10,14 @@ module.exports.StatusChange = async (req, res) => {
         let admin_role = req.user.role
 
         var adminData = await model.CheckAdmin(admin_id, admin_role)
-        if (adminData[0]?.u_role == 'user') {
+        if (adminData[0]?.ad_role == 'user') {
             return res.send({
                 result: false,
                 message: "Access Denied,try with authorized account"
             })
         }
         var currentdate = moment().format('YYYY-MM-DD')
-        var { contract_status, contract_id, activate_admin_id, activate_admin_status, activate_user_id, activate_user_status, activate_admin_id, invest_req_id, invest_req_status, payout_id, payout_status, payout_amount, withdrawel_status, withdrawel_id, withdraw_amount, kyc_status, kyc_user_id, kyc_message, pay_invest_id, pay_invest_status } = req.body
+        var { contract_status, contract_id, activate_admin_id, activate_admin_status, activate_user_id, activate_user_status, invest_req_id, invest_req_status, payout_id, payout_status, payout_amount, withdrawel_status, withdrawel_id, withdraw_amount, kyc_status, kyc_user_id, kyc_message, pay_invest_id, pay_invest_status } = req.body
 
 
         if (contract_status && contract_id) {
@@ -82,51 +82,21 @@ module.exports.StatusChange = async (req, res) => {
             var getuser = await model.GetAdmin(activate_admin_id)
             if (getuser.length > 0) {
                 var previous_status = getuser[0]?.ad_status
-                await notification.addNotification(admin_id, `${admin_role}`, `Verifying admin ${getuser[0]?.ad_name}`, `Admin status verifiyed from ${previous_status} to active`)
+                var role = getuser[0]?.ad_role
+
+                await notification.addNotification(admin_id, `${admin_role}`, `Verifying ${role} ${getuser[0]?.ad_name}`, `Admin ${role} status verifiyed from ${previous_status} to active`)
 
                 let changeuserstatus = await model.ChangeAdminStatus(activate_admin_status, activate_admin_id)
 
                 if (changeuserstatus.affectedRows > 0) {
                     return res.send({
                         result: true,
-                        message: "User Status Updated Sucessfully"
+                        message: "Subadmin Status Updated Sucessfully"
                     })
                 } else {
                     return res.send({
                         result: false,
-                        message: "Failed to Update User Status"
-                    })
-                }
-            } else {
-                return res.send({
-                    result: false,
-                    message: "Failed to get user Details"
-                })
-            }
-        }
-
-        if (activate_admin_id) {
-
-            var getuser = await model.GetUser(activate_admin_id)
-            if (getuser.length > 0) {
-                var previous_status = getuser[0]?.u_status
-                var role = getuser[0]?.u_role
-
-                let activate_admin_status = 'active'
-
-                await notification.addNotification(admin_id, `${admin_role}`, `Verifying ${role} ${getuser[0]?.u_name}`, `User status verifiyed from ${previous_status} to active`)
-
-                let changeuserstatus = await model.ChangeUserStatus(activate_admin_status, activate_admin_id)
-
-                if (changeuserstatus.affectedRows > 0) {
-                    return res.send({
-                        result: true,
-                        message: "subadmin Status Updated Sucessfully"
-                    })
-                } else {
-                    return res.send({
-                        result: false,
-                        message: "Failed to Update subadmin Status"
+                        message: "Failed to Update Subadmin Status"
                     })
                 }
             } else {
@@ -136,6 +106,38 @@ module.exports.StatusChange = async (req, res) => {
                 })
             }
         }
+
+        // if (activate_admin_id) {
+
+        //     var getuser = await model.GetUser(activate_admin_id)
+        //     if (getuser.length > 0) {
+        //         var previous_status = getuser[0]?.u_status
+        //         var role = getuser[0]?.u_role
+
+        //         let activate_admin_status = 'active'
+
+        //         await notification.addNotification(admin_id, `${admin_role}`, `Verifying ${role} ${getuser[0]?.u_name}`, `User status verifiyed from ${previous_status} to active`)
+
+        //         let changeuserstatus = await model.ChangeUserStatus(activate_admin_status, activate_admin_id)
+
+        //         if (changeuserstatus.affectedRows > 0) {
+        //             return res.send({
+        //                 result: true,
+        //                 message: "subadmin Status Updated Sucessfully"
+        //             })
+        //         } else {
+        //             return res.send({
+        //                 result: false,
+        //                 message: "Failed to Update subadmin Status"
+        //             })
+        //         }
+        //     } else {
+        //         return res.send({
+        //             result: false,
+        //             message: "Failed to get subadmin Details"
+        //         })
+        //     }
+        // }
 
 
         if (invest_req_id && invest_req_status) {

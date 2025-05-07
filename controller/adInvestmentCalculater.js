@@ -10,7 +10,7 @@ module.exports.AddInvestmentCalculater = async (req, res) => {
 
         var adminData = await model.getAdmin(user_id, admin_role)
 
-        if (adminData[0]?.u_role !== 'superadmin') {
+        if (adminData[0]?.ad_role !== 'superadmin') {
             return res.send({
                 result: false,
                 message: "Access Denied,try with authorized account"
