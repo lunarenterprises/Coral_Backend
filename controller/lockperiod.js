@@ -5,16 +5,22 @@ module.exports.LockPeriod = async (req, res) => {
     try {
         var date = moment().format('YYYY-MM-DD')
         let { user_id } = req.headers
+        if (!user_id) {
+            return res.send({
+                result: false,
+                message: "User id is required"
+            })
+        }
         let { amount, year, wf, project, profit_model } = req.body
         if (!wf) {
             wf = 'Yearly'
         }
-
         let cutyear = year.split(',')[1]
         let givenyear = Number(cutyear)
         var getyear = moment().format('YYYY')
         var yearto = Number(getyear)
         year = Number(givenyear) - Number(yearto)
+        console.log("year after : ", year)
         let condition = ``
         if (amount < 100000) {
             if (condition !== '') {

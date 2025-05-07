@@ -1,33 +1,35 @@
-var model = require('../model/Addorder')
-let nomineeModel = require('../model/cwiInvestment')
-var moment = require('moment')
-var puppeteer = require('puppeteer');
-var fs = require('fs');
-const { createPdfWithPuppeteer } = require('../util/pdfGeneration');
-const notification = require('../util/saveNotification');
-const { sendNotificationToAdmins } = require('../util/firebaseConfig');
+let model = require('../model/InvestFutureOptions')
 
 
-module.exports.AddOrder = async (req, res) => {
+module.exports.InvestFututreOptions = async (req, res) => {
     try {
-        var day = moment().format('DD')
-        var month = moment().format('MMMM')
-        var year = moment().format('YYYY')
-        var date = moment().format("YYYY-MM-DD")
-        var moddate = moment().format("DD_MM_YYYY")
         let { user_id } = req.headers
         if (!user_id) {
             return res.send({
                 result: false,
-                message: "User id is required"
+                message: "User id is required. "
+            })
+        }
+        let { lp_id } = req.body
+        if (!lp_id) {
+            return res.send({
+                result: false,
+                message: "Future lock id is required."
+            })
+        }
+        let lockData = await model.CheckLockData(lp_id, user_id)
+        if (lockData.length === 0) {
+            return res.send({
+                result: false,
+                message: "Future lock data not found."
             })
         }
         let { investment, securityOption, clientInfo, bankAccount, nomineeDetails } = req.body
-        let project_name = investment.project_name
-        let investment_amount = investment.investment_amount
-        let investment_duration = investment.investment_duration
-        let profit_model = investment.profit_model
-        let withdrawal_frequency = investment.withdrawal_frequency
+        let project_name = lockData[0]?.lp_project
+        let investment_amount = lockData[0]?.lp_amount
+        let investment_duration = lockData[0]?.lp_duration
+        let profit_model = lockData[0]?.lp_profit_model
+        let withdrawal_frequency = lockData[0]?.lp_wf
         let client_name = clientInfo.clientName
         let passportId = clientInfo.passportId
         let nationalId = clientInfo.nationalId
@@ -38,8 +40,8 @@ module.exports.AddOrder = async (req, res) => {
         let relationship = nomineeDetails.relationship
         let contactNumber = nomineeDetails.contactNumber
         let nominee_residentialAddress = nomineeDetails.residentialAddress
-        let percentage = investment.percentage
-        let return_amount = investment.return_amount
+        let percentage = lockData[0]?.lp_percent
+        let return_amount = lockData[0]?.lp_return
         let bankaccount = await model.getBankaccount(bankAccount)
         let nomineeData = null
         let createdNominee = null
@@ -726,7 +728,7 @@ module.exports.AddOrder = async (req, res) => {
                 and retail sectors;
             </p>
             <p class="paragraph">
-                WHEREAS, the Second Party wishes to invest a sum of AED <span class="form-fields">${investment.investment_amount}</span> with the First
+                WHEREAS, the Second Party wishes to invest a sum of AED <span class="form-fields">${investment_amount}</span> with the First
                 Party for the purpose of earning profits from the First Party's investments in these sectors;
             </p>
             <p class="paragraph">
@@ -739,7 +741,7 @@ module.exports.AddOrder = async (req, res) => {
                 وقطاعات الرعاية الصحية، والقطاعات التعليمية، والقطاعات التكنولوجية، وقطاعات التجزئة؛
             </p>
             <p class="arabic-text">
-                وحيث يرغب الطرف الثاني في استثمار مبلغ <span class="form-fields">${investment.investment_amount}</span> درهم إماراتي لدى الطرف الأول
+                وحيث يرغب الطرف الثاني في استثمار مبلغ <span class="form-fields">${investment_amount}</span> درهم إماراتي لدى الطرف الأول
                 بهدف تحقيق أرباح من استثمارات الطرف الأول في هذه القطاعات؛
             </p>
             <p class="arabic-text">
@@ -767,7 +769,7 @@ module.exports.AddOrder = async (req, res) => {
     <div class="section">
         <h2>2. Funding Amount</h2>
         <p class="english-text">
-            The Second Party agrees to provide the First Party with a sum of AED ${investment.investment_amount} (hereinafter referred to as
+            The Second Party agrees to provide the First Party with a sum of AED ${investment_amount} (hereinafter referred to as
             the "Funding Amount"), which will be used by the First Party to invest in the following sectors:
         </p>
         <ul class="english-text">
@@ -780,7 +782,7 @@ module.exports.AddOrder = async (req, res) => {
             <li>Other Growing Industries</li>
         </ul>
         <p class="arabic-text">
-            يوافق الطرف الثاني على تزويد الطرف الأول بمبلغ قدره ${investment.investment_amount} درهم إماراتي (يشار إليه فيما يلي بـ "مبلغ
+            يوافق الطرف الثاني على تزويد الطرف الأول بمبلغ قدره ${investment_amount} درهم إماراتي (يشار إليه فيما يلي بـ "مبلغ
             التمويل")، والذي سيستخدمه الطرف الأول للاستثمار في القطاعات التالية:
         </p>
         <ul class="arabic-text">
@@ -1177,11 +1179,11 @@ module.exports.AddOrder = async (req, res) => {
             </thead>
             <tbody>
                 <tr>
-                    <td>${investment.investment_amount}</td>
-                    <td>${investment.profit_model}</td>
-                    <td>${investment.percentage}</td>
-                    <td>${investment.withdrawal_frequency}</td>
-                    <td>${investment.investment_duration}</td>
+                    <td>${investment_amount}</td>
+                    <td>${profit_model}</td>
+                    <td>${percentage}</td>
+                    <td>${withdrawal_frequency}</td>
+                    <td>${investment_duration}</td>
                 </tr>
             </tbody>
         </table>
@@ -1373,7 +1375,7 @@ module.exports.AddOrder = async (req, res) => {
         // var save = await model.getBankaccount(bankAccount)
         var pdf = await createPdfWithPuppeteer(html, path);
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
-        var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId,"cwi_invest")
+        var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId, "lock_invest")
         await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Investment added successfully')
         return res.send({
@@ -1382,10 +1384,7 @@ module.exports.AddOrder = async (req, res) => {
             contract_id: saveInvest.insertId,
             path: req.protocol + "://" + req.get("host") + path.replace(process.cwd(), '')
         })
-
     } catch (error) {
-        console.log(error);
-
         return res.send({
             result: false,
             message: error.message

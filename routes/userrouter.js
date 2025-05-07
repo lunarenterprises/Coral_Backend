@@ -141,6 +141,8 @@ route.post('/message/listMessages',require('../controller/userMessages').ListMes
 
 route.get('/top_company',require('../controller/top_company').ListTopCompany)
 
+route.post('/future_options/invest',require('../controller/InvestFutureOptions').InvestFututreOptions)
+
 
 /// Payment Routes
 route.post('/createPayment', require('../controller/payment').createClientSecret)

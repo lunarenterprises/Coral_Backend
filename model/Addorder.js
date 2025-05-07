@@ -14,9 +14,9 @@ module.exports.getUser = async (user_id) => {
     return data;
 };
 
-module.exports.AddInvest = async (u_id, ui_date, ui_duration, ui_amount, ui_percentage, ui_return, ui_type, ui_security_option, project_name, withdrawal_frequency, bankAccount, nominee_id) => {
-    var Query = `insert into user_invest(ui_u_id,ui_date,ui_duration,ui_amount,ui_percentage,ui_return,ui_type,ui_security_option,ui_project_name,ui_wf,ui_bank_id,ui_nominee_id)values(?,?,?,?,?,?,?,?,?,?,?,?)`;
-    var data = await query(Query, [u_id, ui_date, ui_duration, ui_amount, ui_percentage, ui_return, ui_type, ui_security_option, project_name, withdrawal_frequency, bankAccount, nominee_id]);
+module.exports.AddInvest = async (u_id, ui_date, ui_duration, ui_amount, ui_percentage, ui_return, ui_type, ui_security_option, project_name, withdrawal_frequency, bankAccount, nominee_id, invest_type) => {
+    var Query = `insert into user_invest(ui_u_id,ui_date,ui_duration,ui_amount,ui_percentage,ui_return,ui_type,ui_security_option,ui_project_name,ui_wf,ui_bank_id,ui_nominee_id,ui_invest_type)values(?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+    var data = await query(Query, [u_id, ui_date, ui_duration, ui_amount, ui_percentage, ui_return, ui_type, ui_security_option, project_name, withdrawal_frequency, bankAccount, nominee_id, invest_type]);
     return data;
 };
 
