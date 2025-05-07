@@ -8,7 +8,7 @@ module.exports.AdminList = async (req, res) => {
         let admin_role = req.user.role
 
         var adminData = await model.CheckAdmin(user_id, admin_role)
-        if (adminData[0]?.u_role !== 'superadmin') {
+        if (adminData[0]?.ad_role !== 'superadmin') {
             return res.send({
                 result: false,
                 message: "Access Denied,try with authorized account"

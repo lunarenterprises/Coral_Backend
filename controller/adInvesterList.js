@@ -13,7 +13,7 @@ module.exports.InvestersList = async (req, res) => {
 
         var adminData = await model.getAdmin(admin_id, admin_role)
 
-        if (adminData[0]?.u_role == 'user') {
+        if (adminData[0]?.ad_role == 'user') {
             return res.send({
                 result: false,
                 message: "Access Denied,try with authorized account"
