@@ -7,7 +7,7 @@ module.exports.Dashboard = async (req, res) => {
 
         // Fetch admin data to check the role
         var adminData = await model.getAdmin(user_id, admin_role);
-        if (adminData[0]?.u_role === 'user') {
+        if (adminData[0]?.ad_role === 'user') {
             return res.send({
                 result: false,
                 message: "Access Denied, try with an authorized account"
