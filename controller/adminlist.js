@@ -19,7 +19,7 @@ module.exports.AdminList = async (req, res) => {
 
         var condition = ''
         if (admin_id) {
-            condition = ` and u_id = '${admin_id}'`
+            condition = ` and ad_id = '${admin_id}'`
 
         }
 
@@ -27,9 +27,9 @@ module.exports.AdminList = async (req, res) => {
         var getadmin = await model.getAdminList(condition)
 
         let data = await Promise.all(getadmin.map(async (el) => {
-            let adminaccess = el.u_access;
+            let adminaccess = el.ad_access;
             let access = await JSON.parse(adminaccess);
-            el.u_access = access;
+            el.ad_access = access;
             return el;
         }));
 

@@ -9,9 +9,9 @@ module.exports.getUserToken = async (user_id) => {
 };
 
 module.exports.getAdminTokens = async () => {
-    var Query = `SELECT u.u_id, ua.fcm_token
-FROM users u
-INNER JOIN user_apps ua ON u.u_id = ua.user_apps_user_id
-WHERE u.u_role <> 'user' AND ua.fcm_token IS NOT NULL`
+    var Query = `SELECT a.ad_id, ua.fcm_token
+FROM admin a
+INNER JOIN user_apps ua ON a.ad_id = ua.user_apps_admin_id
+WHERE ua.fcm_token IS NOT NULL`
     return await query(Query)
 }
