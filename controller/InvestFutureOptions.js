@@ -1365,13 +1365,13 @@ module.exports.InvestFututreOptions = async (req, res) => {
 
         <div class="signature-section">
             <div class="signature-block">
-                <p>[Second Party's Full Name & sign]</p>
-                <p>Second Party</p>
+                <p>Sagithra Nath G</p>
+                <p>CEO and General Manager</p>
                 <p class="arabic">الطرف الثاني</p>
             </div>
             <div class="signature-block">
-                <p>[Nominee's Full Name & sign]</p>
-                <p>Nominee</p>
+                <p>${userdetails[0].u_name}</p>
+                <p>Second Party</p>
                 <p class="arabic">مرشح</p>
             </div>
         </div>
