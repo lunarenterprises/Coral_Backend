@@ -10,7 +10,7 @@ module.exports.InvestFututreOptions = async (req, res) => {
                 message: "User id is required. "
             })
         }
-        let { lp_id } = req.body
+        let { lp_id, securityOption, clientInfo, bankAccount, nomineeDetails } = req.body
         if (!lp_id) {
             return res.send({
                 result: false,
@@ -24,7 +24,6 @@ module.exports.InvestFututreOptions = async (req, res) => {
                 message: "Future lock data not found."
             })
         }
-        let { investment, securityOption, clientInfo, bankAccount, nomineeDetails } = req.body
         let project_name = lockData[0]?.lp_project
         let investment_amount = lockData[0]?.lp_amount
         let investment_duration = lockData[0]?.lp_duration
