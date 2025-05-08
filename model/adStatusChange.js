@@ -39,7 +39,7 @@ module.exports.ChangeInvestReqStatus = async (invest_req_status, invest_req_id) 
     return data;
 }
 module.exports.RemoveInvestQuery = async (invest_req_id) => {
-    var Query = `update user_invest set ui_action_status ='terminated' where ui_id = ?`;
+    var Query = `update user_invest set ui_action_status ='terminated',ui_status='inactive' where ui_id = ?`;
     var data = await query(Query, [invest_req_id]);
     return data;
 };
