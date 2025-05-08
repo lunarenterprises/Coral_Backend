@@ -6,7 +6,7 @@ module.exports.createPdfWithPuppeteer = async function (htmlContent, path) {
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: true,
             // executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
-            executablePath: "/usr/bin/chromium-browser"
+            executablePath: "~/chromium/chrome-linux/chrome"
         });
         let page = await browser.newPage();
 
