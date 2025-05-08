@@ -39,6 +39,12 @@ module.exports.ContractTransfer = async (req, res) => {
                 message: "Your Investment is terminated"
             })
         }
+        if (investedData[0].ui_request === 'termination') {
+            return res.send({
+                result: false,
+                message: "Investment already requested for termination"
+            })
+        }
         if (investedData[0].ui_transfer) {
             return res.send({
                 result: false,
@@ -107,7 +113,6 @@ module.exports.ContractTransfer = async (req, res) => {
     </body>
     </html>`
             });
-
             nodemailer.getTestMessageUrl(info);
             await notification.addNotification(user_id, users[0].u_role, 'Investment Transfer', 'Your investment has been successfully transferred to nominee')
             return res.send({
