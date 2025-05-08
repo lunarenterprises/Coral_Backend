@@ -1,4 +1,5 @@
 var puppeteer = require('puppeteer');
+const newPath = require('path');
 
 module.exports.createPdfWithPuppeteer = async function (htmlContent, path) {
     try {
@@ -6,7 +7,7 @@ module.exports.createPdfWithPuppeteer = async function (htmlContent, path) {
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: true,
             // executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
-            executablePath: "~/chromium/chrome-linux/chrome"
+            executablePath: newPath.resolve(process.env.HOME, 'chromium/chrome-linux/chrome')
         });
         let page = await browser.newPage();
 
