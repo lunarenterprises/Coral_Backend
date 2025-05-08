@@ -64,7 +64,7 @@ module.exports.AddOrder = async (req, res) => {
         if (!fs.existsSync(path1)) {
             fs.mkdirSync(path1, true);
         }
-        let html = `
+        let notarizationAgreement = `
         <!DOCTYPE html>
 <html lang="en">
 
@@ -1369,10 +1369,275 @@ module.exports.AddOrder = async (req, res) => {
 </body>
 
 </html>`
+        let shareAgreement = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Transfer Agreement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #00529b;
+            padding-bottom: 10px;
+        }
+        h1 {
+            color: #00529b;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        h2 {
+            color: #00529b;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+        .parties {
+            margin: 20px 0;
+        }
+        .clause {
+            margin-bottom: 20px;
+        }
+        .indent {
+            margin-left: 20px;
+        }
+        .double-indent {
+            margin-left: 40px;
+        }
+        .signature {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .signature-box {
+            border-top: 1px solid #333;
+            width: 45%;
+            padding-top: 10px;
+            text-align: center;
+        }
+        .highlight {
+            font-weight: bold;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        li::before {
+            content: "- ";
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Share Transfer Agreement</h1>
+        <p><strong>Contract Date: ${moddate}</strong></p>
+        <p>Pursuant to the UAE Commercial Companies Law (Federal Law No. 32 of 2021)</p>
+    </div>
+
+    <div class="parties">
+        <p><strong>Between:</strong></p>
+        <p>The shareholders of CORAL WEALTH INVESTMENT IN HEALTHCARE ENTERPRISES & DEVELOPMENT CO. L.L.C, a company registered in the Emirate of Dubai, United Arab Emirates, under license number 1250854, with its registered office at Business Bay, Dubai, United Arab Emirates.</p>
+        
+        <p><strong>Transferor:</strong><br>
+        Ganeshwaran Vijayaratanam Vijayaratanam</p>
+        
+        <p><strong>Transferee:</strong><br>
+        ${usernme}</p>
+    </div>
+
+    <div class="clause">
+        <h2>1. Preamble</h2>
+        <p>CORAL WEALTH INVESTMENT IN HEALTHCARE ENTERPRISES & DEVELOPMENT CO. L.L.C (hereinafter referred to as the "Company") is registered under a license issued by the Dubai Department of Tourism and Economy and is authorized to engage in (investment in technological projects, their establishment, and management / investment in healthcare projects, their establishment, and management / investment in educational projects, their establishment, and management), and other growing industries under license numbers (1250854, 1435972, 53586), in accordance with the laws of the United Arab Emirates, with its principal place of business in Dubai.</p>
+        
+        <p>The Transferor owns ....% of the share capital of the Company (hereinafter referred to as the "Shares").</p>
+        
+        <p>The Transferor wishes to transfer ownership of (....) Shares to the Transferee, who has agreed to purchase them under the terms and conditions set forth below.</p>
+    </div>
+
+    <div class="clause">
+        <h2>2. Definitions</h2>
+        <p><strong>Shares:</strong> Refers to (....) shares issued by the Company.</p>
+        <p><strong>Purchase Price:</strong> Refers to the amount of ${investment_amount} AED per share, totaling ${investment_amount} AED.</p>
+        <p><strong>Board of Directors:</strong> Refers to the Company's governing body responsible for its management and strategic direction.</p>
+        <p><strong>Fair Market Value:</strong> The value of the Shares as determined by an independent auditor appointed by the Company's Board of Directors, reflecting the prevailing market price at the time of the Withdrawal Notice.</p>
+        <p><strong>Withdrawal Notice:</strong> A written request by a shareholder to the Company to repurchase their Shares under the terms of this Agreement.</p>
+        <p><strong>Notice Period:</strong> A period of 3 months if the total capital to be withdrawn is less than 500,000 AED, or 6 months if equal to or exceeding 500,000 AED.</p>
+    </div>
+
+    <div class="clause">
+        <h2>3. Share Transfer</h2>
+        <p><strong>Transfer:</strong> The Transferor shall transfer ownership of the Shares to the Transferee on a final and absolute basis, free from any encumbrances, liens, or third-party rights.</p>
+        <p><strong>Consideration:</strong> The Transferee shall pay the Purchase Price to the Transferor via bank transfer no later than .....</p>
+        <p><strong>Approval:</strong> This transfer is subject to the approval of the Company's Board of Directors and compliance with the Company's Articles of Association.</p>
+    </div>
+
+    <div class="clause">
+        <h2>4. Representations and Warranties</h2>
+        
+        <p class="highlight">By the Transferor:</p>
+        <div class="indent">
+            <p>The Transferor represents and warrants that they legally own the Shares, which are duly registered in their name in the Company's records and the Dubai Department of Tourism and Economy.</p>
+            <p>The Transferor guarantees that the Shares are free from any third-party claims, encumbrances, or legal restrictions.</p>
+            <p>The Transferor affirms that they have the legal authority to execute this Agreement and will provide all necessary documentation to effect the transfer.</p>
+            <p>The Transferor warrants that the Company has no undisclosed debts or liabilities as of the transfer date.</p>
+        </div>
+        
+        <p class="highlight">By the Transferee:</p>
+        <div class="indent">
+            <p>The Transferee represents that they have sufficient financial resources to pay the Purchase Price.</p>
+            <p>The Transferee acknowledges that they are acquiring the Shares for investment purposes and agree to comply with the Company's membership regulations.</p>
+            <p>The Transferee confirms that they have conducted due diligence on the legal and financial standing of the Company before signing this Agreement.</p>
+            <p>The Transferee agrees to bear all government fees associated with the transfer.</p>
+        </div>
+    </div>
+
+    <div class="clause">
+        <h2>5. Conditions Precedent</h2>
+        <ul>
+            <li>Approval of the Company's Board of Directors for the transfer.</li>
+            <li>Compliance with pre-emption rights (if any) as stated in the Company's Articles of Association or Shareholders' Agreement.</li>
+            <li>Either party may terminate this Agreement if the required approvals are not obtained within (60) days from the contract date.</li>
+        </ul>
+    </div>
+
+    <div class="clause">
+        <h2>6. Contractual Restrictions</h2>
+        
+        <p class="highlight">1. Right of First Refusal (ROFR):</p>
+        <div class="indent">
+            <p>If the Transferee or any subsequent shareholder intends to sell or transfer any of their shares in the Company to a third party, they must first submit a written offer to the existing shareholders, specifying the number of shares offered, the price, and the terms of sale.</p>
+            <p>Existing shareholders shall have thirty (30) days from the date of receiving the written offer to exercise their right of first refusal.</p>
+            <p>If the shareholders do not exercise this right within the specified period, the selling party may proceed with the sale to the third party under the same terms and price offered to the shareholders.</p>
+        </div>
+        
+        <p class="highlight">2. Non-Compete Obligation:</p>
+        <div class="indent">
+            <p>The Transferor agrees not to engage, directly or indirectly, in any business activity that competes with the Company's operations or invest in any competing entity within the United Arab Emirates or any market where the Company operates, for a period of seven (7) years from the effective date of this Agreement.</p>
+            <p>This restriction shall not apply to investments in publicly listed companies, provided that the ownership stake does not exceed 5% of the company's shares.</p>
+        </div>
+        
+        <p class="highlight">3. Exclusion for Share Withdrawal Under Clause 8:</p>
+        <div class="indent">
+            <p>The Right of First Refusal outlined in this Clause shall not apply to any shares repurchased by the Company under the provisions of Clause 8 (Shareholder Withdrawal Rights).</p>
+        </div>
+    </div>
+
+    <div class="clause">
+        <h2>7. Shareholder Withdrawal Rights</h2>
+        
+        <p class="highlight">1. Withdrawal Mechanism:</p>
+        <div class="indent">
+            <p>Any shareholder shall have the right to withdraw their capital by requiring the Company to repurchase their shares at Fair Market Value, subject to the following terms and conditions.</p>
+        </div>
+        
+        <p class="highlight">2. Withdrawal Notice Requirements:</p>
+        <div class="indent">
+            <p>The shareholder must submit a written Withdrawal Notice to the Company's Board of Directors.</p>
+            <p>The Notice shall specify the following:</p>
+            <ul class="double-indent">
+                <li>The number of shares to be repurchased</li>
+                <li>The requested withdrawal dates, provided that such dates shall not be less than three (3) months from the date of the notice</li>
+                <li>Supporting documentation evidencing share ownership</li>
+            </ul>
+        </div>
+        
+        <p class="highlight">3. Notice Periods:</p>
+        <div class="indent">
+            <p>The notice period shall be three (3) months and shall commence upon the Company's formal acknowledgment of receipt of the Withdrawal Notice.</p>
+            <p>The Agreement may also be terminated at any time by mutual written agreement between the Parties.</p>
+        </div>
+        
+        <p class="highlight">4. Valuation Process:</p>
+        <div class="indent">
+            <p>Within 15 business days of receiving the Withdrawal Notice, the Board shall appoint an independent UAE-licensed auditor.</p>
+            <p>The auditor shall determine the Fair Market Value using:</p>
+            <ul class="double-indent">
+                <li>The average of the last three independent valuations</li>
+                <li>The Company's most recent audited financial statements</li>
+                <li>Market comparable for similar healthcare investments</li>
+                <li>Valuation must be completed within 30 days of appointment</li>
+            </ul>
+        </div>
+        
+        <p class="highlight">5. Payment Terms:</p>
+        <div class="indent">
+            <p>Payment shall be made in AED by bank transfer.</p>
+            <p>The full payment shall be made within fifteen (15) days from the end of the notice period.</p>
+        </div>
+        
+        <p class="highlight">6. Conditions and Limitations:</p>
+        <div class="indent">
+            <p>The Company may refuse repurchase if it would:</p>
+            <ul class="double-indent">
+                <li>Violate UAE capital maintenance requirements</li>
+                <li>Endanger the Company's financial stability</li>
+                <li>Contravene any existing financing covenants</li>
+                <li>Maximum annual repurchase limit: 15% of total issued shares</li>
+            </ul>
+        </div>
+        
+        <p class="highlight">7. Effect of Withdrawal:</p>
+        <div class="indent">
+            <ul>
+                <li>Repurchased shares shall be automatically canceled.</li>
+                <li>The shareholder's rights shall terminate and profit distributions shall immediately cease. The shareholder shall not be entitled to any distributions or profits resulting from the final business cycle.</li>
+                <li>The Company shall update its commercial license and share register accordingly. All related fees and expenses shall be borne solely by the shareholder.</li>
+            </ul>
+        </div>
+        
+        <p class="highlight">8. Dispute Resolution:</p>
+        <div class="indent">
+            <ul>
+                <li>Any valuation disputes shall be resolved by the DIFC Courts</li>
+                <li>The Company shall bear the costs of the initial valuation</li>
+                <li>The challenging party bears costs of any subsequent valuations</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="clause">
+        <h2>8. Confidentiality</h2>
+        <p>Both parties agree not to disclose the details of this Agreement or use any confidential information related to the Company, including financial data, client lists, and business strategies, for any third party.</p>
+    </div>
+
+    <div class="clause">
+        <h2>9. Notices</h2>
+        <p>Any written notices shall be sent to the registered addresses of the parties as stated in this Agreement.</p>
+    </div>
+
+    <div class="clause">
+        <h2>10. Severability</h2>
+        <p>If any provision of this Agreement is found to be invalid or unenforceable under applicable laws, the remaining provisions shall remain in full force and effect.</p>
+    </div>
+
+    <div class="signature">
+        <div class="signature-box">
+            <p><strong>Transferor:</strong><br>
+            Ganeshwaran Vijayaratanam Vijayaratanam</p>
+            <p>_________________________</p>
+        </div>
+        <div class="signature-box">
+            <p><strong>Transferee:</strong><br>
+            ...........................</p>
+            <p>_________________________</p>
+        </div>
+    </div>
+</body>
+</html>`
         // var save = await model.getBankaccount(bankAccount)
+        let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : notarizationAgreement
         var pdf = await createPdfWithPuppeteer(html, path);
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
-        var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId,"cwi_invest")
+        var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId, "cwi_invest")
         await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Investment added successfully')
         return res.send({
