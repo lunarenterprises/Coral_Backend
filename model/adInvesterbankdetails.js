@@ -10,10 +10,9 @@ module.exports.getAdmin = async (admin_id, admin_role) => {
 };
 
 module.exports.getbank = async (condition) => {
-    var Query = `SELECT ui.ui_id, ui.ui_date, us.u_id, us.u_name, us.u_email, us.u_mobile, us.u_gender, b.*
-FROM user_invest ui
-LEFT JOIN users us ON ui.ui_u_id = us.u_id
-LEFT JOIN bank b ON us.u_id = b.b_u_id ${condition} GROUP BY us.u_id `;
+    var Query = `SELECT us.u_id, us.u_name, us.u_email, us.u_mobile, us.u_gender, b.*
+    FROM bank b
+LEFT JOIN users us ON b.b_u_id = us.u_id ${condition} GROUP BY us.u_id `;
 
     var data = await query(Query);
 
