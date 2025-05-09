@@ -20,9 +20,18 @@ module.exports.parseAmount = (value) => {
 
     value = value.toString().trim().toLowerCase();
 
+    // Above X: strict greater than
     if (value.includes('above')) {
         const num = value.match(/\d+(\.\d+)?/);
-        return { from: Number(num[0]) * 1000000, to: null };
+        let numText = num?.[0] || '0';
+
+        // Determine multiplier
+        let multiplier = 1;
+        if (value.includes('k')) multiplier = 1000;
+        else if (value.includes('m') || value.includes('million')) multiplier = 1000000;
+
+        const base = Number(numText) * multiplier;
+        return { from: base + 1, to: null };
     }
 
     if (value.includes('-')) {
