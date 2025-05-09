@@ -1,117 +1,77 @@
 var model = require('../model/calculator')
 var nodemailer = require('nodemailer')
+let { matchesDuration } = require('../util/compareDuration')
 
 module.exports.Calculator = async (req, res) => {
     try {
-        let { amount, year, wf, project, platform, name, mobile } = req.body
+        let { amount, duration, wf, project, platform, name, mobile } = req.body
 
-        if(amount<52000){
+        if (amount < 52000) {
             return res.send({
-                result:false,
-                message:"Amount should be greater than 52000 AED"
+                result: false,
+                message: "Amount should be greater than 52000 AED"
             })
         }
 
         let condition = ``
-        if (amount < 100000) {
+        if (amount) {
             if (condition !== '') {
-                condition += ` AND (ri_amount_from = '100000' AND ri_amount_to is null)`
+                condition += ` AND ((ri_amount_to IS NOT NULL AND ${amount} BETWEEN ri_amount_from AND ri_amount_to)
+    OR (ri_amount_to IS NULL AND ${amount} >= ri_amount_from))
+  `
             } else {
-                condition += ` where (ri_amount_from = '100000' AND ri_amount_to is null)`
-            }
-        } else if (amount > 3000000) {
-            if (condition !== '') {
-                condition += ` AND (ri_amount_from is null AND ri_amount_to  = '3000000')`
-            } else {
-                condition += ` where (ri_amount_from is null AND ri_amount_to = '3000000')`
-            }
-        } else {
-            if (condition !== '') {
-                condition += ` AND ('${amount}' BETWEEN ri_amount_from AND ri_amount_to)`
-            } else {
-                condition += ` where ('${amount}' BETWEEN ri_amount_from AND ri_amount_to)`
+                condition += ` WHERE 
+ ((ri_amount_to IS NOT NULL AND ${amount} BETWEEN ri_amount_from AND ri_amount_to)
+    OR (ri_amount_to IS NULL AND ${amount} >= ri_amount_from))
+  `
             }
         }
-        if (project == 'any') {
-            if (amount > 100000) {
-                if (year > 3) {
-                    if (condition !== '') {
-                        condition += ` AND ri_duration = '>3' `
-                    } else {
-                        condition += ` where ri_duration = '>3'`
-                    }
+        if (duration && amount > 100000 && amount < 3000001) {
+            if (duration > 3) {
+                if (condition !== '') {
+                    condition += ` AND ri_duration = '>3' `
                 } else {
-                    if (condition !== '') {
-                        condition += ` AND ri_duration = '${year}' `
-                    } else {
-                        condition += ` where ri_duration = '${year}'`
-                    }
+                    condition += ` where ri_duration = '>3'`
                 }
-                if (wf) {
-                    if (condition !== '') {
-                        condition += ` AND ri_wf = '${wf}' `
-                    } else {
-                        condition += ` where ri_wf = '${wf}'`
-                    }
-                }
-                if (project) {
-                    if (condition !== '') {
-                        condition += ` AND ri_project = '${project}' `
-                    } else {
-                        condition += ` where ri_project = '${project}'`
-                    }
+            } else {
+                if (condition !== '') {
+                    condition += ` AND ri_duration = '${duration}' `
                 } else {
-                    if (condition !== '') {
-                        condition += ` AND ri_project = 'any' `
-                    } else {
-                        condition += ` where ri_project = 'any'`
-                    }
+                    condition += ` where ri_duration = '${duration}'`
                 }
             }
-        } else {
+        }
+        if (wf && amount > 100000 && amount < 3000001) {
+            if (condition !== '') {
+                condition += ` AND ri_wf = '${wf}' `
+            } else {
+                condition += ` where ri_wf = '${wf}'`
+            }
+        }
+        if (project) {
             if (condition !== '') {
                 condition += ` AND ri_project = '${project}' `
             } else {
                 condition += ` where ri_project = '${project}'`
             }
+        } else {
+            if (condition !== '') {
+                condition += ` AND ri_project = 'Any' `
+            } else {
+                condition += ` where ri_project = 'Any'`
+            }
+        }
+        let returns_data = await model.getinvest(condition)
+        if (!matchesDuration(returns_data[0]?.ri_duration, duration)) {
+            return res.send({
+                result: false,
+                message: `Duration should be ${returns_data[0]?.ri_duration}`
+            })
         }
 
-        let returns_data = await model.getinvest(condition)
-
         if (returns_data.length > 0) {
-            if (project == 'any') {
-                if (wf.toLowerCase().includes('monthly')) {
-                    var calculate = Number(amount) + (Number(amount) * returns_data[0].ri_return_month / 100)
-                    var percent = returns_data[0].ri_return_month
-                } else if (wf.toLowerCase().includes('quarterly')) {
-                    var calculate = Number(amount) + (Number(amount) * (returns_data[0].ri_return_month * 4) / 100)
-                    var percent = (returns_data[0].ri_return_month * 4)
-                } else if (wf.toLowerCase().includes('half-yearly')) {
-                    var calculate = Number(amount) + (Number(amount) * (returns_data[0].ri_return_month * 6) / 100)
-                    var percent = (returns_data[0].ri_return_month * 6)
-                } else {
-                    var calculate = Number(amount) + (Number(amount) * returns_data[0].ri_return_year / 100)
-                    var percent = returns_data[0].ri_return_year
-                }
-            } else {
-                if (wf.toLowerCase().includes('monthly')) {
-                    var cal = (Number(amount) * returns_data[0].ri_return_month / 100) * year
-                    var calculate = Number(amount) + cal
-                    var percent = returns_data[0].ri_return_month
-                } else if (wf.toLowerCase().includes('quarterly')) {
-                    var cal = (Number(amount) * (returns_data[0].ri_return_month * 4) / 100) * year
-                    var calculate = Number(amount) + cal
-                    var percent = (returns_data[0].ri_return_month * 4)
-                } else if (wf.toLowerCase().includes('half-yearly')) {
-                    var cal = (Number(amount) * (returns_data[0].ri_return_month * 6) / 100) * year
-                    var calculate = Number(amount) + cal
-                    var percent = (returns_data[0].ri_return_month * 6)
-                } else {
-                    var cal = (Number(amount) * returns_data[0].ri_return_year / 100) * year
-                    var calculate = Number(amount) + cal
-                    var percent = returns_data[0].ri_return_year
-                }
-            }
+            let calculate = ((Number(amount) * returns_data[0]?.ri_return_year) / 100) * Number(duration)
+            let percent = returns_data[0]?.ri_return_year * Number(duration)
 
             if (platform == 'web') {
                 let transporter = nodemailer.createTransport({
@@ -127,7 +87,7 @@ module.exports.Calculator = async (req, res) => {
 
                 let info = await transporter.sendMail({
                     from: "CORAL WEALTH <coraluae@lunarenp.com>",
-                    to: 'sales2@coraluae.com,Mubashirpmmubz@gmail.com',
+                    to: 'sales2@coraluae.com',
                     subject: 'calculator enquiry details',
                     html: `<!DOCTYPE html>
         <html lang="en">
@@ -165,7 +125,7 @@ module.exports.Calculator = async (req, res) => {
                     <p>Phone: <span id="customer-phone">${mobile}</span></p>
                   <p>Invest Amount: <span id="customer-name">${amount}</span></p>
                   <p>Withdrawal Frequency: <span id="customer-name">${wf}</span></p>
-                  <p>Duration: <span id="customer-name">${year} year</span></p>
+                  <p>Duration: <span id="customer-name">${duration} year</span></p>
                 </div>
             </div>
         </body>
@@ -180,12 +140,10 @@ module.exports.Calculator = async (req, res) => {
                 return_amount: calculate.toFixed(2),
                 percentage: percent + '%'
             })
-
-
         } else {
             return res.send({
                 result: false,
-                message: "failed to get data"
+                message: "No data found."
             })
         }
 
