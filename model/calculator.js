@@ -4,6 +4,7 @@ const query = util.promisify(db.query).bind(db);
 
 module.exports.getinvest = async (condition) => {
     var Query = `select * from return_invest ${condition}`;
+    console.log("Query  : ", Query)
     var data = await query(Query);
     return data;
 };

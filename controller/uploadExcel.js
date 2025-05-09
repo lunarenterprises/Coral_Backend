@@ -34,13 +34,20 @@ module.exports.UploadInvestmentCalculaterExcel = async (req, res) => {
                 const data = XLSX.utils.sheet_to_json(worksheet, { raw: false }); // 👈 `raw: false` gives displayed values
                 // Transform data to match DB schema
                 const dbData = data.map(row => {
-                    // Convert percentage strings to decimals
-                    let duration = row['Duration']?.toLowerCase() === "1 year" ? "1" :
-                        row['Duration']?.toLowerCase() === "2 year" ? "2" :
-                            row['Duration']?.toLowerCase() === "3 year" ? "3" :
-                                row['Duration']?.toLowerCase() === "above 3 years" ? ">3" :
-                                    row['Duration']?.toLowerCase() === "minimum 2.5 years" ? ">2.5" :
-                                        row['Duration']?.toLowerCase() === "minimum 2 years" ? ">2" : ""
+                    let durationRaw = row['Duration']?.toLowerCase() || "";
+
+                    // Extract numeric value from the duration string
+                    const match = durationRaw.match(/(\d+(\.\d+)?)/);
+                    let duration = match ? match[1] : "";
+
+                    // Add prefix based on the keywords
+                    if (duration) {
+                        if (durationRaw.includes("minimum")) {
+                            duration = `>=${duration}`;
+                        } else if (durationRaw.includes("above")) {
+                            duration = `>${duration}`;
+                        }
+                    }
 
                     let amountText = row['Amount']
                     const parsedAmount = parseAmount(Array.isArray(amountText) ? amountText.join('-') : amountText);
