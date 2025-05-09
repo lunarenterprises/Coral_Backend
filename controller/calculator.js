@@ -5,6 +5,7 @@ let { matchesDuration } = require('../util/compareDuration')
 module.exports.Calculator = async (req, res) => {
     try {
         let { amount, duration, wf, project, platform, name, mobile } = req.body
+        console.log("body : ", req.body)
 
         if (amount < 52000) {
             return res.send({
