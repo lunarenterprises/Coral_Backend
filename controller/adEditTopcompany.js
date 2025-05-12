@@ -81,19 +81,19 @@ module.exports.EditTopCompany = async (req, res) => {
             if (EditTopCompany.affectedRows > 0) {
                 return res.send({
                     result: true,
-                    message: "Top Company updated successfully"
+                    message: "Current Investment updated successfully"
                 })
             } else {
                 return res.send({
                     result: false,
-                    message: "failed to update Top Company"
+                    message: "failed to update Current Investment"
                 })
             }
 
         } else {
             return res.send({
                 result: false,
-                message: "Top Company does not exists"
+                message: "Current Investment does not exists"
             })
         }
 
