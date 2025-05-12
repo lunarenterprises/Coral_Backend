@@ -1,5 +1,6 @@
 var model = require('../model/lockperiod')
 var moment = require('moment')
+let { matchesDuration } = require('../util/compareDuration')
 
 module.exports.LockPeriod = async (req, res) => {
     try {
