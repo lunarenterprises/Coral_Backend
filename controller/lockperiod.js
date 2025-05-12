@@ -72,13 +72,13 @@ module.exports.LockPeriod = async (req, res) => {
             }
         }
         let returns_data = await model.getinvest(condition)
-        if (!matchesDuration(returns_data[0]?.ri_duration, duration)) {
-            return res.send({
-                result: false,
-                message: `Duration should be ${returns_data[0]?.ri_duration}`
-            })
-        }
         if (returns_data.length > 0) {
+            if (!matchesDuration(returns_data[0]?.ri_duration, duration)) {
+                return res.send({
+                    result: false,
+                    message: `Duration should be ${returns_data[0]?.ri_duration}`
+                })
+            }
             let calculate = ((Number(amount) * returns_data[0]?.ri_return_year) / 100) * Number(duration)
             let percent = returns_data[0]?.ri_return_year * Number(duration)
             let futureDate = moment().add(parseFloat(investment.investment_duration), 'years');
