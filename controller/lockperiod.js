@@ -83,7 +83,7 @@ module.exports.LockPeriod = async (req, res) => {
             }
             let calculate = ((Number(amount) * returns_data[0]?.ri_return_year) / 100) * Number(duration)
             let percent = returns_data[0]?.ri_return_year * Number(duration)
-            let futureDate = moment().add(parseFloat(investment.investment_duration), 'years');
+            let futureDate = moment().add(parseFloat(duration), 'years');
             let investment_duration = futureDate.format('YYYY/MM/DD');
             let lockperiod = await model.lock(user_id, percent, date, amount, investment_duration, project, wf, calculate, profit_model)
             return res.send({
