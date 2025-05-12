@@ -736,7 +736,7 @@ module.exports.InvestFututreOptions = async (req, res) => {
                 and retail sectors;
             </p>
             <p class="paragraph">
-                WHEREAS, the Second Party wishes to invest a sum of AED <span class="form-fields">${investment.investment_amount}</span> with the First
+                WHEREAS, the Second Party wishes to invest a sum of AED <span class="form-fields">${investment_amount}</span> with the First
                 Party for the purpose of earning profits from the First Party's investments in these sectors;
             </p>
             <p class="paragraph">
@@ -749,7 +749,7 @@ module.exports.InvestFututreOptions = async (req, res) => {
                 وقطاعات الرعاية الصحية، والقطاعات التعليمية، والقطاعات التكنولوجية، وقطاعات التجزئة؛
             </p>
             <p class="arabic-text">
-                وحيث يرغب الطرف الثاني في استثمار مبلغ <span class="form-fields">${investment.investment_amount}</span> درهم إماراتي لدى الطرف الأول
+                وحيث يرغب الطرف الثاني في استثمار مبلغ <span class="form-fields">${investment_amount}</span> درهم إماراتي لدى الطرف الأول
                 بهدف تحقيق أرباح من استثمارات الطرف الأول في هذه القطاعات؛
             </p>
             <p class="arabic-text">
@@ -777,7 +777,7 @@ module.exports.InvestFututreOptions = async (req, res) => {
     <div class="section">
         <h2>2. Funding Amount</h2>
         <p class="english-text">
-            The Second Party agrees to provide the First Party with a sum of AED ${investment.investment_amount} (hereinafter referred to as
+            The Second Party agrees to provide the First Party with a sum of AED ${investment_amount} (hereinafter referred to as
             the "Funding Amount"), which will be used by the First Party to invest in the following sectors:
         </p>
         <ul class="english-text">
@@ -790,7 +790,7 @@ module.exports.InvestFututreOptions = async (req, res) => {
             <li>Other Growing Industries</li>
         </ul>
         <p class="arabic-text">
-            يوافق الطرف الثاني على تزويد الطرف الأول بمبلغ قدره ${investment.investment_amount} درهم إماراتي (يشار إليه فيما يلي بـ "مبلغ
+            يوافق الطرف الثاني على تزويد الطرف الأول بمبلغ قدره ${investment_amount} درهم إماراتي (يشار إليه فيما يلي بـ "مبلغ
             التمويل")، والذي سيستخدمه الطرف الأول للاستثمار في القطاعات التالية:
         </p>
         <ul class="arabic-text">
@@ -1187,11 +1187,11 @@ module.exports.InvestFututreOptions = async (req, res) => {
             </thead>
             <tbody>
                 <tr>
-                    <td>${investment.investment_amount}</td>
-                    <td>${investment.profit_model}</td>
-                    <td>${investment.percentage}</td>
-                    <td>${investment.withdrawal_frequency}</td>
-                    <td>${investment.investment_duration}</td>
+                    <td>${investment_amount}</td>
+                    <td>${profit_model}</td>
+                    <td>${percentage}</td>
+                    <td>${withdrawal_frequency}</td>
+                    <td>${investment_duration}</td>
                 </tr>
             </tbody>
         </table>
