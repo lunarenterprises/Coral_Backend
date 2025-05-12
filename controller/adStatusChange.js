@@ -17,7 +17,7 @@ module.exports.StatusChange = async (req, res) => {
             })
         }
         var currentdate = moment().format('YYYY-MM-DD')
-        var { contract_status, contract_id, activate_admin_id, activate_admin_status, activate_user_id, activate_user_status, invest_req_id, invest_req_status, payout_id, payout_status, payout_amount, withdrawel_status, withdrawel_id, withdraw_amount, kyc_status, kyc_user_id, kyc_message, pay_invest_id, pay_invest_status } = req.body
+        var { contract_status, contract_id, activate_admin_id, activate_admin_status, activate_user_id, activate_user_status, invest_req_id, invest_req_status,total_payout_amount,total_invest_amount ,payout_id, payout_status, payout_amount, withdrawel_status, withdrawel_id, withdraw_amount, kyc_status, kyc_user_id, kyc_message, pay_invest_id, pay_invest_status } = req.body
 
 
         if (contract_status && contract_id) {
@@ -155,6 +155,15 @@ module.exports.StatusChange = async (req, res) => {
                 if (changeInveststatus.affectedRows > 0) {
 
                     if (request == 'termination') {
+                        if (total_payout_amount && total_invest_amount) {
+                            
+                            let addterminationdata = await model.AddTerminationData(total_payout_amount,total_invest_amount,invest_req_id)
+                        } else {
+                            return res.send({
+                                result: false,
+                                message: "Total Paid Payout amount and return invest amount data are needed"
+                            }) 
+                        }
                         var removecontract = await model.RemoveInvestQuery(invest_req_id);
                     }
                     if (request == 'transfer') {
