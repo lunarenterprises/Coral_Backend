@@ -7,15 +7,6 @@ module.exports.Calculator = async (req, res) => {
     try {
         let { amount, duration, year, wf, project, platform, name, mobile } = req.body
 
-        let endDate = moment(year, "DD/MM/YYYY");
-        let currentYear = moment();  // current date
-
-        let months = endDate.diff(currentYear, 'months'); // true = float
-        console.log("months : ", months)
-        let durationInYears = months / 12;
-
-        console.log("Duration in years: ", durationInYears);
-
         if (!amount || amount < 52000) {
             return res.send({
                 result: false,
@@ -36,7 +27,18 @@ module.exports.Calculator = async (req, res) => {
   `
             }
         }
-        if (duration && amount > 100000 && amount < 3000001) {
+        if (duration) {
+            if (amount >= 3000001) {
+                if (project === "Any") {
+                    if (condition !== '') {
+                        condition += ` AND ri_duration = '>=2.5' `
+                    } else {
+                        condition += ` where ri_duration = '>=2.5'`
+                    }
+                } else {
+
+                }
+            }
             if (duration > 3) {
                 if (condition !== '') {
                     condition += ` AND ri_duration = '>3' `
@@ -51,7 +53,22 @@ module.exports.Calculator = async (req, res) => {
                 }
             }
         }
-        if (wf && amount > 100000 && amount < 3000001) {
+        // if (duration && amount > 100000 && amount < 3000001) {
+        //     if (duration > 3) {
+        //         if (condition !== '') {
+        //             condition += ` AND ri_duration = '>3' `
+        //         } else {
+        //             condition += ` where ri_duration = '>3'`
+        //         }
+        //     } else {
+        //         if (condition !== '') {
+        //             condition += ` AND ri_duration = '${duration}' `
+        //         } else {
+        //             condition += ` where ri_duration = '${duration}'`
+        //         }
+        //     }
+        // }
+        if (wf && amount > 100000 && amount < 3000001 && project === "Any") {
             if (condition !== '') {
                 condition += ` AND ri_wf = '${wf}' `
             } else {
