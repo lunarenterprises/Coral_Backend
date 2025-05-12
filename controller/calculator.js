@@ -26,7 +26,7 @@ module.exports.Calculator = async (req, res) => {
   `
             }
         }
-        if (duration) {
+        if (duration && amount >= 100000) {
             if (project === "Any") {
                 if (amount >= 3000001) {
                     if (condition !== '') {
@@ -57,7 +57,7 @@ module.exports.Calculator = async (req, res) => {
                 }
             }
         }
-        
+
         if (wf && amount > 100000 && amount < 3000001 && project === "Any") {
             if (condition !== '') {
                 condition += ` AND ri_wf = '${wf}' `

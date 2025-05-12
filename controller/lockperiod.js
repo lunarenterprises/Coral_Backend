@@ -36,7 +36,7 @@ module.exports.LockPeriod = async (req, res) => {
           `
             }
         }
-        if (duration) {
+        if (duration && amount>=100000) {
             if (project === "Any") {
                 if (amount >= 3000001) {
                     if (condition !== '') {
