@@ -72,6 +72,8 @@ module.exports.LockPeriod = async (req, res) => {
             }
         }
         let returns_data = await model.getinvest(condition)
+        console.log("condition : ", condition)
+        console.log("returns_data : ", returns_data)
         if (returns_data.length > 0) {
             if (!matchesDuration(returns_data[0]?.ri_duration, duration)) {
                 return res.send({
