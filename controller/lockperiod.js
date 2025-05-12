@@ -11,119 +11,78 @@ module.exports.LockPeriod = async (req, res) => {
                 message: "User id is required"
             })
         }
-        let { amount, year, wf, project, profit_model } = req.body
+        let { amount, duration, wf, project, profit_model } = req.body
         if (!wf) {
             wf = 'Yearly'
         }
-        let cutyear = year.split(',')[1]
-        let givenyear = Number(cutyear)
-        var getyear = moment().format('YYYY')
-        var yearto = Number(getyear)
-        year = Number(givenyear) - Number(yearto)
-        console.log("year after : ", year)
+        if (!amount || amount < 52000) {
+            return res.send({
+                result: false,
+                message: "Amount should be greater than 52000 AED"
+            })
+        }
+
         let condition = ``
-        if (amount < 100000) {
+        if (amount) {
             if (condition !== '') {
-                condition += ` AND (ri_amount_from = '100000' AND ri_amount_to is null)`
+                condition += ` AND ((ri_amount_to IS NOT NULL AND ${amount} BETWEEN ri_amount_from AND ri_amount_to)
+            OR (ri_amount_to IS NULL AND ${amount} >= ri_amount_from))
+          `
             } else {
-                condition += ` where (ri_amount_from = '100000' AND ri_amount_to is null)`
-            }
-        } else if (amount > 3000000) {
-            if (condition !== '') {
-                condition += ` AND (ri_amount_from is null AND ri_amount_to  = '3000000')`
-            } else {
-                condition += ` where (ri_amount_from is null AND ri_amount_to = '3000000')`
-            }
-        } else {
-            if (condition !== '') {
-                condition += ` AND ('${amount}' BETWEEN ri_amount_from AND ri_amount_to)`
-            } else {
-                condition += ` where ('${amount}' BETWEEN ri_amount_from AND ri_amount_to)`
+                condition += ` WHERE 
+         ((ri_amount_to IS NOT NULL AND ${amount} BETWEEN ri_amount_from AND ri_amount_to)
+            OR (ri_amount_to IS NULL AND ${amount} >= ri_amount_from))
+          `
             }
         }
-        if (project == 'any') {
-            if (amount > 100000) {
-                if (year > 3) {
-                    if (condition !== '') {
-                        condition += ` AND ri_duration = '>3' `
-                    } else {
-                        condition += ` where ri_duration = '>3'`
-                    }
+        if (duration && amount > 100000 && amount < 3000001) {
+            if (duration > 3) {
+                if (condition !== '') {
+                    condition += ` AND ri_duration = '>3' `
                 } else {
-                    if (condition !== '') {
-                        condition += ` AND ri_duration = '${year}' `
-                    } else {
-                        condition += ` where ri_duration = '${year}'`
-                    }
+                    condition += ` where ri_duration = '>3'`
                 }
-                if (wf) {
-                    if (condition !== '') {
-                        condition += ` AND ri_wf = '${wf}' `
-                    } else {
-                        condition += ` where ri_wf = '${wf}'`
-                    }
-                }
-                if (project) {
-                    if (condition !== '') {
-                        condition += ` AND ri_project = '${project}' `
-                    } else {
-                        condition += ` where ri_project = '${project}'`
-                    }
+            } else {
+                if (condition !== '') {
+                    condition += ` AND ri_duration = '${duration}' `
                 } else {
-                    if (condition !== '') {
-                        condition += ` AND ri_project = 'any' `
-                    } else {
-                        condition += ` where ri_project = 'any'`
-                    }
+                    condition += ` where ri_duration = '${duration}'`
                 }
             }
-        } else {
+        }
+        if (wf && amount > 100000 && amount < 3000001) {
+            if (condition !== '') {
+                condition += ` AND ri_wf = '${wf}' `
+            } else {
+                condition += ` where ri_wf = '${wf}'`
+            }
+        }
+        if (project) {
             if (condition !== '') {
                 condition += ` AND ri_project = '${project}' `
             } else {
                 condition += ` where ri_project = '${project}'`
             }
-        }
-
-
-        let returns_data = await model.getinvest(condition)
-        if (returns_data.length > 0) {
-            if (project == 'any') {
-                if (wf.toLowerCase().includes('monthly')) {
-                    var calculate = Number(amount) + (Number(amount) * returns_data[0].ri_return_month / 100)
-                    var percent = returns_data[0].ri_return_month
-                } else if (wf.toLowerCase().includes('quarterly')) {
-                    var calculate = Number(amount) + (Number(amount) * (returns_data[0].ri_return_month * 4) / 100)
-                    var percent = (returns_data[0].ri_return_month * 4)
-                } else if (wf.toLowerCase().includes('half-yearly')) {
-                    var calculate = Number(amount) + (Number(amount) * (returns_data[0].ri_return_month * 6) / 100)
-                    var percent = (returns_data[0].ri_return_month * 6)
-                } else {
-                    var calculate = Number(amount) + (Number(amount) * returns_data[0].ri_return_year / 100)
-                    var percent = returns_data[0].ri_return_year
-                }
+        } else {
+            if (condition !== '') {
+                condition += ` AND ri_project = 'Any' `
             } else {
-                if (wf.toLowerCase().includes('monthly')) {
-                    var cal = (Number(amount) * returns_data[0].ri_return_month / 100) * year
-                    var calculate = Number(amount) + cal
-                    var percent = returns_data[0].ri_return_month * year
-                } else if (wf.toLowerCase().includes('quarterly')) {
-                    var cal = (Number(amount) * (returns_data[0].ri_return_month * 4) / 100) * year
-                    var calculate = Number(amount) + cal
-                    var percent = (returns_data[0].ri_return_month * 4) * year
-                } else if (wf.toLowerCase().includes('half-yearly')) {
-                    var cal = (Number(amount) * (returns_data[0].ri_return_month * 6) / 100) * year
-                    var calculate = Number(amount) + cal
-                    var percent = (returns_data[0].ri_return_month * 6) * year
-                } else {
-                    var cal = (Number(amount) * returns_data[0].ri_return_year / 100) * year
-                    var calculate = Number(amount) + cal
-                    var percent = returns_data[0].ri_return_year * year
-                }
+                condition += ` where ri_project = 'Any'`
             }
-            let lockperiod = await model.lock(user_id, percent, date, amount, year, project, wf, calculate, profit_model)
-
-
+        }
+        let returns_data = await model.getinvest(condition)
+        if (!matchesDuration(returns_data[0]?.ri_duration, duration)) {
+            return res.send({
+                result: false,
+                message: `Duration should be ${returns_data[0]?.ri_duration}`
+            })
+        }
+        if (returns_data.length > 0) {
+            let calculate = ((Number(amount) * returns_data[0]?.ri_return_year) / 100) * Number(duration)
+            let percent = returns_data[0]?.ri_return_year * Number(duration)
+            let futureDate = moment().add(parseFloat(investment.investment_duration), 'years');
+            let investment_duration = futureDate.format('YYYY/MM/DD');
+            let lockperiod = await model.lock(user_id, percent, date, amount, investment_duration, project, wf, calculate, profit_model)
             return res.send({
                 result: true,
                 message: `${percent} percent in ${returns_data[0]?.ri_project} has been locked for you`,
@@ -132,7 +91,10 @@ module.exports.LockPeriod = async (req, res) => {
             })
 
         } else {
-
+            return res.send({
+                result: false,
+                message: "No data found."
+            })
         }
     } catch (error) {
         return res.send({

@@ -22,9 +22,10 @@ module.exports.AddOrder = async (req, res) => {
             })
         }
         let { investment, securityOption, clientInfo, bankAccount, nomineeDetails } = req.body
+        let futureDate = moment().add(parseFloat(investment.investment_duration), 'years');
+        let investment_duration = futureDate.format('YYYY/MM/DD');
         let project_name = investment.project_name
         let investment_amount = investment.investment_amount
-        let investment_duration = investment.investment_duration
         let profit_model = investment.profit_model
         let withdrawal_frequency = investment.withdrawal_frequency
         let client_name = clientInfo.clientName
