@@ -1,11 +1,10 @@
 var model = require('../model/calculator')
 var nodemailer = require('nodemailer')
 let { matchesDuration } = require('../util/compareDuration')
-let moment = require('moment')
 
 module.exports.Calculator = async (req, res) => {
     try {
-        let { amount, duration, year, wf, project, platform, name, mobile } = req.body
+        let { amount, duration, wf, project, platform, name, mobile } = req.body
 
         if (!amount || amount < 52000) {
             return res.send({
@@ -28,46 +27,37 @@ module.exports.Calculator = async (req, res) => {
             }
         }
         if (duration) {
-            if (amount >= 3000001) {
-                if (project === "Any") {
+            if (project === "Any") {
+                if (amount >= 3000001) {
                     if (condition !== '') {
                         condition += ` AND ri_duration = '>=2.5' `
                     } else {
                         condition += ` where ri_duration = '>=2.5'`
                     }
                 } else {
-
-                }
-            }
-            if (duration > 3) {
-                if (condition !== '') {
-                    condition += ` AND ri_duration = '>3' `
-                } else {
-                    condition += ` where ri_duration = '>3'`
+                    if (duration > 3) {
+                        if (condition !== '') {
+                            condition += ` AND ri_duration = '>3' `
+                        } else {
+                            condition += ` where ri_duration = '>3'`
+                        }
+                    } else {
+                        if (condition !== '') {
+                            condition += ` AND ri_duration = ${duration} `
+                        } else {
+                            condition += ` where ri_duration = ${duration}`
+                        }
+                    }
                 }
             } else {
                 if (condition !== '') {
-                    condition += ` AND ri_duration = '${duration}' `
+                    condition += ` AND ri_duration = '>=2' `
                 } else {
-                    condition += ` where ri_duration = '${duration}'`
+                    condition += ` where ri_duration = '>=2'`
                 }
             }
         }
-        // if (duration && amount > 100000 && amount < 3000001) {
-        //     if (duration > 3) {
-        //         if (condition !== '') {
-        //             condition += ` AND ri_duration = '>3' `
-        //         } else {
-        //             condition += ` where ri_duration = '>3'`
-        //         }
-        //     } else {
-        //         if (condition !== '') {
-        //             condition += ` AND ri_duration = '${duration}' `
-        //         } else {
-        //             condition += ` where ri_duration = '${duration}'`
-        //         }
-        //     }
-        // }
+        
         if (wf && amount > 100000 && amount < 3000001 && project === "Any") {
             if (condition !== '') {
                 condition += ` AND ri_wf = '${wf}' `

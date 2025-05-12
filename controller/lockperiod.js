@@ -36,18 +36,34 @@ module.exports.LockPeriod = async (req, res) => {
           `
             }
         }
-        if (duration && amount > 100000 && amount < 3000001) {
-            if (duration > 3) {
-                if (condition !== '') {
-                    condition += ` AND ri_duration = '>3' `
+        if (duration) {
+            if (project === "Any") {
+                if (amount >= 3000001) {
+                    if (condition !== '') {
+                        condition += ` AND ri_duration = '>=2.5' `
+                    } else {
+                        condition += ` where ri_duration = '>=2.5'`
+                    }
                 } else {
-                    condition += ` where ri_duration = '>3'`
+                    if (duration > 3) {
+                        if (condition !== '') {
+                            condition += ` AND ri_duration = '>3' `
+                        } else {
+                            condition += ` where ri_duration = '>3'`
+                        }
+                    } else {
+                        if (condition !== '') {
+                            condition += ` AND ri_duration = ${duration} `
+                        } else {
+                            condition += ` where ri_duration = ${duration}`
+                        }
+                    }
                 }
             } else {
                 if (condition !== '') {
-                    condition += ` AND ri_duration = '${duration}' `
+                    condition += ` AND ri_duration = '>=2' `
                 } else {
-                    condition += ` where ri_duration = '${duration}'`
+                    condition += ` where ri_duration = '>=2'`
                 }
             }
         }
