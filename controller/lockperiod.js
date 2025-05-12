@@ -13,6 +13,12 @@ module.exports.LockPeriod = async (req, res) => {
             })
         }
         let { amount, duration, wf, project, profit_model } = req.body
+        if (!amount || !duration || !project || !profit_model) {
+            return res.send({
+                result: false,
+                message: "Amount, duration, project and profit model are required"
+            })
+        }
         if (!wf) {
             wf = 'Yearly'
         }
@@ -36,7 +42,7 @@ module.exports.LockPeriod = async (req, res) => {
           `
             }
         }
-        if (duration && amount>=100000) {
+        if (duration && amount >= 100000) {
             if (project === "Any") {
                 if (amount >= 3000001) {
                     if (condition !== '') {

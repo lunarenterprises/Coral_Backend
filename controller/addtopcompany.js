@@ -25,7 +25,7 @@ module.exports.AddTopCompany = async (req, res) => {
 
             return res.send({
                 result: true,
-                message: "Top Company added successfully"
+                message: "Current Investment added successfully"
             });
 
         } else {
