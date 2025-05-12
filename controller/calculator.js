@@ -80,7 +80,7 @@ module.exports.Calculator = async (req, res) => {
         }
         let returns_data = await model.getinvest(condition)
         if (returns_data.length > 0) {
-            if (!matchesDuration(returns_data[0]?.ri_duration, duration)) {
+            if (returns_data[0]?.ri_duration && !matchesDuration(returns_data[0]?.ri_duration, duration)) {
                 return res.send({
                     result: false,
                     message: `Duration should be ${returns_data[0]?.ri_duration}`
