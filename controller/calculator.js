@@ -1,13 +1,22 @@
 var model = require('../model/calculator')
 var nodemailer = require('nodemailer')
 let { matchesDuration } = require('../util/compareDuration')
+let moment = require('moment')
 
 module.exports.Calculator = async (req, res) => {
     try {
-        let { amount, duration, wf, project, platform, name, mobile } = req.body
-        console.log("body : ", req.body)
+        let { amount, duration, year, wf, project, platform, name, mobile } = req.body
 
-        if (amount < 52000) {
+        let endDate = moment(year, "DD/MM/YYYY");
+        let currentYear = moment();  // current date
+
+        let months = endDate.diff(currentYear, 'months'); // true = float
+        console.log("months : ", months)
+        let durationInYears = months / 12;
+
+        console.log("Duration in years: ", durationInYears);
+
+        if (!amount || amount < 52000) {
             return res.send({
                 result: false,
                 message: "Amount should be greater than 52000 AED"

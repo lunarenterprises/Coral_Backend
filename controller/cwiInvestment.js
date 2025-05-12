@@ -45,10 +45,16 @@ module.exports.cwiInvestment = async (req, res) => {
                 message: "Company data not found."
             })
         }
-
+        if (investment.investment_duration < 2) {
+            return res.send({
+                result: false,
+                message: "Minimum duration is 2 years"
+            })
+        }
         let project_name = futureCompanyData[0].fi_industries
         let investment_amount = Number(amount)
-        let investment_duration = moment().add(2, 'years').format("YYYY-MM-DD");
+        let futureDate = moment().add(parseFloat(investment.investment_duration), 'years');
+        let investment_duration = futureDate.format("YYYY-MM-DD");
         let profit_model = 'fixed'
         let withdrawal_frequency = "quarterly"
         let client_name = clientInfo?.clientName
