@@ -50,7 +50,8 @@ module.exports.AddOrder = async (req, res) => {
             }
         }
         var userdetails = await model.getUser(user_id)
-        if (userdetails[0].u_kyc !== "verified") {
+        console.log("user kyc", userdetails)
+        if (!userdetails[0]?.u_kyc || userdetails[0]?.u_kyc !== "verified") {
             return res.send({
                 result: false,
                 message: "KYC needs to be verified before investing"
