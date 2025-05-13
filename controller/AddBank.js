@@ -1,6 +1,7 @@
 var model = require('../model/AddBank')
 let userModel = require('../model/users')
-let notification=require('../util/saveNotification')
+const { sendNotificationToAdmins } = require('../util/firebaseConfig')
+let notification = require('../util/saveNotification')
 
 module.exports.AddBank = async (req, res) => {
     try {
@@ -13,9 +14,17 @@ module.exports.AddBank = async (req, res) => {
         if (userData.length == 0) {
             return res.send({ result: false, message: "User not found" })
         }
+        let checkBank = await model.CheckBank(user_id)
+        if (checkBank.length > 0) {
+            return res.send({
+                result: false,
+                message: "Bank already added for this user."
+            })
+        }
         let data = await model.Addbank(account_no, ifsc_code, swift_code, bank_name, branch_name, currency, user_id)
         if (data.affectedRows > 0) {
-            await notification.addNotification(user_id,userData[0].u_role, "Bank Added", "Bank added successfully")
+            await notification.addNotification(user_id, userData[0].u_role, "Bank Added", "Bank added successfully")
+            await sendNotificationToAdmins("Added bank", `${userdetails[0].u_name} added new bank`)
             return res.send({
                 result: true,
                 message: "Bank added successfully"

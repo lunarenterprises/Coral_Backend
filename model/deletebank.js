@@ -7,3 +7,9 @@ module.exports.Deletebank = async (b_id) => {
     var data = await query(Query, [b_id]);
     return data;
 };
+
+
+module.exports.UpdateKycStatus = async (user_id) => {
+    let Query = `update users set u_kyc=? where u_id=?`
+    return await query(Query, ["pending", user_id])
+}

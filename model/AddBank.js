@@ -7,3 +7,9 @@ module.exports.Addbank = async (account_no, ifsc_code, swift_code, bank_name, br
     var data = await query(Query, [user_id, account_no, ifsc_code, swift_code, bank_name, branch_name, currency]);
     return data;
 };
+
+
+module.exports.CheckBank = async (user_id) => {
+    let Query = `select * from bank where b_u_id=?`
+    return await query(Query, [user_id])
+}

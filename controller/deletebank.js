@@ -1,6 +1,6 @@
 var model = require('../model/deletebank')
 let userModel = require('../model/users')
-let notification=require('../util/saveNotification')
+let notification = require('../util/saveNotification')
 
 module.exports.DeleteBank = async (req, res) => {
     try {
@@ -27,7 +27,8 @@ module.exports.DeleteBank = async (req, res) => {
         }
         let deleted = await model.Deletebank(b_id)
         if (deleted.affectedRows > 0) {
-            await notification.addNotification(user_id,userData[0].u_role, "Bank Deleted", "Bank Deleted Successfully")
+            await model.UpdateKycStatus(user_id)
+            await notification.addNotification(user_id, userData[0].u_role, "Bank Deleted", "Bank Deleted Successfully")
             return res.send({
                 result: true,
                 message: "bank deleted successfully"
