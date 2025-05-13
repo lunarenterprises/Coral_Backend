@@ -50,7 +50,12 @@ module.exports.AddOrder = async (req, res) => {
             }
         }
         var userdetails = await model.getUser(user_id)
-        console.log("user kyc", userdetails)
+        if (userdetails.length === 0) {
+            return res.send({
+                result: false,
+                message: "User not found."
+            })
+        }
         if (!userdetails[0]?.u_kyc || userdetails[0]?.u_kyc !== "verified") {
             return res.send({
                 result: false,
