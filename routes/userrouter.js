@@ -135,17 +135,21 @@ route.delete('/ticket/delete', require('../controller/ticket').DeleteTicket)
 
 route.post('/google/login', require('../controller/GoogleAuth').GoogleLogin)
 
-route.post('/message/sendMessage',require('../controller/userMessages').SendMessage)
+route.post('/message/sendMessage', require('../controller/userMessages').SendMessage)
 
-route.post('/message/listMessages',require('../controller/userMessages').ListMessages)
+route.post('/message/listMessages', require('../controller/userMessages').ListMessages)
 
-route.get('/top_company',require('../controller/top_company').ListTopCompany)
+route.get('/top_company', require('../controller/top_company').ListTopCompany)
 
-route.post('/future_options/invest',require('../controller/InvestFutureOptions').InvestFututreOptions)
+route.post('/future_options/invest', require('../controller/InvestFutureOptions').InvestFututreOptions)
+
+route.post('/upload/paymentreceipt', require('../controller/uploadPaymentReceipt').UploadPaymentReceipt)
 
 
 /// Payment Routes
 route.post('/createPayment', require('../controller/payment').createClientSecret)
+
+route.post('/paymentstatus/update', require('../controller/payment').UpdatePaymentStatus)
 
 route.get('/paymentDetails', require('../controller/payment').getPaymentDetails)
 

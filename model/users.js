@@ -38,5 +38,16 @@ module.exports.createPaymentHistory = async (userId, amount, currency, paymentIn
         description
     ]
 
-    return await db.query(query, values);
+    return await query(query, values);
 };
+
+
+module.exports.updatePaymentStatus = async (investment_id, status) => {
+    let Query = `update user_invest set ui_payment_status=? and ui_payment_type=? where ui_id=? `
+    return await query(Query, [status, "through_stripe", investment_id])
+}
+
+module.exports.UploadPaymentReceipt = async (investment_id, filePath) => {
+    let Query=`update user_invest set ui_payment_receipt=? and ui_payment_type=? where ui_id=? `
+    return await query(Query, [filePath, "through_bank", investment_id])
+}
