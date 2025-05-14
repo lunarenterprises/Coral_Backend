@@ -57,21 +57,21 @@ module.exports.KycUpload = async (req, res) => {
                         process.cwd() + "/uploads/kyc/" + date + '_' + files.front_page.originalFilename.replace(' ', '_')
                     let rawData1 = fs.readFileSync(oldPath1);
                     fs.writeFileSync(newPath1, rawData1)
-                    let front_page = "uploads/kyc/" + date + '_' + files.front_page.originalFilename.replace(' ', '_')
+                    let front_page = "/uploads/kyc/" + date + '_' + files.front_page.originalFilename.replace(' ', '_')
 
                     var oldPath2 = files.back_page.filepath
                     var newPath2 =
                         process.cwd() + "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
                     let rawData2 = fs.readFileSync(oldPath2);
                     fs.writeFileSync(newPath2, rawData2)
-                    let back_page = "uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
+                    let back_page = "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
 
                     var oldPath3 = files.image.filepath
                     var newPath3 =
                         process.cwd() + "/uploads/profile/" + date + '_' + files.image.originalFilename.replace(' ', '_')
                     let rawData3 = fs.readFileSync(oldPath3);
                     fs.writeFileSync(newPath3, rawData3)
-                    let profile = "uploads/profile/" + date + '_' + files.image.originalFilename.replace(' ', '_')
+                    let profile = "/uploads/profile/" + date + '_' + files.image.originalFilename.replace(' ', '_')
 
                     var oldPath4 = files.bank_file.filepath
                     var newPath4 =
@@ -80,7 +80,7 @@ module.exports.KycUpload = async (req, res) => {
                     fs.writeFileSync(newPath4, rawData4)
 
                     await model.UpdateUser(profile, wfa_password, user_id, dob)
-                    let bank_file = "uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
+                    let bank_file = "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
                     let insertbank = await model.Addbank(name_per_bank, account_no, ifsc_code, swift_code, bank_name, branch_name, currency, user_id)
                     let insertdata = await model.AddUserKyc(user_id, id_type, front_page, back_page, bank_file)
                     if (insertdata.affectedRows > 0) {
