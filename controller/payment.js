@@ -4,7 +4,6 @@ const stripe = Stripe(process.env.STRIPE_SECRET);
 
 
 module.exports.createClientSecret = async (req, res) => {
-
     try {
         let { user_id } = req.headers
         if (!user_id) {
@@ -28,8 +27,7 @@ module.exports.createClientSecret = async (req, res) => {
             })
         }
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: amount * 100,
-            currency: userData[0].u_currency,
+            amount: Math.round(amount * 100),
             automatic_payment_methods: {
                 enabled: true,
             },
@@ -37,6 +35,7 @@ module.exports.createClientSecret = async (req, res) => {
                 user_id
             }
         });
+        console.log("amount : ", amount)
         if (paymentIntent) {
             await userModel.createPaymentHistory(user_id, amount, userData[0]?.u_currency, paymentIntent?.id, paymentIntent?.client_secret)
             return res.send({
@@ -90,6 +89,51 @@ module.exports.getPaymentDetails = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message)
+        return res.send({
+            result: false,
+            message: error.message
+        })
+    }
+}
+
+
+module.exports.UpdatePaymentStatus = async (req, res) => {
+    try {
+        let { user_id } = req.headers
+        if (!user_id) {
+            return res.send({
+                result: false,
+                message: "User id is required"
+            })
+        }
+        let userData = await userModel.getUser(user_id)
+        if (userData.length === 0) {
+            return res.send({
+                result: false,
+                message: "User not found"
+            })
+        }
+        let { investment_id } = req.body
+        if (!investment_id) {
+            return res.send({
+                result: false,
+                message: "Investment id is required"
+            })
+        }
+        let status = "success" ? "paid" : "failed"
+        let updatePaymentStatus = await userModel.updatePaymentStatus(investment_id, status)
+        if (updatePaymentStatus.affectedRows > 0) {
+            return res.send({
+                result: true,
+                message: "Payment status updated successfully"
+            })
+        } else {
+            return res.send({
+                result: false,
+                message: "Failed to update payment status"
+            })
+        }
+    } catch (error) {
         return res.send({
             result: false,
             message: error.message
