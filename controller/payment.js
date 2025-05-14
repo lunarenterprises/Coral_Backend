@@ -28,6 +28,7 @@ module.exports.createClientSecret = async (req, res) => {
         }
         const paymentIntent = await stripe.paymentIntents.create({
             amount: Math.round(amount * 100),
+            currency:'AED',
             automatic_payment_methods: {
                 enabled: true,
             },
