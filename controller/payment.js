@@ -37,6 +37,7 @@ module.exports.createClientSecret = async (req, res) => {
                 user_id
             }
         });
+        console.log("paymentIntent : ", paymentIntent)
         if (paymentIntent) {
             await userModel.createPaymentHistory(user_id, amount, userData[0]?.u_currency, paymentIntent?.id, paymentIntent?.client_secret)
             return res.send({
