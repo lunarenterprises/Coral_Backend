@@ -23,12 +23,12 @@ module.exports.RemoveTopcompanyQuery = async (tc_id) => {
 //------------------------------------------------------
 
 module.exports.CheckSubAdminQuery = async (subadmin_id) => {
-    var Query = `select * FROM users WHERE u_id=?`;
+    var Query = `select * FROM admin WHERE ad_id=?`;
     var data = await query(Query, [subadmin_id]);
     return data;
 };
 module.exports.RemoveSubAdminQuery = async (subadmin_id) => {
-    var Query = `update users set u_status ='removed' where u_id = ?`;
+    var Query = `update admin set ad_status ='removed' where ad_id = ?`;
     var data = await query(Query, [subadmin_id]);
     return data;
 };
