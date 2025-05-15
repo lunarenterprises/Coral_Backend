@@ -77,10 +77,15 @@ module.exports.KycUpload = async (req, res) => {
                         process.cwd() + "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
                     let rawData4 = fs.readFileSync(oldPath4);
                     fs.writeFileSync(newPath4, rawData4)
+                    let bank_file = "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
+
+                    console.log("front_page : ", front_page)
+                    console.log("back_page : ", back_page)
+                    console.log("profile : ", profile)
+                    console.log("bank_file : ", bank_file)
 
                     let updateuser = await model.UpdateUser(profile, wfa_password, user_id, dob)
                     console.log("updateuser : ", updateuser)
-                    let bank_file = "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
                     let insertbank = await model.Addbank(name_per_bank, account_no, ifsc_code, swift_code, bank_name, branch_name, currency, user_id)
                     console.log("user kyc ", user_id, id_type, front_page, back_page, bank_file)
                     let insertdata = await model.AddUserKyc(user_id, id_type, front_page, back_page, bank_file)
