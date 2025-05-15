@@ -23,7 +23,7 @@ module.exports.verifyReferralCode = async (referral_code) => {
 
 module.exports.createPaymentHistory = async (userId, amount, currency, paymentIntentId, clientSecret, description = '') => {
     // Insert new payment record into payment_history table
-    const query = `
+    const Query = `
             INSERT INTO payment_history (user_id, amount, currency, payment_intent_id, client_secret, payment_status, description)
             VALUES (?,?,?, ?,?,?,?)
         `;
@@ -38,7 +38,7 @@ module.exports.createPaymentHistory = async (userId, amount, currency, paymentIn
         description
     ]
 
-    return await query(query, values);
+    return await query(Query, values);
 };
 
 
