@@ -63,7 +63,7 @@ module.exports.AdminDeleteSection = async (req, res) => {
         if (subadmin_id) {
             let checksubadmin = await model.CheckSubAdminQuery(subadmin_id);
 
-            var adminname = checksubadmin[0]?.u_name
+            var adminname = checksubadmin[0]?.ad_name
             if (checksubadmin.length == 0) {
                 return res.send({
                     result: false,
