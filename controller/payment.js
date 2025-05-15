@@ -26,7 +26,6 @@ module.exports.createClientSecret = async (req, res) => {
                 message: "Amount is required"
             })
         }
-        console.log("amount : ", amount)
         const paymentIntent = await stripe.paymentIntents.create({
             amount: Math.round(amount * 100),
             currency: 'AED',
@@ -37,7 +36,6 @@ module.exports.createClientSecret = async (req, res) => {
                 user_id
             }
         });
-        console.log("paymentIntent : ", paymentIntent)
         if (paymentIntent) {
             await userModel.createPaymentHistory(user_id, amount, userData[0]?.u_currency, paymentIntent?.id, paymentIntent?.client_secret)
             return res.send({
