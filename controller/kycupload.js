@@ -34,7 +34,6 @@ module.exports.KycUpload = async (req, res) => {
                     data: err,
                 });
             }
-
             let { name_per_bank, account_no, ifsc_code, swift_code, bank_name, branch_name, currency, verification_type, id_type, wfa_password, dob, country } = fields
             if (!name_per_bank || !account_no || !ifsc_code || !bank_name || !branch_name || !currency || !verification_type || !id_type || !wfa_password || !dob || !country) {
                 return res.send({
@@ -82,7 +81,9 @@ module.exports.KycUpload = async (req, res) => {
                     await model.UpdateUser(profile, wfa_password, user_id, dob)
                     let bank_file = "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
                     let insertbank = await model.Addbank(name_per_bank, account_no, ifsc_code, swift_code, bank_name, branch_name, currency, user_id)
+                    console.log("user kyc ", user_id, id_type, front_page, back_page, bank_file)
                     let insertdata = await model.AddUserKyc(user_id, id_type, front_page, back_page, bank_file)
+                    console.log("insertdata", insertdata)
                     if (insertdata.affectedRows > 0) {
                         var username = finduser[0]?.u_name.toUpperCase().substring(0, 3)
                         let info = await transporter.sendMail({
