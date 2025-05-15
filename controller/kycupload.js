@@ -25,6 +25,7 @@ module.exports.KycUpload = async (req, res) => {
                 message: "User id is required"
             })
         }
+        console.log("date : ", date)
         var form = new formidable.IncomingForm({ multiples: true });
         form.parse(req, async function (err, fields, files) {
             if (err) {
@@ -42,6 +43,7 @@ module.exports.KycUpload = async (req, res) => {
                 })
 
             }
+            console.log("fields : ", fields)
             let finduser = await model.GetUser(user_id)
             if (finduser[0]?.u_kyc && (finduser[0]?.u_kyc === "active" || finduser[0]?.u_kyc === "pending")) {
                 return res.send({
@@ -49,8 +51,10 @@ module.exports.KycUpload = async (req, res) => {
                     message: "Kyc already submitted"
                 })
             }
+            console.log("finduser : ", finduser)
             if (verification_type == "photo") {
                 if (files.front_page && files.back_page && files.image && files.bank_file) {
+                    console.log("files : ", files)
                     var oldPath1 = files.front_page.filepath
                     var newPath1 =
                         process.cwd() + "/uploads/kyc/" + date + '_' + files.front_page.originalFilename.replace(' ', '_')
