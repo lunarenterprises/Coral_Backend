@@ -37,3 +37,29 @@ module.exports.UpdateUserKyc = async (u_id, u_country, u_currency) => {
     var data = await query(Query, ['pending', u_country, u_currency, u_id]);
     return data;
 };
+
+
+module.exports.CheckKyc = async (user_id, user_kyc) => {
+    let Query = `select * from user_kyc where uk_u_id = ? and uk_id=?`;
+    return await query(Query, [user_id, user_kyc]);
+}
+
+module.exports.UpdateKyc = async (kyc_id, front_page, back_page, bank_file) => {
+    let Query = `update user_kyc set `
+    let values = []
+    if (front_page) {
+        Query += `uk_front = ?,`
+        values.push(front_page)
+    }
+    if (back_page) {
+        Query += `uk_back = ?,`
+        values.push(back_page)
+    }
+    if (bank_file) {
+        Query += `uk_bank_statement = ?`
+        values.push(bank_file)
+    }
+    Query += ` where uk_id = ?`
+    values.push(kyc_id)
+    return await query(Query, values);
+}
