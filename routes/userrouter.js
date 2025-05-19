@@ -83,6 +83,8 @@ route.post('/wfa-pin/change', require('../controller/forgotpassword').WfaChangeP
 
 route.post('/kyc-upload', require('../controller/kycupload').KycUpload)
 
+route.post('/kyc/re_upload',require('../controller/kycupload').KycReUpload)
+
 route.get('/kyc', require('../controller/UserKycData').GetUserKycData)
 
 route.post('/contractList', require('../controller/userContractList').UserContractList)
