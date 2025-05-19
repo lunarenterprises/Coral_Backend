@@ -139,7 +139,7 @@ route.post('/message/sendMessage', require('../controller/userMessages').SendMes
 
 route.post('/message/listMessages', require('../controller/userMessages').ListMessages)
 
-route.get('/top_company', require('../controller/top_company').ListTopCompany)
+route.post('/top_company', require('../controller/top_company').ListTopCompany)
 
 route.post('/future_options/invest', require('../controller/InvestFutureOptions').InvestFututreOptions)
 
