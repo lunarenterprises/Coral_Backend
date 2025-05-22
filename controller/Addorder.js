@@ -640,7 +640,7 @@ module.exports.AddOrder = async (req, res) => {
       <div class="watermark-text">CORAL WEALTH</div>
         <!-- Header -->
         <div class="header">
-            <img src="https://lunarsenterprises.com:6017/uploads/agreement_needs/coraluae.webp" alt="Coral Wealth Investment Logo">
+            <img src="${req.protocol + "://" + req.get("host")}/uploads/agreement_needs/coraluae.webp" alt="Coral Wealth Investment Logo">
             <!-- Replace with your logo file -->
         </div>
 
