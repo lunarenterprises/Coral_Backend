@@ -640,7 +640,7 @@ module.exports.AddOrder = async (req, res) => {
       <div class="watermark-text">CORAL WEALTH</div>
         <!-- Header -->
         <div class="header">
-            <img src="${req.protocol + "://" + req.get("host")}/uploads/agreement_needs/coraluae.webp" alt="Coral Wealth Investment Logo">
+            <img src="https://coral.lunarsenterprises.com/uploads/agreement_needs/coraluae.webp/uploads/agreement_needs/coraluae.webp" alt="Coral Wealth Investment Logo">
             <!-- Replace with your logo file -->
         </div>
 
@@ -656,17 +656,17 @@ module.exports.AddOrder = async (req, res) => {
         <!-- Footer -->
     <div class="footer">
         <div class="flexstyle">
-            <img class='phone-icon' src="https://lunarsenterprises.com:6017/uploads/agreement_needs/phone.png" alt="Phone">
+            <img class='phone-icon' src="https://coral.lunarsenterprises.com/uploads/agreement_needs/phone.png" alt="Phone">
             <!-- Replace with phone icon -->
             <span>+971 4 287 7411</span>
         </div>
         <div>
-            <img class='phone-icon' src="https://lunarsenterprises.com:6017/uploads/agreement_needs/internet.png" alt="Email">
+            <img class='phone-icon' src="https://coral.lunarsenterprises.com/uploads/agreement_needs/internet.png" alt="Email">
             <!-- Replace with email icon -->
             <a href="mailto:info@coraluce.com">info@coraluce.com</a>
         </div>
         <div class="flexstyle">
-            <img class='phone-icon' src="https://lunarsenterprises.com:6017/uploads/agreement_needs/location.png" alt="Location">
+            <img class='phone-icon' src="https://coral.lunarsenterprises.com/uploads/agreement_needs/location.png" alt="Location">
             <!-- Replace with location icon -->
             <span>310, 3rd Floor, SIT Towers, Dubai Silicon Oasis, Dubai</span>
         </div>
