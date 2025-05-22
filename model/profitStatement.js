@@ -44,3 +44,9 @@ module.exports.getUser = async (user_id) => {
     const data = await query(Query, [user_id]);
     return data
 }
+
+
+module.exports.GetBankData=async(user_id)=>{
+    let Query=`select * from bank where b_u_id=?`
+    return await query(Query,[user_id])
+}

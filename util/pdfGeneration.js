@@ -37,21 +37,67 @@ const newPath = require('path');
 //     return path;
 // }
 
+// module.exports.createPdfWithPuppeteer = async (htmlContent, path) => {
+//     try {
+//         let browser = await puppeteer.launch({
+//             args: ["--no-sandbox", "--disable-setuid-sandbox"],
+//             headless: "new",
+//             executablePath: newPath.resolve(process.env.HOME, 'chromium/chrome-linux/chrome')
+//         });
+//         let page = await browser.newPage();
+
+//         await page.setContent(htmlContent, { "waitUntil": "networkidle0", timeout: 60000 });
+
+//         await page.pdf({
+//             path: path,
+//             format: "A4",
+//             printBackground: true, // Only one instance of this key
+//             displayHeaderFooter: true,
+//             margin: { top: "50px", bottom: "50px" },
+//         });
+
+//         await browser.close();
+//     } catch (err) {
+//         console.error("Error_creating_PDF", err);
+//     }
+//     return path;
+// }
+
 module.exports.createPdfWithPuppeteer = async (htmlContent, path) => {
     try {
-        let browser = await puppeteer.launch({
+        const browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: "new",
             executablePath: newPath.resolve(process.env.HOME, 'chromium/chrome-linux/chrome')
         });
-        let page = await browser.newPage();
+        const page = await browser.newPage();
 
-        await page.setContent(htmlContent, { "waitUntil": "networkidle0", timeout: 60000 });
+        // Block unnecessary requests
+        await page.setRequestInterception(true);
+        page.on('request', req => {
+            const blockTypes = ['image', 'stylesheet', 'font'];
+            if (blockTypes.includes(req.resourceType())) {
+                req.abort();
+            } else {
+                req.continue();
+            }
+        });
+
+        // Log failed requests for debugging
+        page.on('requestfailed', request => {
+            console.error(`❌ Request failed: ${request.url()} (${request.failure().errorText})`);
+        });
+
+        // Load content with relaxed timeout
+        await page.setContent(htmlContent, {
+            waitUntil: "networkidle0",
+            timeout: 120000
+        });
 
         await page.pdf({
             path: path,
             format: "A4",
-            printBackground: true, // Only one instance of this key
+            printBackground: true,
             displayHeaderFooter: true,
             margin: { top: "50px", bottom: "50px" },
         });
@@ -61,4 +107,4 @@ module.exports.createPdfWithPuppeteer = async (htmlContent, path) => {
         console.error("Error_creating_PDF", err);
     }
     return path;
-}
+};

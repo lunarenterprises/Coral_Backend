@@ -109,7 +109,7 @@ route.get('/nest/currentInvestment', require('../controller/currentInvestment').
 
 route.get('/notifications', require('../controller/ListNotification').GetNotification)
 
-route.get('/download/statement/profit', require('../controller/ProfitStatement').downloadStatement)
+route.get('/download/statement/profit', require('../controller/ProfitStatement').downloadStatementPdf)
 
 route.post('/download/statement/wallet', require('../controller/WalletStatement').downloadStatement)
 
