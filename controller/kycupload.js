@@ -4,6 +4,7 @@ var moment = require('moment')
 var fs = require('fs')
 var nodemailer = require('nodemailer')
 let notifiaction = require('../util/saveNotification')
+let {sendNotificationToAdmins} =require('../util/firebaseConfig')
 
 module.exports.KycUpload = async (req, res) => {
     try {
@@ -217,6 +218,7 @@ module.exports.KycUpload = async (req, res) => {
                             "KYC Verification Request",
                             "Your KYC verification request has been submitted successfully"
                         )
+                        await sendNotificationToAdmins("KYC submitted" , `${username} has submitted the KYC.`)
                         return res.send({
                             result: true,
                             message: "Kyc submitted successfully,one of our representative will contact u"
@@ -470,12 +472,12 @@ module.exports.KycReUpload = async (req, res) => {
                         }
                     ]
                 });
-                await model.UpdateUserKyc(user_id, country, currency)
                 await notifiaction.addNotification(user_id,
                     finduser[0]?.u_role,
                     "KYC Verification Request",
                     "Your KYC verification request has been submitted successfully"
                 )
+                await sendNotificationToAdmins("KYC reuploaded" , `${username} has resubmitted the KYC.`)
                 return res.send({
                     result: true,
                     message: "Kyc submitted successfully,one of our representative will contact u"
