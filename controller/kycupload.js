@@ -297,7 +297,7 @@ module.exports.KycReUpload = async (req, res) => {
                 message: "User id is required"
             })
         }
-        let bankData=await model.GetBank(user_id)
+        let bankData = await model.GetBank(user_id)
 
         var form = new formidable.IncomingForm({ multiples: true });
         form.parse(req, async function (err, fields, files) {
@@ -329,44 +329,44 @@ module.exports.KycReUpload = async (req, res) => {
                     message: "Kyc already submitted"
                 })
             }
-                let front_page = null
-                let back_page = null
-                let bank_file = null
-                if (files.front_page) {
-                    var oldPath1 = files.front_page.filepath
-                    var newPath1 =
-                        process.cwd() + "/uploads/kyc/" + date + '_' + files.front_page.originalFilename.replace(' ', '_')
-                    let rawData1 = fs.readFileSync(oldPath1);
-                    fs.writeFileSync(newPath1, rawData1)
-                    front_page = "/uploads/kyc/" + date + '_' + files.front_page.originalFilename.replace(' ', '_')
-                }
-                if (files.back_page) {
-                    var oldPath2 = files.back_page.filepath
-                    var newPath2 =
-                        process.cwd() + "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
-                    let rawData2 = fs.readFileSync(oldPath2);
-                    fs.writeFileSync(newPath2, rawData2)
-                    back_page = "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
-                }
-                if (files.bank_file) {
-                    var oldPath4 = files.bank_file.filepath
-                    var newPath4 =
-                        process.cwd() + "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
-                    let rawData4 = fs.readFileSync(oldPath4);
-                    fs.writeFileSync(newPath4, rawData4)
-                    bank_file = "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
-                }
-                let updateKyc = await model.UpdateKyc(kyc_id, front_page, back_page, bank_file)
-                console.log("updateKyc : ", kyc_id, front_page, back_page, bank_file)
-                console.log("insertdata", updateKyc)
-                if (updateKyc.affectedRows > 0) {
-                    var username = finduser[0]?.u_name.toUpperCase().substring(0, 3)
-                    let info = await transporter.sendMail({
-                        from: "CORAL WEALTH <coraluae@lunarenp.com>",
-                        // to: 'operations@coraluae.com',
-                        to: 'aishwaryalunar@gmail.com',
-                        subject: 'KYC VERIFICATION REQUEST',
-                        html: `<!DOCTYPE html>
+            let front_page = null
+            let back_page = null
+            let bank_file = null
+            if (files.front_page) {
+                var oldPath1 = files.front_page.filepath
+                var newPath1 =
+                    process.cwd() + "/uploads/kyc/" + date + '_' + files.front_page.originalFilename.replace(' ', '_')
+                let rawData1 = fs.readFileSync(oldPath1);
+                fs.writeFileSync(newPath1, rawData1)
+                front_page = "/uploads/kyc/" + date + '_' + files.front_page.originalFilename.replace(' ', '_')
+            }
+            if (files.back_page) {
+                var oldPath2 = files.back_page.filepath
+                var newPath2 =
+                    process.cwd() + "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
+                let rawData2 = fs.readFileSync(oldPath2);
+                fs.writeFileSync(newPath2, rawData2)
+                back_page = "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
+            }
+            if (files.bank_file) {
+                var oldPath4 = files.bank_file.filepath
+                var newPath4 =
+                    process.cwd() + "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
+                let rawData4 = fs.readFileSync(oldPath4);
+                fs.writeFileSync(newPath4, rawData4)
+                bank_file = "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
+            }
+            let updateKyc = await model.UpdateKyc(kyc_id, front_page, back_page, bank_file)
+            console.log("updateKyc : ", kyc_id, front_page, back_page, bank_file)
+            console.log("insertdata", updateKyc)
+            if (updateKyc.affectedRows > 0) {
+                var username = finduser[0]?.u_name.toUpperCase().substring(0, 3)
+                let info = await transporter.sendMail({
+                    from: "CORAL WEALTH <coraluae@lunarenp.com>",
+                    // to: 'operations@coraluae.com',
+                    to: 'aishwaryalunar@gmail.com',
+                    subject: 'KYC VERIFICATION REQUEST',
+                    html: `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -455,36 +455,32 @@ module.exports.KycReUpload = async (req, res) => {
 </body>
 </html>
 `,
-                        attachments: [
-                            {
-                                filename: 'KYC' + '_FRONT_PAGE_' + username + '_' + date + '.pdf',
-                                path: process.cwd() + "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
-                            },
-                            {
-                                filename: 'KYC' + '_BACK_PAGE_' + username + '_' + date + '.pdf',
-                                path: process.cwd() + "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
-                            },
-                            {
-                                filename: 'PROFILE' + username + '_' + date + '.' + files.image.originalFilename.split('.')[1],
-                                path: process.cwd() + "/uploads/profile/" + date + '_' + files.image.originalFilename.replace(' ', '_')
-                            },
-                            {
-                                filename: 'BANK' + '_STATEMENT_' + username + '_' + date + '.pdf',
-                                path: process.cwd() + "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
-                            }
-                        ]
-                    });
-                    await model.UpdateUserKyc(user_id, country, currency)
-                    await notifiaction.addNotification(user_id,
-                        finduser[0]?.u_role,
-                        "KYC Verification Request",
-                        "Your KYC verification request has been submitted successfully"
-                    )
-                    return res.send({
-                        result: true,
-                        message: "Kyc submitted successfully,one of our representative will contact u"
-                    })
-                }
+                    attachments: [
+                        {
+                            filename: 'KYC' + '_FRONT_PAGE_' + username + '_' + date + '.pdf',
+                            path: process.cwd() + "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
+                        },
+                        {
+                            filename: 'KYC' + '_BACK_PAGE_' + username + '_' + date + '.pdf',
+                            path: process.cwd() + "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
+                        },
+                        {
+                            filename: 'BANK' + '_STATEMENT_' + username + '_' + date + '.pdf',
+                            path: process.cwd() + "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
+                        }
+                    ]
+                });
+                await model.UpdateUserKyc(user_id, country, currency)
+                await notifiaction.addNotification(user_id,
+                    finduser[0]?.u_role,
+                    "KYC Verification Request",
+                    "Your KYC verification request has been submitted successfully"
+                )
+                return res.send({
+                    result: true,
+                    message: "Kyc submitted successfully,one of our representative will contact u"
+                })
+            }
         })
     } catch (error) {
         return res.send({
