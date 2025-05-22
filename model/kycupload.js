@@ -63,3 +63,8 @@ module.exports.UpdateKyc = async (kyc_id, front_page, back_page, bank_file) => {
     values.push(kyc_id)
     return await query(Query, values);
 }
+
+module.exports.GetBank = async (user_id) => {
+    let Query = `select * from bank where b_u_id=?`
+    return await query(Query, [user_id])
+}
