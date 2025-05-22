@@ -432,7 +432,7 @@ module.exports.KycReUpload = async (req, res) => {
                 <li><strong>Name:</strong> ${finduser[0]?.u_name}</li>
                 <li><strong>Email:</strong> ${finduser[0]?.u_email}</li>
                 <li><strong>Phone:</strong> ${finduser[0]?.u_mobile}</li>
-                 <li><strong>DOB:</strong> ${dob}</li>
+                 <li><strong>DOB:</strong> ${finduser[0]?.u_dob}</li>
             </ul>
             <div class="bank-details">
                 <h3>Bank Details</h3>
