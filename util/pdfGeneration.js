@@ -73,20 +73,20 @@ module.exports.createPdfWithPuppeteer = async (htmlContent, path) => {
         const page = await browser.newPage();
 
         // Block unnecessary requests
-        await page.setRequestInterception(true);
-        page.on('request', req => {
-            const blockTypes = ['image', 'stylesheet', 'font'];
-            if (blockTypes.includes(req.resourceType())) {
-                req.abort();
-            } else {
-                req.continue();
-            }
-        });
+        // await page.setRequestInterception(true);
+        // page.on('request', req => {
+        //     const blockTypes = ['image', 'stylesheet', 'font'];
+        //     if (blockTypes.includes(req.resourceType())) {
+        //         req.abort();
+        //     } else {
+        //         req.continue();
+        //     }
+        // });
 
-        // Log failed requests for debugging
-        page.on('requestfailed', request => {
-            console.error(`❌ Request failed: ${request.url()} (${request.failure().errorText})`);
-        });
+        // // Log failed requests for debugging
+        // page.on('requestfailed', request => {
+        //     console.error(`❌ Request failed: ${request.url()} (${request.failure().errorText})`);
+        // });
 
         // Load content with relaxed timeout
         await page.setContent(htmlContent, {
