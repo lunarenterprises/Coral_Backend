@@ -327,7 +327,6 @@ module.exports.KycReUpload = async (req, res) => {
                     message: "Kyc already submitted"
                 })
             }
-            if (verification_type == "photo") {
                 let front_page = null
                 let back_page = null
                 let bank_file = null
@@ -450,7 +449,6 @@ module.exports.KycReUpload = async (req, res) => {
             <p>Attached, you will find the relevant documents for your review and processing.</p>
             <p>Please complete the verification process at the earliest.</p>
         </div>
-
     </div>
 </body>
 </html>
@@ -485,16 +483,7 @@ module.exports.KycReUpload = async (req, res) => {
                         message: "Kyc submitted successfully,one of our representative will contact u"
                     })
                 }
-
-            } else {
-                return res.send({
-                    result: false,
-                    message: "Failed to upload kyc document,pls try again"
-                })
-            }
         })
-
-
     } catch (error) {
         return res.send({
             result: false,
