@@ -297,6 +297,8 @@ module.exports.KycReUpload = async (req, res) => {
                 message: "User id is required"
             })
         }
+        let bankData=await model.GetBank(user_id)
+
         var form = new formidable.IncomingForm({ multiples: true });
         form.parse(req, async function (err, fields, files) {
             if (err) {
@@ -437,13 +439,13 @@ module.exports.KycReUpload = async (req, res) => {
             <div class="bank-details">
                 <h3>Bank Details</h3>
                 <ul>
-                    <li><strong>Name As Per Bank Account:</strong> ${name_per_bank}</li>
-                    <li><strong>Bank Name:</strong> ${bank_name}</li>
-                    <li><strong>Branch Name:</strong> ${branch_name}</li>
-                    <li><strong>Account Number:</strong> ${account_no}</li>
-                    <li><strong>IFSC Code:</strong> ${ifsc_code}</li>
-                    <li><strong>Swift Code:</strong> ${swift_code}</li>
-                    <li><strong>Currency:</strong> ${currency}</li>
+                    <li><strong>Name As Per Bank Account:</strong> ${bankData[0]?.b_name_as}</li>
+                    <li><strong>Bank Name:</strong> ${bankData[0]?.b_name}</li>
+                    <li><strong>Branch Name:</strong> ${bankData[0]?.b_branck}</li>
+                    <li><strong>Account Number:</strong> ${bankData[0]?.b_account_no}</li>
+                    <li><strong>IFSC Code:</strong> ${bankData[0]?.b_ifsc_code}</li>
+                    <li><strong>Swift Code:</strong> ${bankData[0]?.b_swift_code}</li>
+                    <li><strong>Currency:</strong> ${bankData[0]?.b_currency}</li>
                 </ul>
             </div>
             <p>Attached, you will find the relevant documents for your review and processing.</p>
