@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path');
 const exceljs = require('exceljs');
 const moment = require('moment')
+const { createPdfWithPuppeteer } = require('../util/pdfGeneration');
 
 module.exports.downloadStatementExcel = async (req, res) => {
     try {
@@ -135,29 +136,72 @@ module.exports.downloadStatementPdf = async (req, res) => {
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: Arial, sans-serif;
             font-size: 9px;
             line-height: 1.2;
-            background: white;
+            background: #f5f5f5;
             color: black;
+        }
+
+        .watermark-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 6em;
+            color: rgba(0, 0, 0, 0.05);
+            text-transform: uppercase;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0e0e0e 0%, #1a1a1a 100%);
+            padding: 20px 0;
+            margin-bottom: 30px;
+            width: 100%;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .header img {
+            width: 180px;
+            height: auto;
+            max-width: 100%;
         }
         
         .page {
-            width: 210mm;
-            min-height: 297mm;
-            margin: 0 auto 20px auto;
-            padding: 20mm;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
             background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            page-break-after: always;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .page {
+                box-shadow: none;
+                margin: 0;
+                border-radius: 0;
+                page-break-after: always;
+            }
         }
         
         /* Page 1 Styles */
         .summary-header {
             text-align: center;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
             margin-bottom: 25px;
+            color: #333;
         }
         
         .summary-table {
@@ -168,103 +212,109 @@ module.exports.downloadStatementPdf = async (req, res) => {
         
         .summary-table th,
         .summary-table td {
-            border: 1px solid #000;
-            padding: 8px;
+            border: 1px solid #ddd;
+            padding: 12px 8px;
             text-align: left;
-            font-size: 10px;
+            font-size: 11px;
         }
         
         .summary-table th {
-            background-color: #fff;
+            background-color: #f8f9fa;
             font-weight: bold;
+            color: #333;
         }
         
         .summary-table .balance {
             text-align: center;
             font-weight: bold;
+            color: #2c5530;
         }
         
-        /* Page 2 & 3 Styles */
+        /* Company Info */
         .company-info {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: bold;
             margin-bottom: 20px;
-            line-height: 1.3;
-            color:blue;
+            line-height: 1.4;
+            color: #1565c0;
         }
         
-        .company-info span{
-            font-size:14px;
+        .company-info span {
+            font-size: 14px;
+            display: block;
+            margin-bottom: 8px;
         }
         
         .statement-header {
             text-align: center;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
             margin-bottom: 25px;
+            color: #333;
         }
         
         .transactions-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
-            font-size: 9px;
+            font-size: 10px;
         }
         
         .transactions-table th,
         .transactions-table td {
-            border: 1px solid #000;
-            padding: 6px;
+            border: 1px solid #ddd;
+            padding: 8px;
             text-align: left;
             vertical-align: top;
         }
         
         .transactions-table th {
-            background-color: #fff;
+            background-color: #f8f9fa;
             font-weight: bold;
             text-align: center;
+            color: #333;
         }
         
-        .transactions-table .amount-col {
-            text-align: right;
-            width: 90px;
-        }
-        
+        .transactions-table .amount-col,
         .transactions-table .balance-col {
             text-align: right;
             width: 90px;
         }
         
         .transactions-table .date-col {
-            width: 70px;
+            width: 90px;
         }
         
         .transactions-table .ref-col {
-            width: 85px;
+            width: 100px;
         }
         
-        /* Account Details Section at bottom of pages */
+        /* Account Details Section */
         .account-details-section {
             margin-top: 40px;
             display: flex;
             justify-content: space-between;
+            gap: 20px;
         }
         
         .account-details-left {
-            width: 48%;
-            font-size: 9px;
+            width: 55%;
+            font-size: 10px;
         }
         
         .account-details-right {
-            width: 48%;
-            font-size: 10px;
+            width: 40%;
+            font-size: 11px;
             font-weight: bold;
             text-align: left;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
         }
         
         .account-detail-row {
-            margin-bottom: 2px;
-            line-height: 1.3;
+            margin-bottom: 4px;
+            line-height: 1.4;
         }
         
         .account-label {
@@ -272,60 +322,99 @@ module.exports.downloadStatementPdf = async (req, res) => {
             display: inline-block;
             vertical-align: top;
             width: 140px;
+            color: #555;
         }
         
         .account-value {
             display: inline-block;
             vertical-align: top;
+            color: #333;
         }
         
         .account-holder-name {
             font-weight: bold;
+            color: #1565c0;
         }
         
         /* Footer Styles */
         .footer {
-            position: absolute;
-            bottom: 20mm;
-            left: 20mm;
-            right: 20mm;
-            font-size: 8px;
+            margin-top: 40px;
+            font-size: 9px;
             line-height: 1.4;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
         }
         
         .digital-stamp {
             font-style: italic;
             margin-bottom: 15px;
+            color: #666;
         }
         
         .copyright {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            color: #333;
         }
         
         .terms {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            color: #555;
         }
         
         .arabic-text {
             direction: rtl;
             text-align: right;
             margin-bottom: 15px;
+            color: #555;
+            font-family: 'Arial Unicode MS', Arial, sans-serif;
         }
         
         .notice {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            color: #555;
+            line-height: 1.5;
         }
         
         .page-number {
             text-align: center;
             margin-top: 20px;
-            font-size: 8px;
+            font-size: 9px;
+            color: #666;
+            font-weight: bold;
         }
-        
-        .page {
-            position: relative;
-            min-height: 297mm;
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .page {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .account-details-section {
+                flex-direction: column;
+            }
+            
+            .account-details-left,
+            .account-details-right {
+                width: 100%;
+            }
+            
+            .transactions-table {
+                font-size: 9px;
+            }
+            
+            .transactions-table th,
+            .transactions-table td {
+                padding: 6px 4px;
+            }
+        }
+
+        .no-data {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
         }
     </style>
 </head>
@@ -333,16 +422,14 @@ module.exports.downloadStatementPdf = async (req, res) => {
 
 <!-- Page 1: Summary -->
 <div class="page">
-<div class="header">
-            <img src="https://lunarsenterprises.com:6017/uploads/agreement_needs/coraluae.webp" alt="Coral Wealth Investment Logo">
-            <!-- Replace with your logo file -->
-        </div>
+    <div class="watermark-text">CORAL WEALTH</div>
+    <div class="header">
+        <img src="https://coral.lunarsenterprises.com/uploads/agreement_needs/coraluae.webp" alt="Coral Wealth Investment Logo">
+    </div>
+    
     <div class="company-info">
-        <span>
-  CORAL WEALTH INVESTMENT IN HEALTHCARE ENTERPRISES & DEVELOPMENT CO. L.L.C
-</span><br>
-        IFZA, A2 Building, Dubai Digital Park, DSO
-Office 606<br>
+        <span>CORAL WEALTH INVESTMENT IN HEALTHCARE ENTERPRISES & DEVELOPMENT CO. L.L.C</span>
+        IFZA, A2 Building, Dubai Digital Park, DSO Office 606<br>
         Regal Tower, Business Bay,<br>
         Dubai, United Arab Emirates
     </div>
@@ -352,6 +439,7 @@ Office 606<br>
     <table class="summary-table">
         <thead>
             <tr>
+                <th>ACCOUNT HOLDER</th>
                 <th>ACCOUNT NUMBER</th>
                 <th>ACCOUNT IFSC CODE</th>
                 <th>ACCOUNT CURRENCY</th>
@@ -360,6 +448,7 @@ Office 606<br>
         </thead>
         <tbody>
             <tr>
+                <td>${bankData[0]?.b_name_as}</td>
                 <td>${bankData[0]?.b_account_no}</td>
                 <td>${bankData[0]?.b_ifsc_code}</td>
                 <td>${bankData[0]?.b_currency}</td>
@@ -369,14 +458,14 @@ Office 606<br>
     </table>
 
     <div class="footer">
-        <div class="digital-stamp">This is a digital stamp and<br>does not require signature.</div>
+        <div class="digital-stamp">This is a digital stamp and does not require signature.</div>
         
         <div class="copyright">© 2025 Coral Wealth Investment, Dubai</div>
         <div class="terms">Coral Wealth Standard Terms and Conditions are applicable</div>
         
         <div class="arabic-text">
             كورال ويلث إنفستمنت، دبي<br>
-تنطبق الشروط والأحكام القياسية لشركة كورال ويلث
+            تنطبق الشروط والأحكام القياسية لشركة كورال ويلث
         </div>
         
         <div class="notice">
@@ -386,28 +475,26 @@ Office 606<br>
         </div>
         
         <div class="arabic-text">
-    يرجى مراجعة كشف الحساب هذا والإبلاغ عن أي اختلافات في غضون 30 يوماً. في حال لم يتم الإبلاغ عن أي مشاكل، فسيتم اعتبار البيان صحيحاً (خاضع لحق شركة كورال ويلث في تصحيح الأخطاء).<br>
-    للمساعدة، تواصل مع خدمة عملاء كورال ويلث على 946 500 600
-</div>
-
+            يرجى مراجعة كشف الحساب هذا والإبلاغ عن أي اختلافات في غضون 30 يوماً. في حال لم يتم الإبلاغ عن أي مشاكل، فسيتم اعتبار البيان صحيحاً (خاضع لحق شركة كورال ويلث في تصحيح الأخطاء).<br>
+            للمساعدة، تواصل مع خدمة عملاء كورال ويلث على 946 500 600
+        </div>
         
-        <div class="page-number">Page 1 of 3</div>
+        <div class="page-number">Page 1 of 2</div>
     </div>
 </div>
 
 <!-- Page 2: AED Account Statement -->
 <div class="page">
     <div class="company-info">
-        CORAL WEALTH INVESTMENT IN HEALTHCARE ENTERPRISES & DEVELOPMENT CO. L.L.C<br>
-        IFZA, A2 Building, Dubai Digital Park, DSO
-Office 606<br>
+        <span>CORAL WEALTH INVESTMENT IN HEALTHCARE ENTERPRISES & DEVELOPMENT CO. L.L.C</span>
+        IFZA, A2 Building, Dubai Digital Park, DSO Office 606<br>
         Regal Tower, Business Bay,<br>
         Dubai, United Arab Emirates
     </div>
 
     <div class="statement-header">
         ACCOUNT STATEMENT<br>
-        LAST ${monthsAgo} months
+        ${monthsAgo ?`LAST ${monthsAgo} months`:""}
     </div>
 
     <table class="transactions-table">
@@ -440,19 +527,14 @@ Office 606<br>
                 <span class="account-label">ACCOUNT HOLDER NAME</span>
             </div>
             <div class="account-detail-row account-holder-name">
-                CORAL WEALTH INVESTMENT <br>
-                HEALTHCARE ENTERPRISES <br>
-                DEVELOPMENT<br>
-                TRAINING CO. L.L.C
+               ${user[0]?.u_name} <br>
+               ${user[0]?.u_email} <br>
+               ${user[0]?.u_mobile} <br>
             </div>
             <br>
             <div class="account-detail-row">
                 <span class="account-label">CURRENCY</span>
-                <span class="account-value">AED</span>
-            </div>
-            <div class="account-detail-row">
-                <span class="account-label">INTEREST RATE</span>
-                <span class="account-value">0%</span>
+                <span class="account-value">${user[0]?.u_currency}</span>
             </div>
             <div class="account-detail-row">
                 <span class="account-label">ACCOUNT TYPE</span>
@@ -460,52 +542,36 @@ Office 606<br>
             </div>
             <div class="account-detail-row">
                 <span class="account-label">ACCOUNT NAME</span>
-            </div>
-            <div class="account-detail-row">
-                CORAL WEALTH INVESTMENT IN HEALTHCARE ENTERPRISES DEVELOPMENT CO. L.L.C
+                ${bankData[0]?.b_name_as}
             </div>
             <div class="account-detail-row">
                 <span class="account-label">ACCOUNT NUMBER</span>
-                <span class="account-value">9076680104</span>
+                <span class="account-value">${bankData[0]?.b_account_no}</span>
             </div>
             <div class="account-detail-row">
                 <span class="account-label">ACCOUNT OPENED</span>
-                <span class="account-value">10/08/2023</span>
+                <span class="account-value">${moment(user[0]?.u_joining_date).format('DD/MM/YYYY')}</span>
             </div>
             <div class="account-detail-row">
-                <span class="account-label">IBAN</span>
-                <span class="account-value">AE810860000009076680104</span>
-            </div>
-            <div class="account-detail-row">
-                <span class="account-label">OPENING BALANCE</span>
-                <span class="account-value">27,735.26</span>
+                <span class="account-label">IFSC</span>
+                <span class="account-value">${bankData[0]?.b_ifsc_code}</span>
             </div>
             <div class="account-detail-row">
                 <span class="account-label">CLOSING BALANCE</span>
-                <span class="account-value">7,319.47</span>
+                <span class="account-value">${user[0]?.u_wallet}</span>
             </div>
-        </div>
-        <div class="account-details-right">
-            ACCOUNT STATEMENT<br>
-            FROM 01/05/2025 TO 15/05/2025<br><br>
-            CORAL WEALTH INVESTMENT <br> HEALTHCARE ENTERPRISES <br>
-             DEVELOPMENT CO. L.L.C<br>
-            IFZA, A2 Building, Dubai Digital Park, DSO
-Office 606<br>
-            Regal Tower,<br>
-             Business Bay, Dubai, United Arab Emirates
         </div>
     </div>
 
     <div class="footer">
-        <div class="digital-stamp">This is a digital stamp and<br>does not require signature.</div>
+        <div class="digital-stamp">This is a digital stamp and does not require signature.</div>
         
-        <div class="copyright">© 2025 Coral Wealth investment, Dubai</div>
+        <div class="copyright">© 2025 Coral Wealth Investment, Dubai</div>
         <div class="terms">Coral Wealth Standard Terms and Conditions are applicable</div>
         
         <div class="arabic-text">
             كورال ويلث إنفستمنت، دبي<br>
-تنطبق الشروط والأحكام القياسية لشركة كورال ويلث
+            تنطبق الشروط والأحكام القياسية لشركة كورال ويلث
         </div>
         
         <div class="notice">
@@ -514,142 +580,22 @@ Office 606<br>
             For assistance, contact Coral Wealth customer service at 600 500 946.
         </div>
         
-       <div class="arabic-text">
-    يرجى مراجعة كشف الحساب هذا والإبلاغ عن أي اختلافات في غضون 30 يوماً. في حال لم يتم الإبلاغ عن أي مشاكل، فسيتم اعتبار البيان صحيحاً (خاضع لحق شركة كورال ويلث في تصحيح الأخطاء).<br>
-    للمساعدة، تواصل مع خدمة عملاء كورال ويلث على 946 500 600
-</div>
-
-        
-        <div class="page-number">Page 2 of 3</div>
-    </div>
-</div>
-
-<!-- Page 3: USD Account Statement -->
-<div class="page">
-    <div class="company-info">
-        CORAL WEALTH INVESTMENT IN HEALTHCARE ENTERPRISES & DEVELOPMENT CO. L.L.C<br>
-        IFZA, A2 Building, Dubai Digital Park, DSO
-Office 606<br>
-        Regal Tower, Business Bay,<br>
-        Dubai, United Arab Emirates
-    </div>
-
-    <div class="statement-header">
-        ACCOUNT STATEMENT<br>
-        FROM 01/05/2025 TO 15/05/2025
-    </div>
-
-    <table class="transactions-table">
-        <thead>
-            <tr>
-                <th class="date-col">Date</th>
-                <th class="ref-col">Ref. Number</th>
-                <th>Description</th>
-                <th class="amount-col">Amount<br>(Incl. VAT)</th>
-                <th class="balance-col">Balance<br>(USD)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Empty table for USD account -->
-        </tbody>
-    </table>
-
-    <!-- Account Details Section for USD Account -->
-    <div class="account-details-section">
-        <div class="account-details-left">
-            <div class="account-detail-row">
-                <span class="account-label">ACCOUNT HOLDER NAME</span>
-            </div>
-            <div class="account-detail-row account-holder-name">
-                CORAL WEALTH INVESTMENT<br>
-                IN HEALTHCARE ENTERPRISES<br>
-                DEVELOPMENT<br>
-                 CO. L.L.C
-            </div>
-            <br>
-            <div class="account-detail-row">
-                <span class="account-label">CURRENCY</span>
-                <span class="account-value">USD</span>
-            </div>
-            <div class="account-detail-row">
-                <span class="account-label">INTEREST RATE</span>
-                <span class="account-value">0%</span>
-            </div>
-            <div class="account-detail-row">
-                <span class="account-label">ACCOUNT TYPE</span>
-                <span class="account-value">CURRENT_ACCOUNT</span>
-            </div>
-            <div class="account-detail-row">
-                <span class="account-label">ACCOUNT NAME</span>
-            </div>
-            <div class="account-detail-row">
-                CORAL WEALTH INVESTMENT IN HEALTHCARE ENTERPRISES DEVELOPMENT CO. L.L.C
-            </div>
-            <div class="account-detail-row">
-                <span class="account-label">ACCOUNT NUMBER</span>
-                <span class="account-value">9830327120</span>
-            </div>
-            <div class="account-detail-row">
-                <span class="account-label">ACCOUNT OPENED</span>
-                <span class="account-value">08/09/2023</span>
-            </div>
-            <div class="account-detail-row">
-                <span class="account-label">IBAN</span>
-                <span class="account-value">AE440860000009830327120</span>
-            </div>
-            <div class="account-detail-row">
-                <span class="account-label">OPENING BALANCE</span>
-                <span class="account-value">0</span>
-            </div>
-            <div class="account-detail-row">
-                <span class="account-label">CLOSING BALANCE</span>
-                <span class="account-value">0</span>
-            </div>
-        </div>
-        <div class="account-details-right">
-            ACCOUNT STATEMENT<br>
-            FROM 01/05/2025 TO 15/05/2025<br><br>
-           CORAL WEALTH INVESTMENT <br> HEALTHCARE ENTERPRISES <br>
-             DEVELOPMENT CO. L.L.C<br>
-            IFZA, A2 Building, Dubai Digital Park, DSO
-Office 606<br>
-            Regal Tower,<br>
-             Business Bay, Dubai, United Arab Emirates
-        </div>
-    </div>
-
-    <div class="footer">
-        <div class="digital-stamp">This is a digital stamp and<br>does not require signature.</div>
-        
-        <div class="copyright">© 2025 Coral Wealth Investment, Dubai</div>
-        <div class="terms">Coral Wealth Standard Terms and Conditions are applicable</div>
-        
         <div class="arabic-text">
-            كورال ويلث إنفستمنت، دبي<br>
-تنطبق الشروط والأحكام القياسية لشركة كورال ويلث
+            يرجى مراجعة كشف الحساب هذا والإبلاغ عن أي اختلافات في غضون 30 يوماً. في حال لم يتم الإبلاغ عن أي مشاكل، فسيتم اعتبار البيان صحيحاً (خاضع لحق شركة كورال ويلث في تصحيح الأخطاء).<br>
+            للمساعدة، تواصل مع خدمة عملاء كورال ويلث على 946 500 600
         </div>
         
-        <div class="notice">
-            Please review this account statement and report any discrepancies within 30 days.<br>
-            If no issues are reported, the statement will be considered correct (subject to the Bank's right to correct errors).<br>
-            For assistance, contact Coral wealth customer service at 600 500 946.
-        </div>
-        
-        <div class="arabic-text">
-    يرجى مراجعة كشف الحساب هذا والإبلاغ عن أي اختلافات في غضون 30 يوماً. في حال لم يتم الإبلاغ عن أي مشاكل، فسيتم اعتبار البيان صحيحاً (خاضع لحق شركة كورال ويلث في تصحيح الأخطاء).<br>
-    للمساعدة، تواصل مع خدمة عملاء كورال ويلث على 946 500 600
-</div>
-        
-        <div class="page-number">Page 3 of 3</div>
+        <div class="page-number">Page 2 of 2</div>
     </div>
 </div>
 
 </body>
 </html>`
-console.log(html)
+            await createPdfWithPuppeteer(html, outputFilePath)
             return res.send({
                 result: true,
-
+                message: "Pdf generated succesfully",
+                file: req.protocol + "://" + req.get("host") + outputFilePath.replace(process.cwd(), '')
             })
         } else {
             return res.send({
