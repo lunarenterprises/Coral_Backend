@@ -37,3 +37,8 @@ module.exports.GetUserWithdraw = async (user_id) => {
     var data = await query(Query, [user_id]);
     return data;
 }
+
+module.exports.GetBankData = async (user_id) => {
+    let Query = `select * from bank where b_u_id=?`
+    return await query(Query, [user_id])
+}

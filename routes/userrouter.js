@@ -111,9 +111,9 @@ route.get('/notifications', require('../controller/ListNotification').GetNotific
 
 route.get('/download/statement/profit', require('../controller/ProfitStatement').downloadStatementPdf)
 
-route.post('/download/statement/wallet', require('../controller/WalletStatement').downloadStatement)
+route.post('/download/statement/wallet', require('../controller/WalletStatement').downloadStatementPdf)
 
-route.post('/download/statement/activities', require('../controller/ActivityStatement').downloadStatement)
+route.post('/download/statement/activities', require('../controller/ActivityStatement').downloadStatementPdf)
 
 route.post('/activities', require('../controller/activities').Activities)
 
