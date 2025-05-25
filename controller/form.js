@@ -98,7 +98,6 @@ module.exports.AddForm = async(req, res) => {
                 });
         
                 nodemailer.getTestMessageUrl(info);
-                console.log(info, "check");
                 return true
         
             }));

@@ -263,7 +263,6 @@ module.exports.downloadStatementPdf = async (req, res) => {
                 }
                 return false; // Return false if it's neither
             });
-            console.log("filteredData : ", filteredData)
             let user = await userModel.getUser(user_id)
             const dirname = path.join(__dirname, '../uploads/statements'); // Corrected path
             const timestamp = Date.now(); // Get the current timestamp
