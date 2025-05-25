@@ -438,7 +438,7 @@ module.exports.downloadStatementPdf = async (req, res) => {
         
         .account-holder-name {
             font-weight: bold;
-            color: #1565c0;
+            color:rgb(10, 77, 154);
         }
         
         /* Footer Styles */
