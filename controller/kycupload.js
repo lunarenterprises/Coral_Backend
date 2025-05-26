@@ -480,7 +480,7 @@ module.exports.KycReUpload = async (req, res) => {
                     await sendNotificationToAdmins("KYC reuploaded", `${username} has resubmitted the KYC.`)
                     return res.send({
                         result: true,
-                        message: "Kyc submitted successfully,one of our representative will contact u"
+                        message: "Kyc submitted successfully, one of our representative will contact u"
                     })
                 }
             }else{
