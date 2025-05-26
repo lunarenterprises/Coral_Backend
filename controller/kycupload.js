@@ -358,8 +358,8 @@ module.exports.KycReUpload = async (req, res) => {
                 fs.writeFileSync(newPath4, rawData4)
                 bank_file = "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
             }
-            let updateKyc = await model.UpdateKyc(kyc_id, front_page, back_page, bank_file)
             console.log("updateKyc : ", kyc_id, front_page, back_page, bank_file)
+            let updateKyc = await model.UpdateKyc(kyc_id, front_page, back_page, bank_file)
             console.log("insertdata", updateKyc)
             if (updateKyc.affectedRows > 0) {
                 var username = finduser[0]?.u_name.toUpperCase().substring(0, 3)
