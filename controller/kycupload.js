@@ -4,7 +4,7 @@ var moment = require('moment')
 var fs = require('fs')
 var nodemailer = require('nodemailer')
 let notifiaction = require('../util/saveNotification')
-let {sendNotificationToAdmins} =require('../util/firebaseConfig')
+let { sendNotificationToAdmins } = require('../util/firebaseConfig')
 
 module.exports.KycUpload = async (req, res) => {
     try {
@@ -218,7 +218,7 @@ module.exports.KycUpload = async (req, res) => {
                             "KYC Verification Request",
                             "Your KYC verification request has been submitted successfully"
                         )
-                        await sendNotificationToAdmins("KYC submitted" , `${username} has submitted the KYC.`)
+                        await sendNotificationToAdmins("KYC submitted", `${username} has submitted the KYC.`)
                         return res.send({
                             result: true,
                             message: "Kyc submitted successfully,one of our representative will contact u"
@@ -358,129 +358,135 @@ module.exports.KycReUpload = async (req, res) => {
                 fs.writeFileSync(newPath4, rawData4)
                 bank_file = "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
             }
-            console.log("updateKyc : ", kyc_id, front_page, back_page, bank_file)
-            let updateKyc = await model.UpdateKyc(kyc_id, front_page, back_page, bank_file)
-            console.log("insertdata", updateKyc)
-            if (updateKyc.affectedRows > 0) {
-                var username = finduser[0]?.u_name.toUpperCase().substring(0, 3)
-                let info = await transporter.sendMail({
-                    from: "CORAL WEALTH <coraluae@lunarenp.com>",
-                    // to: 'operations@coraluae.com',
-                    to: 'aishwaryalunar@gmail.com',
-                    subject: 'KYC VERIFICATION REQUEST',
-                    html: `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Resubmit KYC Verification</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
+            if (front_page || back_page || bank_file) {
+
+                let updateKyc = await model.UpdateKyc(kyc_id, front_page, back_page, bank_file)
+                if (updateKyc.affectedRows > 0) {
+                    var username = finduser[0]?.u_name.toUpperCase().substring(0, 3)
+                    let info = await transporter.sendMail({
+                        from: "CORAL WEALTH <coraluae@lunarenp.com>",
+                        // to: 'operations@coraluae.com',
+                        to: 'aishwaryalunar@gmail.com',
+                        subject: 'KYC VERIFICATION REQUEST',
+                        html: `<!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title> Resubmit KYC Verification</title>
+                    <style>
+                    body {
+                        font-family: Arial, sans-serif;
             background-color: #f9f9f9;
             margin: 0;
             padding: 0;
-        }
-        .container {
-            width: 100%;
-            max-width: 600px;
-            margin: 20px auto;
-            background-color: #ffffff;
-            border: 1px solid #dddddd;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #4CAF50;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-        }
-        .header h1 {
-            color: #4CAF50;
-            margin: 0;
-        }
-        .content {
-            line-height: 1.6;
-            color: #333333;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #777777;
-        }
-        .bank-details {
-            background-color: #f4f4f4;
-            padding: 10px;
-            border: 1px solid #dddddd;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .bank-details h3 {
-            margin-top: 0;
-            color: #4CAF50;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>KYC Verification Request</h1>
-        </div>
-        <div class="content">
-            <p>Hello Operations Team,</p>
-            <p>We have received a KYC verification request from the client. Please find the client details below:</p>
-            <ul>
-                <li><strong>Name:</strong> ${finduser[0]?.u_name}</li>
-                <li><strong>Email:</strong> ${finduser[0]?.u_email}</li>
-                <li><strong>Phone:</strong> ${finduser[0]?.u_mobile}</li>
-                 <li><strong>DOB:</strong> ${finduser[0]?.u_dob}</li>
-            </ul>
-            <div class="bank-details">
-                <h3>Bank Details</h3>
-                <ul>
-                    <li><strong>Name As Per Bank Account:</strong> ${bankData[0]?.b_name_as}</li>
-                    <li><strong>Bank Name:</strong> ${bankData[0]?.b_name}</li>
-                    <li><strong>Branch Name:</strong> ${bankData[0]?.b_branck}</li>
-                    <li><strong>Account Number:</strong> ${bankData[0]?.b_account_no}</li>
-                    <li><strong>IFSC Code:</strong> ${bankData[0]?.b_ifsc_code}</li>
-                    <li><strong>Swift Code:</strong> ${bankData[0]?.b_swift_code}</li>
-                    <li><strong>Currency:</strong> ${bankData[0]?.b_currency}</li>
-                </ul>
-            </div>
-            <p>Attached, you will find the relevant documents for your review and processing.</p>
-            <p>Please complete the verification process at the earliest.</p>
-        </div>
-    </div>
-</body>
+            }
+            .container {
+                width: 100%;
+                max-width: 600px;
+                margin: 20px auto;
+                background-color: #ffffff;
+                border: 1px solid #dddddd;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                }
+                .header {
+                    text-align: center;
+                    border-bottom: 2px solid #4CAF50;
+                    margin-bottom: 20px;
+                    padding-bottom: 10px;
+                    }
+                    .header h1 {
+                        color: #4CAF50;
+                        margin: 0;
+                        }
+                        .content {
+                            line-height: 1.6;
+                            color: #333333;
+                            }
+                            .footer {
+                                text-align: center;
+                                margin-top: 20px;
+                                font-size: 12px;
+                                color: #777777;
+                                }
+                                .bank-details {
+                                    background-color: #f4f4f4;
+                                    padding: 10px;
+                                    border: 1px solid #dddddd;
+                                    border-radius: 5px;
+                                    margin-bottom: 20px;
+                                    }
+                                    .bank-details h3 {
+                                        margin-top: 0;
+                                        color: #4CAF50;
+                                        }
+                                        </style>
+                                        </head>
+                                        <body>
+                                        <div class="container">
+                                        <div class="header">
+                                        <h1>KYC Verification Request</h1>
+                                        </div>
+                                        <div class="content">
+                                        <p>Hello Operations Team,</p>
+                                        <p>We have received a KYC verification request from the client. Please find the client details below:</p>
+                                        <ul>
+                                        <li><strong>Name:</strong> ${finduser[0]?.u_name}</li>
+                                        <li><strong>Email:</strong> ${finduser[0]?.u_email}</li>
+                                        <li><strong>Phone:</strong> ${finduser[0]?.u_mobile}</li>
+                                        <li><strong>DOB:</strong> ${finduser[0]?.u_dob}</li>
+                                        </ul>
+                                        <div class="bank-details">
+                                        <h3>Bank Details</h3>
+                                        <ul>
+                                        <li><strong>Name As Per Bank Account:</strong> ${bankData[0]?.b_name_as}</li>
+                                        <li><strong>Bank Name:</strong> ${bankData[0]?.b_name}</li>
+                                        <li><strong>Branch Name:</strong> ${bankData[0]?.b_branck}</li>
+                                        <li><strong>Account Number:</strong> ${bankData[0]?.b_account_no}</li>
+                                        <li><strong>IFSC Code:</strong> ${bankData[0]?.b_ifsc_code}</li>
+                                        <li><strong>Swift Code:</strong> ${bankData[0]?.b_swift_code}</li>
+                                        <li><strong>Currency:</strong> ${bankData[0]?.b_currency}</li>
+                                        </ul>
+                                        </div>
+                                        <p>Attached, you will find the relevant documents for your review and processing.</p>
+                                        <p>Please complete the verification process at the earliest.</p>
+                                        </div>
+                                        </div>
+                                        </body>
 </html>
 `,
-                    attachments: [
-                        {
-                            filename: 'KYC' + '_FRONT_PAGE_' + username + '_' + date + '.pdf',
-                            path: process.cwd() + "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
-                        },
-                        {
-                            filename: 'KYC' + '_BACK_PAGE_' + username + '_' + date + '.pdf',
-                            path: process.cwd() + "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
-                        },
-                        {
-                            filename: 'BANK' + '_STATEMENT_' + username + '_' + date + '.pdf',
-                            path: process.cwd() + "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
-                        }
-                    ]
-                });
-                await notifiaction.addNotification(user_id,
-                    finduser[0]?.u_role,
-                    "KYC Verification Request",
-                    "Your KYC verification request has been submitted successfully"
-                )
-                await sendNotificationToAdmins("KYC reuploaded" , `${username} has resubmitted the KYC.`)
+                        attachments: [
+                            {
+                                filename: 'KYC' + '_FRONT_PAGE_' + username + '_' + date + '.pdf',
+                                path: process.cwd() + "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
+                            },
+                            {
+                                filename: 'KYC' + '_BACK_PAGE_' + username + '_' + date + '.pdf',
+                                path: process.cwd() + "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
+                            },
+                            {
+                                filename: 'BANK' + '_STATEMENT_' + username + '_' + date + '.pdf',
+                                path: process.cwd() + "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
+                            }
+                        ]
+                    });
+                    await notifiaction.addNotification(user_id,
+                        finduser[0]?.u_role,
+                        "KYC Verification Request",
+                        "Your KYC verification request has been submitted successfully"
+                    )
+                    await sendNotificationToAdmins("KYC reuploaded", `${username} has resubmitted the KYC.`)
+                    return res.send({
+                        result: true,
+                        message: "Kyc submitted successfully,one of our representative will contact u"
+                    })
+                }
+            }else{
                 return res.send({
-                    result: true,
-                    message: "Kyc submitted successfully,one of our representative will contact u"
+                    result:false,
+                    message:"Files not found"
                 })
             }
         })

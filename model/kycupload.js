@@ -59,8 +59,8 @@ module.exports.UpdateKyc = async (kyc_id, front_page, back_page, bank_file) => {
         Query += `uk_bank_statement = ?`
         values.push(bank_file)
     }
-    Query += ` where uk_id = ?`
-    values.push(kyc_id)
+    Query += `uk_reject_message=? where uk_id = ?`
+    values.push(null,kyc_id)
     return await query(Query, values);
 }
 
