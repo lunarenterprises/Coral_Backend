@@ -12,19 +12,23 @@ module.exports.Calculator = async (req, res) => {
                 message: "Amount should be greater than 52000 AED"
             })
         }
-
         let condition = ``
         if (amount) {
             if (condition !== '') {
-                condition += ` AND ((ri_amount_to IS NOT NULL AND ${amount} BETWEEN ri_amount_from AND ri_amount_to)
-    OR (ri_amount_to IS NULL AND ${amount} >= ri_amount_from))
-  `
+                condition += ` AND ri_amount_from < ${amount}`
             } else {
-                condition += ` WHERE 
- ((ri_amount_to IS NOT NULL AND ${amount} BETWEEN ri_amount_from AND ri_amount_to)
-    OR (ri_amount_to IS NULL AND ${amount} >= ri_amount_from))
-  `
+                condition += ` WHERE ri_amount_from < ${amount}`
             }
+            //             if (condition !== '') {
+            //                 condition += ` AND ((ri_amount_to IS NOT NULL AND ${amount} BETWEEN ri_amount_from AND ri_amount_to)
+            //     OR (ri_amount_to IS NULL AND ${amount} >= ri_amount_from))
+            //   `
+            //             } else {
+            //                 condition += ` WHERE 
+            //  ((ri_amount_to IS NOT NULL AND ${amount} BETWEEN ri_amount_from AND ri_amount_to)
+            //     OR (ri_amount_to IS NULL AND ${amount} >= ri_amount_from))
+            //   `
+            //             }
         }
         if (duration && amount >= 100000) {
             if (project === "Any") {
@@ -78,6 +82,7 @@ module.exports.Calculator = async (req, res) => {
                 condition += ` where ri_project = 'Any'`
             }
         }
+        condition += ` ORDER BY ri_amount_from DESC LIMIT 1`
         let returns_data = await model.getinvest(condition)
         if (returns_data.length > 0) {
             if (returns_data[0]?.ri_duration && !matchesDuration(returns_data[0]?.ri_duration, duration)) {
@@ -150,7 +155,6 @@ module.exports.Calculator = async (req, res) => {
 
                 nodemailer.getTestMessageUrl(info);
             }
-
             return res.send({
                 result: true,
                 return_amount: calculate.toFixed(2),
@@ -162,8 +166,6 @@ module.exports.Calculator = async (req, res) => {
                 message: "No data found."
             })
         }
-
-
     } catch (error) {
         console.log(error);
         return res.send({
