@@ -31,7 +31,7 @@ module.exports.parseAmount = (value) => {
         else if (value.includes('m') || value.includes('million')) multiplier = 1000000;
 
         const base = Number(numText) * multiplier;
-        return { from: base + 1, to: null };
+        return { from: base, to: null };
     }
 
     if (value.includes('-')) {
