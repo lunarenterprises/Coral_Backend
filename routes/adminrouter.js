@@ -83,6 +83,11 @@ route.post('/upload/current-investment/file', verifyToken, require('../controlle
 
 route.post('/upload/future-investment/file', verifyToken, require('../controller/uploadExcel').UploadFutureInvestmentExcel)
 
+route.post('/add/industry-growth', require('../controller/adIndustryGrowth').AddIndustryGrowth)
+
+route.post('/list/industry-growth', require('../controller/adIndustryGrowth').IndustryGrowthList)
+
+
 
 
 
