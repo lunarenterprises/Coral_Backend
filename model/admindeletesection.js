@@ -99,4 +99,19 @@ module.exports.RemoveFutureInvestmentQuery = async (fi_id) => {
 //-----------------------------------------
 
 
+module.exports.checkIndustryGrowthDetailsQuery = async (industry_growth_id) => {
+    var Query = `select * from industries_growth where ig_id = ?`;
+    var data = await query(Query, [industry_growth_id]);
+    return data;
+};
+module.exports.RemoveIndustryGrowthDetailsQuery = async (industry_growth_id) => {
+    var Query = `delete from industries_growth where ig_id = ?`;
+    var data = await query(Query, [industry_growth_id]);
+    return data;
+};
+
+//-----------------------------------------
+
+
+
 

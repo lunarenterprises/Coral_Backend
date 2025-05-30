@@ -24,6 +24,8 @@ module.exports.AdminDeleteSection = async (req, res) => {
         var invester_id = req.body.invester_id;
         var hgfs_id = req.body.hgfs_id;
         var fi_id = req.body.fi_id;
+        var industry_growth_id = req.body.industry_growth_id;
+
 
 
 
@@ -63,14 +65,14 @@ module.exports.AdminDeleteSection = async (req, res) => {
         if (subadmin_id) {
             let checksubadmin = await model.CheckSubAdminQuery(subadmin_id);
 
-            var adminname = checksubadmin[0]?.ad_name
+            var adminame = checksubadmin[0]?.ad_name
             if (checksubadmin.length == 0) {
                 return res.send({
                     result: false,
                     message: "Subadmin not found"
                 });
             } else {
-                await notification.addNotification(admin_id, `${admin_role}`, "Subadmin Removed", `Subadmin [${adminname}] removed successfully`)
+                await notification.addNotification(admin_id, `${admin_role}`, "Subadmin Removed", `Subadmin [${adminame}] removed successfully`)
 
                 var deletesection = await model.RemoveSubAdminQuery(subadmin_id);
 
@@ -144,6 +146,25 @@ module.exports.AdminDeleteSection = async (req, res) => {
 
             }
         }
+        if (industry_growth_id) {
+            let checkIndustrygrowthdetails = await model.checkIndustryGrowthDetailsQuery(industry_growth_id);
+
+            if (checkIndustrygrowthdetails.length == 0) {
+                return res.send({
+                    result: false,
+                    message: "Industry growth details not found"
+                });
+                
+            } else {
+
+                // let data = await notification.addNotification(admin_id, `${admin_role}`, "User Removed", `User [${username}] Removed deleted successfully`)
+               
+                var deletesection = await model.RemoveIndustryGrowthDetailsQuery(industry_growth_id);
+
+            }
+        }
+
+
 
         if (deletesection.affectedRows > 0) {
             return res.send({
