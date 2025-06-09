@@ -12,8 +12,8 @@ module.exports.UserRegistration = async (req, res) => {
             auth: {
                 type: 'custom',
                 method: 'PLAIN',
-                user: 'coraluae@lunarenp.com',
-                pass: 'Coraluae@2024',
+                user: 'nocontact@lunarenp.com',
+                pass: 'Cwicoral@123',
             },
         });
 
@@ -45,7 +45,7 @@ module.exports.UserRegistration = async (req, res) => {
                 }
             }
             let info = await transporter.sendMail({
-                from: "CORAL WEALTH <coraluae@lunarenp.com>",
+                from: "CORAL WEALTH <nocontact@lunarenp.com>",
                 to: email,
                 subject: 'Verification Otp',
                 html: `<!DOCTYPE html>

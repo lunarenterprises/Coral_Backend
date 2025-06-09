@@ -37,12 +37,12 @@ module.exports.OtpSend = async (req, res) => {
                 auth: {
                     type: 'custom',
                     method: 'PLAIN',
-                    user: 'coraluae@lunarenp.com',
-                    pass: 'Coraluae@2024',
+                    user: 'nocontact@lunarenp.com',
+                    pass: 'Cwicoral@123',
                 },
             });
             let info = await transporter.sendMail({
-                from: "CORAL WEALTH <coraluae@lunarenp.com>",
+                from: "CORAL WEALTH <nocontact@lunarenp.com>",
                 to: email,
                 subject: "Your single-use code",
                 html: `<!DOCTYPE html>

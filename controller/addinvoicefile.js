@@ -13,8 +13,8 @@ module.exports.AddInvoiceFile = async (req, res) => {
             auth: {
                 type: 'custom',
                 method: 'PLAIN',
-                user: 'coraluae@lunarenp.com',
-                pass: 'Coraluae@2024',
+                user: 'nocontact@lunarenp.com',
+                pass: 'Cwicoral@123',
             },
         });
         var date = moment().format('DD_MM_YYYY')
@@ -44,7 +44,7 @@ module.exports.AddInvoiceFile = async (req, res) => {
 
 
                             let info = await transporter.sendMail({
-                                from: "CORAL WEALTH <coraluae@lunarenp.com>",
+                                from: "CORAL WEALTH <nocontact@lunarenp.com>",
                                 to: 'operations@coraluae.com',
                                 subject: 'Contract and Invoice Attached',
                                 text: `Hello Operations Team,
@@ -69,7 +69,7 @@ Client Details:
                             });
 
                             let infos = await transporter.sendMail({
-                                from: 'CORAL WEALTH <coraluae@lunarenp.com>', // Sender email
+                                from: 'CORAL WEALTH <nocontact@lunarenp.com>', // Sender email
                                 to: `${investdetails[0]?.u_email}`, // Client email
                                 subject: 'Verification in Process',
                                 text: `Hello ${investdetails[0]?.u_name},\n\nYour verification is currently being processed. After 24 hours, you will be able to track your growth using our platform.\n\nIf you have any questions, feel free to contact us.\n\nBest regards,\n Coral Wealth`

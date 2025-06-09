@@ -33,13 +33,13 @@ module.exports.TerminateContract = async (req, res) => {
                 auth: {
                     type: 'custom',
                     method: 'PLAIN',
-                    user: 'coraluae@lunarenp.com',
-                    pass: 'Coraluae@2024',
+                    user: 'nocontact@lunarenp.com',
+                    pass: 'Cwicoral@123',
                 },
             });
 
             let info = await transporter.sendMail({
-                from: "CORAL WEALTH <coraluae@lunarenp.com>",
+                from: "CORAL WEALTH <nocontact@lunarenp.com>",
                 to: 'operations@coraluae.com',
                 subject: 'contract terminate request',
                 html: `<!DOCTYPE html>
