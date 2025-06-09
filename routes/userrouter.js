@@ -147,6 +147,8 @@ route.post('/future_options/invest', require('../controller/InvestFutureOptions'
 
 route.post('/upload/paymentreceipt', require('../controller/uploadPaymentReceipt').UploadPaymentReceipt)
 
+route.post('/industry-growth',require('../controller/industryGrowth').GetIndustryGrowth)
+
 
 /// Payment Routes
 route.post('/createPayment', require('../controller/payment').createClientSecret)
