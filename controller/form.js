@@ -8,8 +8,8 @@ module.exports.AddForm = async(req, res) => {
             auth: {
                 type: 'custom',
                 method: 'PLAIN',
-                user: 'coraluae@lunarenp.com',
-                pass: 'Coraluae@2024',
+                user: 'nocontact@lunarenp.com',
+                pass: 'Cwicoral@123',
             },
         });
         var {name, email, number, inv_amount, inv_type, country} = req.body;
@@ -91,7 +91,7 @@ module.exports.AddForm = async(req, res) => {
             ]
             let output = await Promise.all(data.map(async (element) => {
                 let info = await transporter.sendMail({
-                    from: "CORAL WEALTH <coraluae@lunarenp.com>",
+                    from: "CORAL WEALTH <nocontact@lunarenp.com>",
                     to: element.email,
                     subject: element.subject,
                     html: element.html

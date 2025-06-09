@@ -14,8 +14,8 @@ module.exports.KycUpload = async (req, res) => {
             auth: {
                 type: 'custom',
                 method: 'PLAIN',
-                user: 'coraluae@lunarenp.com',
-                pass: 'Coraluae@2024',
+                user: 'nocontact@lunarenp.com',
+                pass: 'Cwicoral@123',
             },
         });
         var date = moment().format('YYYY_MM_DD')
@@ -98,7 +98,7 @@ module.exports.KycUpload = async (req, res) => {
                     if (insertdata.affectedRows > 0) {
                         var username = finduser[0]?.u_name.toUpperCase().substring(0, 3)
                         let info = await transporter.sendMail({
-                            from: "CORAL WEALTH <coraluae@lunarenp.com>",
+                            from: "CORAL WEALTH <nocontact@lunarenp.com>",
                             // to: 'operations@coraluae.com',
                             to: 'aishwaryalunar@gmail.com',
                             subject: 'KYC VERIFICATION REQUEST',
@@ -287,8 +287,8 @@ module.exports.KycReUpload = async (req, res) => {
             auth: {
                 type: 'custom',
                 method: 'PLAIN',
-                user: 'coraluae@lunarenp.com',
-                pass: 'Coraluae@2024',
+                user: 'nocontact@lunarenp.com',
+                pass: 'Cwicoral@123',
             },
         });
         var date = moment().format('YYYY_MM_DD')
@@ -364,7 +364,7 @@ module.exports.KycReUpload = async (req, res) => {
                 if (updateKyc.affectedRows > 0) {
                     var username = finduser[0]?.u_name.toUpperCase().substring(0, 3)
                     let info = await transporter.sendMail({
-                        from: "CORAL WEALTH <coraluae@lunarenp.com>",
+                        from: "CORAL WEALTH <nocontact@lunarenp.com>",
                         // to: 'operations@coraluae.com',
                         to: 'aishwaryalunar@gmail.com',
                         subject: 'KYC VERIFICATION REQUEST',

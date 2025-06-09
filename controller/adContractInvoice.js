@@ -74,8 +74,8 @@ module.exports.ContractInvoice = async (req, res) => {
                         auth: {
                             type: 'custom',
                             method: 'PLAIN',
-                            user: 'coraluae@lunarenp.com',
-                            pass: 'Coraluae@2024',
+                            user: 'nocontact@lunarenp.com',
+                            pass: 'Cwicoral@123',
                         },
                     });
 
@@ -155,7 +155,7 @@ module.exports.ContractInvoice = async (req, res) => {
 
                     data.forEach(async (el) => {
                         let infos = await transporter.sendMail({
-                            from: "CORAL WEALTH <coraluae@lunarenp.com>",
+                            from: "CORAL WEALTH <nocontact@lunarenp.com>",
                             to: el.email,
                             subject: el.subject,
                             html: el.html,

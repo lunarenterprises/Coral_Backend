@@ -13,8 +13,8 @@ module.exports.Withdraw = async (req, res) => {
             auth: {
                 type: 'custom',
                 method: 'PLAIN',
-                user: 'coraluae@lunarenp.com',
-                pass: 'Coraluae@2024',
+                user: 'nocontact@lunarenp.com',
+                pass: 'Cwicoral@123',
             },
         });
         let { user_id } = req.headers;
@@ -30,7 +30,7 @@ module.exports.Withdraw = async (req, res) => {
 
         let result = await model.AddWithdraw(user_id, amount, bank_id, date);
         let info = await transporter.sendMail({
-            from: "CORAL WEALTH <coraluae@lunarenp.com>",
+            from: "CORAL WEALTH <nocontact@lunarenp.com>",
             to: 'operations@coraluae.com',
             subject: 'Withdrawal Request',
             html: `<!DOCTYPE html>
