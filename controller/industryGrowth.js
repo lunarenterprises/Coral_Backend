@@ -18,7 +18,7 @@ module.exports.GetIndustryGrowth = async (req, res) => {
             })
         }
         let industryData = await model.GetIndustryGrowth(industry_id)
-        if (getindustry.length > 0) {
+        if (industryData.length > 0) {
             return res.send({
                 result: true,
                 message: "data retrived",
