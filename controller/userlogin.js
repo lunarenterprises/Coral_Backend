@@ -21,6 +21,12 @@ module.exports.Login = async (req, res) => {
         }
         let CheckUser = await model.CheckUserQuery(email);
         if (CheckUser.length > 0) {
+            if(CheckUser[0]?.u_is_registered===0){
+                return res.send({
+                    result:false,
+                    message:"OTP verification pending"
+                })
+            }
             let Checkpassword = await bcrypt.compare(
                 password,
                 CheckUser[0].u_password
