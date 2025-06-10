@@ -3,6 +3,8 @@ var route = express.Router();
 
 route.post('/register', require('../controller/register').UserRegistration)
 
+route.post('/verify_otp', require('../controller/verify_otp').VerifyOtp)
+
 route.post('/login', require('../controller/userlogin').Login)
 
 route.post('/forgotpassword/otpsend', require('../controller/forgotpassword').OtpSend)
@@ -83,7 +85,7 @@ route.post('/wfa-pin/change', require('../controller/forgotpassword').WfaChangeP
 
 route.post('/kyc-upload', require('../controller/kycupload').KycUpload)
 
-route.post('/kyc/re_upload',require('../controller/kycupload').KycReUpload)
+route.post('/kyc/re_upload', require('../controller/kycupload').KycReUpload)
 
 route.get('/kyc', require('../controller/UserKycData').GetUserKycData)
 
@@ -147,7 +149,7 @@ route.post('/future_options/invest', require('../controller/InvestFutureOptions'
 
 route.post('/upload/paymentreceipt', require('../controller/uploadPaymentReceipt').UploadPaymentReceipt)
 
-route.post('/industry-growth',require('../controller/industryGrowth').GetIndustryGrowth)
+route.post('/industry-growth', require('../controller/industryGrowth').GetIndustryGrowth)
 
 
 /// Payment Routes
