@@ -1,6 +1,7 @@
 var model = require("../model/adStatus");
 const path = require('path');
 var fs = require("fs");
+const util = require("util");
 var formidable = require("formidable");
 
 module.exports.addStatus = async (req, res) => {
@@ -16,27 +17,35 @@ module.exports.addStatus = async (req, res) => {
 
             }
             if (files.image) {
-                var oldPath = files.image.filepath;
-                var newPath =
-                    process.cwd() + "/uploads/status/" +
-                    files.image.originalFilename;
-                let rawData = fs.readFileSync(oldPath);
-                fs.writeFile(newPath, rawData, async function (err) {
-                    if (err) console.log(err);
-                    let imagepath = "uploads/status/" + files.image.originalFilename;
+                const writeFileAsync = util.promisify(fs.writeFile);
+                const oldPath = files.image.filepath;
+                const originalFilename = files.image.originalFilename;
+                const dirname = path.join(__dirname, "../uploads/status");
+                const newPath = path.join(dirname, originalFilename); // safer than using `process.cwd()`
 
-                    await model.AddimageQuery(imagepath);
+                // Ensure directory exists
+                if (!fs.existsSync(dirname)) {
+                    fs.mkdirSync(dirname, { recursive: true });
+                }
 
-                })
+                // Read and write file
+                const rawData = fs.readFileSync(oldPath);
+                await writeFileAsync(newPath, rawData); // use async/await style for consistency
+
+                const imagePath = "uploads/status/" + originalFilename;
+
+                // Save in DB
+                await model.AddimageQuery(imagePath);
+
                 return res.send({
                     result: true,
-                    message: "status added successfully"
-                })
-            }
-            else {
+                    message: "Status added successfully",
+                    image: imagePath,
+                });
+            } else {
                 return res.send({
                     result: false,
-                    message: "status required "
+                    message: "image required "
                 })
             }
         })
