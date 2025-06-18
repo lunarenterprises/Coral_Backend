@@ -87,15 +87,11 @@ route.post('/add/industry-growth', require('../controller/adIndustryGrowth').Add
 
 route.post('/list/industry-growth', require('../controller/adIndustryGrowth').IndustryGrowthList)
 
+route.post('/add/status', require('../controller/adStatus').addStatus)
 
+route.post('/list/status', require('../controller/adStatus').listStatus)
 
-
-
-
-
-
-
-
+route.post('/delete/status', require('../controller/adStatus').deleteStatus)
 
 
 
