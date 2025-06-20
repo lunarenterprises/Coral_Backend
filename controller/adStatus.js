@@ -16,6 +16,18 @@ module.exports.addStatus = async (req, res) => {
                 });
 
             }
+
+            let user_id = req.user.admin_id;
+            let admin_role = req.user.role;
+
+            var adminData = await model.getAdmin(user_id, admin_role);
+            if (adminData[0]?.ad_role == "user") {
+                return res.send({
+                    result: false,
+                    message: "Access Denied,try with authorized account",
+                });
+            }
+
             if (files.image) {
                 const writeFileAsync = util.promisify(fs.writeFile);
                 const oldPath = files.image.filepath;
@@ -37,31 +49,32 @@ module.exports.addStatus = async (req, res) => {
                 // Save in DB
                 await model.AddimageQuery(imagePath);
 
-                return res.send({
-                    result: true,
-                    message: "Status added successfully",
-                    image: imagePath,
-                });
-            } else {
-                return res.send({
-                    result: false,
-                    message: "image required "
-                })
-            }
+        return res.send({
+            result: true,
+            message: "status added successfully"
         })
-
-    } catch (error) {
-        console.log(error);
+    }
+            else {
         return res.send({
             result: false,
-            message: error.message,
+            message: "image required "
         })
-
     }
+})
+
+    } catch (error) {
+    console.log(error);
+    return res.send({
+        result: false,
+        message: error.message,
+    })
+
+}
 }
 
 module.exports.listStatus = async (req, res) => {
     try {
+
 
         let listStatus = await model.listStatusQuery();
         if (listStatus.length > 0) {
@@ -90,6 +103,18 @@ module.exports.listStatus = async (req, res) => {
 
 module.exports.deleteStatus = async (req, res) => {
     try {
+
+        let user_id = req.user.admin_id;
+        let admin_role = req.user.role;
+
+        var adminData = await model.getAdmin(user_id, admin_role);
+        if (adminData[0]?.ad_role == "user") {
+            return res.send({
+                result: false,
+                message: "Access Denied,try with authorized account",
+            });
+        }
+
         let st_id = req.body.st_id;
         if (!st_id) {
             return res.send({
