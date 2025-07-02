@@ -85,16 +85,16 @@ module.exports.StatusChange = async (req, res) => {
             }
         }
 
-        if (activate_admin_id && activate_admin_status) {
+        if (activate_admin_id) {
 
             var getuser = await model.GetAdmin(activate_admin_id)
             if (getuser.length > 0) {
-                var previous_status = getuser[0]?.ad_status
+                let status = getuser[0]?.ad_status === 'pending' ? 'active' : getuser[0]?.ad_status === 'active' ? 'inactive' : 'active'
                 var role = getuser[0]?.ad_role
 
                 await notification.addNotification(admin_id, `${admin_role}`, `Verifying ${role} ${getuser[0]?.ad_name}`, `Admin ${role} status verifiyed from ${previous_status} to active`)
 
-                let changeuserstatus = await model.ChangeAdminStatus(activate_admin_status, activate_admin_id)
+                let changeuserstatus = await model.ChangeAdminStatus(status, activate_admin_id)
 
                 if (changeuserstatus.affectedRows > 0) {
                     return res.send({
