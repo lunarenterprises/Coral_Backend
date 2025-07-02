@@ -17,7 +17,6 @@ module.exports.StatusChange = async (req, res) => {
             })
         }
         var currentdate = moment().format('YYYY-MM-DD')
-        console.log("body : ", req.body)
         var { contract_status, contract_id, activate_admin_id, activate_admin_status, activate_user_id, activate_user_status, invest_req_id, invest_req_status, total_payout_amount, total_invest_amount, payout_id, payout_status, payout_amount, withdrawel_status, withdrawel_id, withdraw_amount, kyc_status, kyc_user_id, kyc_message, pay_invest_id, pay_invest_status } = req.body
 
 
@@ -313,12 +312,8 @@ module.exports.StatusChange = async (req, res) => {
             var getinvest = await model.GetContract(pay_invest_id)
             if (getinvest.length > 0) {
                 var previous_status = getinvest[0]?.ui_payment_status
-
-
                 await notification.addNotification(admin_id, `${admin_role}`, `Investment Payment Status updated for id ${pay_invest_id} `, `Investment Payment Status updated  from ${previous_status} to ${pay_invest_status}`)
-
                 let changeInveststatus = await model.ChangeInvestPatmentStatus(pay_invest_id, pay_invest_status)
-
                 if (changeInveststatus.affectedRows > 0) {
                     return res.send({
                         result: true,
