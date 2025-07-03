@@ -602,3 +602,144 @@ module.exports.KycUpload = async (req, res) => {
         return res.send({ result: false, message: error.message })
     }
 }
+
+module.exports.KycReUpload = async (req, res) => {
+    try {
+        const transporter = nodemailer.createTransport({
+            host: "smtp.hostinger.com",
+            port: 587,
+            auth: {
+                type: 'custom',
+                method: 'PLAIN',
+                user: 'nocontact@lunarenp.com',
+                pass: 'Cwicoral@123',
+            },
+        });
+
+        const date = moment().format('YYYY_MM_DD');
+        const { user_id } = req.headers;
+
+        if (!user_id) {
+            return res.send({ result: false, message: "User id is required" });
+        }
+
+        const bankData = await model.GetBank(user_id);
+        const form = new formidable.IncomingForm({ multiples: true });
+
+        form.parse(req, async (err, fields, files) => {
+            if (err) {
+                return res.send({
+                    result: false,
+                    message: "File Upload Failed!",
+                    data: err,
+                });
+            }
+
+            const { kyc_id } = fields;
+            if (!kyc_id) {
+                return res.send({ result: false, message: "Kyc id is required" });
+            }
+
+            const checkKyc = await model.CheckKyc(user_id, kyc_id);
+            if (checkKyc.length === 0) {
+                return res.send({ result: false, message: "Kyc not found" });
+            }
+
+            const finduser = await model.GetUser(user_id);
+            if (finduser[0]?.u_kyc === "active" || finduser[0]?.u_kyc === "pending") {
+                return res.send({ result: false, message: "Kyc already submitted" });
+            }
+
+            const datePrefix = Date.now();
+            let front_page = null;
+            let back_page = null;
+            let bank_file = null;
+
+            if (files.front_page) {
+                front_page = saveFile(
+                    files.front_page.filepath,
+                    'kyc',
+                    `${datePrefix}_${files.front_page.originalFilename.replace(/ /g, '_')}`
+                );
+            }
+
+            if (files.back_page) {
+                back_page = saveFile(
+                    files.back_page.filepath,
+                    'kyc',
+                    `${datePrefix}_${files.back_page.originalFilename.replace(/ /g, '_')}`
+                );
+            }
+
+            if (files.bank_file) {
+                bank_file = saveFile(
+                    files.bank_file.filepath,
+                    'bank_statements',
+                    `${datePrefix}_${files.bank_file.originalFilename.replace(/ /g, '_')}`
+                );
+            }
+
+            if (front_page || back_page || bank_file) {
+                const updateKyc = await model.UpdateKyc(kyc_id, front_page, back_page, bank_file);
+
+                if (updateKyc.affectedRows > 0) {
+                    const username = finduser[0]?.u_name.toUpperCase().substring(0, 3);
+                    const attachments = [];
+
+                    if (front_page) {
+                        attachments.push({
+                            filename: `KYC_FRONT_PAGE_${username}_${date}.pdf`,
+                            path: process.cwd() + front_page
+                        });
+                    }
+
+                    if (back_page) {
+                        attachments.push({
+                            filename: `KYC_BACK_PAGE_${username}_${date}.pdf`,
+                            path: process.cwd() + back_page
+                        });
+                    }
+
+                    if (bank_file) {
+                        attachments.push({
+                            filename: `BANK_STATEMENT_${username}_${date}.pdf`,
+                            path: process.cwd() + bank_file
+                        });
+                    }
+
+                    await transporter.sendMail({
+                        from: "CORAL WEALTH <nocontact@lunarenp.com>",
+                        to: "aishwaryalunar@gmail.com",
+                        subject: "KYC VERIFICATION REQUEST",
+                        html: `
+                            <p>Hello Operations Team,</p>
+                            <p>${finduser[0]?.u_name} has reuploaded their KYC documents. Please review and process.</p>
+                        `,
+                        attachments
+                    });
+
+                    await notifiaction.addNotification(
+                        user_id,
+                        finduser[0]?.u_role,
+                        "KYC Reupload",
+                        "You have reuploaded your KYC documents."
+                    );
+
+                    await sendNotificationToAdmins("KYC Reupload", `${username} has reuploaded the KYC.`);
+
+                    return res.send({
+                        result: true,
+                        message: "KYC reuploaded successfully"
+                    });
+                }
+            }
+
+            return res.send({
+                result: false,
+                message: "No files found or update failed"
+            });
+        });
+    } catch (error) {
+        return res.send({ result: false, message: error.message });
+    }
+};
