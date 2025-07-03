@@ -5,6 +5,7 @@ var fs = require('fs')
 var nodemailer = require('nodemailer')
 let notifiaction = require('../util/saveNotification')
 let { sendNotificationToAdmins } = require('../util/firebaseConfig')
+let { saveFile } = require('../util/uploadFile')
 
 module.exports.KycUpload = async (req, res) => {
     try {
@@ -55,34 +56,31 @@ module.exports.KycUpload = async (req, res) => {
             console.log("finduser : ", finduser)
             if (verification_type == "photo") {
                 if (files.front_page && files.back_page && files.image && files.bank_file) {
-                    console.log("files : ", files)
-                    var oldPath1 = files.front_page.filepath
-                    var newPath1 =
-                        process.cwd() + "/uploads/kyc/" + date + '_' + files.front_page.originalFilename.replace(' ', '_')
-                    let rawData1 = fs.readFileSync(oldPath1);
-                    fs.writeFileSync(newPath1, rawData1)
-                    let front_page = "/uploads/kyc/" + date + '_' + files.front_page.originalFilename.replace(' ', '_')
+                    const datePrefix = Date.now(); // Or use your own formatted date
 
-                    var oldPath2 = files.back_page.filepath
-                    var newPath2 =
-                        process.cwd() + "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
-                    let rawData2 = fs.readFileSync(oldPath2);
-                    fs.writeFileSync(newPath2, rawData2)
-                    let back_page = "/uploads/kyc/" + date + '_' + files.back_page.originalFilename.replace(' ', '_')
+                    const front_page = saveFile(
+                        files.front_page.filepath,
+                        'kyc',
+                        `${datePrefix}_${files.front_page.originalFilename.replace(/ /g, '_')}`
+                    );
 
-                    var oldPath3 = files.image.filepath
-                    var newPath3 =
-                        process.cwd() + "/uploads/profile/" + date + '_' + files.image.originalFilename.replace(' ', '_')
-                    let rawData3 = fs.readFileSync(oldPath3);
-                    fs.writeFileSync(newPath3, rawData3)
-                    let profile = "/uploads/profile/" + date + '_' + files.image.originalFilename.replace(' ', '_')
+                    const back_page = saveFile(
+                        files.back_page.filepath,
+                        'kyc',
+                        `${datePrefix}_${files.back_page.originalFilename.replace(/ /g, '_')}`
+                    );
 
-                    var oldPath4 = files.bank_file.filepath
-                    var newPath4 =
-                        process.cwd() + "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
-                    let rawData4 = fs.readFileSync(oldPath4);
-                    fs.writeFileSync(newPath4, rawData4)
-                    let bank_file = "/uploads/bank_statements/" + date + '_' + files.bank_file.originalFilename.replace(' ', '_')
+                    const profile = saveFile(
+                        files.image.filepath,
+                        'profile',
+                        `${datePrefix}_${files.image.originalFilename.replace(/ /g, '_')}`
+                    );
+
+                    const bank_file = saveFile(
+                        files.bank_file.filepath,
+                        'bank_statements',
+                        `${datePrefix}_${files.bank_file.originalFilename.replace(/ /g, '_')}`
+                    );
 
                     console.log("front_page : ", front_page)
                     console.log("back_page : ", back_page)
@@ -483,10 +481,10 @@ module.exports.KycReUpload = async (req, res) => {
                         message: "Kyc submitted successfully, one of our representative will contact u"
                     })
                 }
-            }else{
+            } else {
                 return res.send({
-                    result:false,
-                    message:"Files not found"
+                    result: false,
+                    message: "Files not found"
                 })
             }
         })
