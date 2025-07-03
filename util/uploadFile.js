@@ -1,3 +1,6 @@
+const fs = require('fs')
+const path = require('path')
+
 module.exports.saveFile = (oldPath, folder, filename) => {
     const dirPath = path.join('/mnt/ebs500/uploads', folder); // Your EBS-mounted uploads path
     if (!fs.existsSync(dirPath)) {
