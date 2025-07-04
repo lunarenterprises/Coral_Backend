@@ -230,10 +230,10 @@ ${usernme}, holder of UAE ID number ……. and passport number ……. residing
   <h2>Nominee Appointment Acknowledgment</h2>
   <p>I, ${usernme}, holder of UAE ID number … acknowledge and appoint the following nominee:</p>
   <ul>
-    <li>Full Name: ${nomineeData[0]?.n_name}</li>
-    <li>Relationship: ${nomineeData[0]?.n_relation}</li>
+    <li>Full Name: ${nomineeData?nomineeData[0]?.n_name:""}</li>
+    <li>Relationship: ${nomineeData?nomineeData[0]?.n_relation:''}</li>
     <li>ID/Passport: __________</li>
-    <li>Contact: ${nomineeData[0]?.n_mobile}</li>
+    <li>Contact: ${nomineeData?nomineeData[0]?.n_mobile:''}</li>
   </ul>
   <p>Candidate Rights: Receive profits, capital, and represent legally.</p>
   <p>Party One is not responsible for candidate actions. This follows UAE law.</p>
