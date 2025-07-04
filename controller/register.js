@@ -5,50 +5,50 @@ var moment = require('moment')
 var nodemailer = require('nodemailer')
 
 module.exports.UserRegistration = async (req, res) => {
-    try {
-        let transporter = nodemailer.createTransport({
-            host: "smtp.hostinger.com",
-            port: 587,
-            auth: {
-                type: 'custom',
-                method: 'PLAIN',
-                user: 'nocontact@lunarenp.com',
-                pass: 'Cwicoral@123',
-            },
-        });
+  try {
+    let transporter = nodemailer.createTransport({
+      host: "smtp.hostinger.com",
+      port: 587,
+      auth: {
+        type: 'custom',
+        method: 'PLAIN',
+        user: 'nocontact@lunarenp.com',
+        pass: 'Cwicoral@123',
+      },
+    });
 
-        var date = moment().format("YYYY-MM-DD")
+    var date = moment().format("YYYY-MM-DD")
 
-        let { name, email, mobile, currency, password, referralCode } = req.body
-        if (!name || !mobile || !email || !password) {
-            return res.send({
-                result: false,
-                message: "insufficient parameters",
-            });
+    let { name, email, mobile, currency, password, referralCode } = req.body
+    if (!name || !mobile || !email || !password) {
+      return res.send({
+        result: false,
+        message: "insufficient parameters",
+      });
+    }
+    var token = loginToken();
+    let checkuser = await model.getUser(email)
+    if (checkuser.length > 0) {
+      return res.send({
+        result: false,
+        message: "User already registered with this email."
+      })
+    } else {
+      let verifyReferralCode = null
+      if (referralCode) {
+        verifyReferralCode = await userModel.verifyReferralCode(referralCode)
+        if (verifyReferralCode.length == 0 || verifyReferralCode[0].u_id == user_id) {
+          return res.send({
+            result: false,
+            message: "Invalid referral code"
+          })
         }
-        var token = loginToken();
-        let checkuser = await model.getUser(email)
-        if (checkuser.length > 0) {
-            return res.send({
-                result: false,
-                message: "User already registered with this email."
-            })
-        } else {
-            let verifyReferralCode = null
-            if (referralCode) {
-                verifyReferralCode = await userModel.verifyReferralCode(referralCode)
-                if (verifyReferralCode.length == 0 || verifyReferralCode[0].u_id == user_id) {
-                    return res.send({
-                        result: false,
-                        message: "Invalid referral code"
-                    })
-                }
-            }
-            let info = await transporter.sendMail({
-                from: "CORAL WEALTH <nocontact@lunarenp.com>",
-                to: email,
-                subject: 'Verification Otp',
-                html: `<!DOCTYPE html>
+      }
+      let info = await transporter.sendMail({
+        from: "CORAL WEALTH <nocontact@lunarenp.com>",
+        to: email,
+        subject: 'Verification Otp',
+        html: `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -95,24 +95,25 @@ module.exports.UserRegistration = async (req, res) => {
 </body>
 </html>
 `
-            })
-            var hashedPassword = await bcrypt.hash(password, 10);
-            let user = await model.InsertUserQuery(name, email, mobile, hashedPassword, date, token, currency, verifyReferralCode);
-            return res.send({
-                status: true,
-                message: "registered successfully,otp send to your mail",
-                token: token
-            });
-        }
-    } catch (error) {
-        return res.send({
-            result: false,
-            message: error.message
-        })
+      })
+      var hashedPassword = await bcrypt.hash(password, 10);
+      let user = await model.InsertUserQuery(name, email, mobile, hashedPassword, date, token, currency, verifyReferralCode);
+      console.warn("mail send info : ", info)
+      return res.send({
+        status: true,
+        message: "registered successfully,otp send to your mail",
+        token: token
+      });
     }
+  } catch (error) {
+    return res.send({
+      result: false,
+      message: error.message
+    })
+  }
 }
 
 
 function loginToken() {
-    return Math.floor(1000 + Math.random() * 9000).toString();
+  return Math.floor(1000 + Math.random() * 9000).toString();
 }
