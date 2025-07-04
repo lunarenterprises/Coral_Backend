@@ -5,6 +5,8 @@ const exceljs = require('exceljs');
 const moment = require('moment')
 const { createPdfWithPuppeteer } = require('../util/pdfGeneration');
 
+const uploadRoot = '/mnt/ebs500/uploads';
+
 module.exports.downloadStatementExcel = async (req, res) => {
     try {
         let { user_id } = req.headers
@@ -16,76 +18,91 @@ module.exports.downloadStatementExcel = async (req, res) => {
         }
         let { monthsAgo } = req.query
         let data = await model.getProfitStatement(user_id, monthsAgo)
-        if (data.length > 0) {
-            let user = await model.getUser(user_id)
-            const dirname = path.join(__dirname, '../uploads/statements'); // Corrected path
-            const timestamp = Date.now(); // Get the current timestamp
-            const outputFilePath = path.join(dirname, `profit_statement_user_${user[0].u_name}_${timestamp}.xlsx`); // Full file path
-
-            // Ensure the folder exists
-            if (!fs.existsSync(dirname)) {
-                fs.mkdirSync(dirname, { recursive: true }); // Create directories recursively
-            }
-
-            // Create a new workbook and add a worksheet
-            const workbook = new exceljs.Workbook();
-            const worksheet = workbook.addWorksheet(`Profit Statement ${user[0].u_name}`);
-
-            // Add headings and format the first section (similar to 'Withdraw Request' in previous code)
-            let headingRow1 = worksheet.addRow(['Profit Statement']);
-            worksheet.mergeCells('A1:J1');
-            headingRow1.getCell(1).font = { bold: true, size: 16, name: 'Liberation Serif' };
-            headingRow1.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
-
-            let headingRow2 = worksheet.addRow(["SL NO.", "INVESTED DATE", "INVESTED DURATION", "INVESTED AMOUNT", "INVESTED PERCENTAGE", "INVESTED RETURN", "INVESTED TYPE", "INVESTED STATUS", "INVESTED SECURITY", "INVESTED PROJECT"]);
-            headingRow2.getCell(1).font = { bold: true, size: 14, name: 'Liberation Serif' };
-            headingRow2.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
-
-            worksheet.addRow([]); // Empty row for spacing
-
-            worksheet.columns = [
-                { key: 'sl_no', width: 7 },
-                { key: 'ui_date', width: 21 },
-                { key: 'ui_duration', width: 18 },
-                { key: 'ui_amount', width: 24 },
-                { key: 'ui_percentage', width: 24 },
-                { key: 'ui_return', width: 13 },
-                { key: 'ui_type', width: 13 },
-                { key: 'ui_status', width: 13 },
-                { key: 'ui_security_option', width: 13 },
-                { key: 'ui_project_name', width: 13 },
-
-            ];
-
-            // Add data rows to the worksheet
-            data.forEach((el, index) => {
-                worksheet.addRow([
-                    index + 1,
-                    el.ui_date,
-                    el.ui_duration,
-                    el.ui_amount,
-                    el.ui_percentage,
-                    el.ui_return,
-                    el.ui_type,
-                    el.ui_status,
-                    el.ui_security_option,
-                    el.ui_project_name
-                ]);
-            });
-
-            // Write the workbook to the file
-            workbook.xlsx.writeFile(outputFilePath)
-            return res.send({
-                result: true,
-                message: "data retrieved",
-                file: req.protocol + "://" + req.get("host") + outputFilePath.replace(process.cwd(), '')
-            })
-        } else {
+        if (!data.length) {
             return res.send({
                 result: false,
                 message: "No data found"
-            })
+            });
         }
+
+        const user = await getUser(user_id);
+        const username = user[0]?.u_name?.replace(/[^a-zA-Z0-9]/g, '_') || 'user';
+
+        const timestamp = Date.now();
+        const filename = `profit_statement_${username}_${timestamp}.xlsx`;
+        const relativePath = `statements/${filename}`;
+        const outputFilePath = path.join(uploadRoot, relativePath);
+
+        // Ensure directory exists
+        const dirPath = path.dirname(outputFilePath);
+        if (!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath, { recursive: true });
+        }
+
+        const workbook = new exceljs.Workbook();
+        const worksheet = workbook.addWorksheet(`Profit Statement`);
+
+        // Title Row
+        const headingRow1 = worksheet.addRow(['Profit Statement']);
+        worksheet.mergeCells('A1:J1');
+        headingRow1.getCell(1).font = { bold: true, size: 16, name: 'Liberation Serif' };
+        headingRow1.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+
+        // Column Headers
+        const headingRow2 = worksheet.addRow([
+            "SL NO.",
+            "INVESTED DATE",
+            "INVESTED DURATION",
+            "INVESTED AMOUNT",
+            "INVESTED PERCENTAGE",
+            "INVESTED RETURN",
+            "INVESTED TYPE",
+            "INVESTED STATUS",
+            "INVESTED SECURITY",
+            "INVESTED PROJECT"
+        ]);
+        headingRow2.eachCell(cell => {
+            cell.font = { bold: true, size: 12 };
+            cell.alignment = { horizontal: 'center' };
+        });
+
+        worksheet.columns = [
+            { key: 'sl_no', width: 7 },
+            { key: 'ui_date', width: 21 },
+            { key: 'ui_duration', width: 18 },
+            { key: 'ui_amount', width: 24 },
+            { key: 'ui_percentage', width: 24 },
+            { key: 'ui_return', width: 13 },
+            { key: 'ui_type', width: 13 },
+            { key: 'ui_status', width: 13 },
+            { key: 'ui_security_option', width: 18 },
+            { key: 'ui_project_name', width: 18 },
+        ];
+
+        // Data Rows
+        data.forEach((el, index) => {
+            worksheet.addRow([
+                index + 1,
+                el.ui_date,
+                el.ui_duration,
+                el.ui_amount,
+                el.ui_percentage,
+                el.ui_return,
+                el.ui_type,
+                el.ui_status,
+                el.ui_security_option,
+                el.ui_project_name
+            ]);
+        });
+
+        // Save file
+        await workbook.xlsx.writeFile(outputFilePath);
+
+        return res.send({
+            result: true,
+            message: "Data retrieved",
+            file: `${req.protocol}://${req.get("host")}/uploads/${relativePath}`
+        });
     } catch (error) {
         return res.send({
             result: false,
@@ -116,13 +133,12 @@ module.exports.downloadStatementPdf = async (req, res) => {
         let data = await model.getProfitStatement(user_id, monthsAgo)
         if (data.length > 0) {
             let bankData = await model.GetBankData(user_id)
-            const dirname = path.join(__dirname, '../uploads/statements'); // Corrected path
-            const timestamp = Date.now(); // Get the current timestamp
-            const outputFilePath = path.join(dirname, `profit_statement_user_${user[0].u_name}_${timestamp}.pdf`); // Full file path
+            const dirname = '/mnt/ebs500/uploads/statements';
+            const timestamp = Date.now();
+            const outputFilePath = path.join(dirname, `profit_statement_user_${user[0].u_name}_${timestamp}.pdf`);
 
-            // Ensure the folder exists
             if (!fs.existsSync(dirname)) {
-                fs.mkdirSync(dirname, { recursive: true }); // Create directories recursively
+                fs.mkdirSync(dirname, { recursive: true });
             }
             let html = `<!DOCTYPE html>
 <html lang="en">
@@ -494,7 +510,7 @@ module.exports.downloadStatementPdf = async (req, res) => {
 
     <div class="statement-header">
         ACCOUNT STATEMENT<br>
-        ${monthsAgo ?`LAST ${monthsAgo} months`:""}
+        ${monthsAgo ? `LAST ${monthsAgo} months` : ""}
     </div>
 
     <table class="transactions-table">
@@ -594,9 +610,9 @@ module.exports.downloadStatementPdf = async (req, res) => {
             await createPdfWithPuppeteer(html, outputFilePath)
             return res.send({
                 result: true,
-                message: "Pdf generated succesfully",
-                file: req.protocol + "://" + req.get("host") + outputFilePath.replace(process.cwd(), '')
-            })
+                message: "Pdf generated successfully",
+                file: req.protocol + "://" + req.get("host") + outputFilePath.replace('/mnt/ebs500', '')
+            });
         } else {
             return res.send({
                 result: false,

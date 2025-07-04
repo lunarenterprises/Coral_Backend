@@ -49,22 +49,26 @@ module.exports.AddNominee = async (req, res) => {
                 })
             }
             if (files.image) {
-                var oldPath3 = files.image.filepath;
+                const oldPath3 = files.image.filepath;
                 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                var newFilename = date + '_' + uniqueSuffix + '_' + files.image.originalFilename.replace(' ', '_');
-                var newPath3 = process.cwd() + "/uploads/nomineeProof/" + newFilename;
+                const cleanFilename = files.image.originalFilename.replace(/ /g, '_');
+                const newFilename = `${date}_${uniqueSuffix}_${cleanFilename}`;
 
-                if (!fs.existsSync(process.cwd() + "/uploads/nomineeProof/")) {
-                    fs.mkdirSync(process.cwd() + "/uploads/nomineeProof/", { recursive: true });
+                const nomineeDir = "/mnt/ebs500/uploads/nomineeProof";
+                const newPath3 = `${nomineeDir}/${newFilename}`;
+
+                // Ensure the directory exists
+                if (!fs.existsSync(nomineeDir)) {
+                    fs.mkdirSync(nomineeDir, { recursive: true });
                 }
 
-                fs.renameSync(oldPath3, newPath3);  // Move the file
+                fs.renameSync(oldPath3, newPath3); // Move the file
 
-                let proof = "uploads/nomineeProof/" + newFilename;
+                const proof = `uploads/nomineeProof/${newFilename}`; // Relative path for DB
 
-                let add = await model.addnominee(user_id, name, relation, email, gender, country, mobile, address, id_type, proof);
+                const add = await model.addnominee(user_id, name, relation, email, gender, country, mobile, address, id_type, proof);
                 if (add.affectedRows > 0) {
-                    await notification.addNotification(user_id,userData[0].u_role, "Nominee added", `Nominee ${name} added successfully`)
+                    await notification.addNotification(user_id, userData[0].u_role, "Nominee added", `Nominee ${name} added successfully`);
                     return res.send({
                         result: true,
                         message: "Nominee added successfully"
@@ -75,16 +79,12 @@ module.exports.AddNominee = async (req, res) => {
                         message: "Failed to add nominee"
                     });
                 }
+            } else {
+                return res.send({
+                    result: false,
+                    message: "Please upload your nominee proof"
+                });
             }
-            else {
-                if (!files.image) {
-                    return res.send({
-                        result: false,
-                        message: "please upload your nominee proof"
-                    })
-                }
-            }
-
         })
     } catch (error) {
         return res.send({

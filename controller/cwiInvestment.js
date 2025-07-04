@@ -94,13 +94,15 @@ module.exports.cwiInvestment = async (req, res) => {
             })
         }
         let usernme = userdetails[0]?.u_name.toUpperCase().substring(0, 3)
-        var path1 = `${process.cwd()}/uploads/agreement/`;
-        var path = `${process.cwd()}/uploads/agreement/CON_${usernme}_${moddate}.pdf`;
+        const agreementDir = '/mnt/ebs500/uploads/agreement'; // Central EBS-mounted directory
+        const filename = `CON_${usernme}_${moddate}.pdf`;
+        const fullPath = path.join(agreementDir, filename);  // Absolute path
 
-
-        if (!fs.existsSync(path1)) {
-            fs.mkdirSync(path1, true);
+        // Ensure the folder exists
+        if (!fs.existsSync(agreementDir)) {
+            fs.mkdirSync(agreementDir, { recursive: true });
         }
+
         let notarizationAgreement = `
         <!DOCTYPE html>
 <html lang="en">
@@ -1678,12 +1680,14 @@ module.exports.cwiInvestment = async (req, res) => {
         await SendMessage(user_id, "CWI Investment", "CWI Investment added successfully.!")
         await sendNotificationToAdmins("CWI Investment", `${userdetails[0].u_name} requested to invest in CWI Investment`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'CWI Investment', 'CWI Investment added successfully')
+        const relativeUrl = `/uploads/agreement/${filename}`;
+
         return res.send({
             result: true,
             message: "order success",
             contract_id: saveInvest.insertId,
-            path: req.protocol + "://" + req.get("host") + path.replace(process.cwd(), '')
-        })
+            path: `${req.protocol}://${req.get('host')}${relativeUrl}`
+        });
     } catch (error) {
         console.log(error);
         return res.send({

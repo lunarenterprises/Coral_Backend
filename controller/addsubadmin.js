@@ -43,47 +43,44 @@ module.exports.AddSubAdmin = async (req, res) => {
             var hashedPassword = await bcrypt.hash(password, 10);
 
 
-
+            let image = null
             if (files.image) {
-                var oldPath = files.image.filepath;
-                var newPath =
-                    process.cwd() +
-                    "/uploads/profile/admin/" + files.image.originalFilename
-                let rawData = fs.readFileSync(oldPath);
+                const imageDir = '/mnt/ebs500/uploads/profile/admin';
+                const originalName = files.image.originalFilename.replace(/\s+/g, '_'); // sanitize filename
+                const newPath = path.join(imageDir, originalName);
 
-                fs.writeFileSync(newPath, rawData)
-                var image = "uploads/profile/admin/" + files.image.originalFilename
-                let addadmin = await model.AddAdmin(name, email, hashedPassword, mobile, image, date, role, ad_access)
-
-                if (addadmin.affectedRows > 0) {
-                    await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.ad_name} Added Subadmin`, `Subadmin ${name} with role ${role} added sucessfully`)
-
-                    return res.send({
-                        result: true,
-                        message: "subadmin added successfully"
-                    })
-                } else {
-                    return res.send({
-                        result: false,
-                        message: "failed to add subadmin"
-                    })
+                // Ensure the directory exists
+                if (!fs.existsSync(imageDir)) {
+                    fs.mkdirSync(imageDir, { recursive: true });
                 }
 
+                // Move the file
+                const oldPath = files.image.filepath;
+                const rawData = fs.readFileSync(oldPath);
+                fs.writeFileSync(newPath, rawData);
+
+                image = `uploads/profile/admin/${originalName}`; // Public-facing path
             }
-            let addadmin = await model.AddAdmin(name, email, hashedPassword, mobile, null, date, role, ad_access)
+
+            const addadmin = await model.AddAdmin(name, email, hashedPassword, mobile, image, date, role, ad_access);
 
             if (addadmin.affectedRows > 0) {
-                await notification.addNotification(user_id, admin_role, ` ${adminData[0]?.ad_name} Added Subadmin`, `Subadmin ${name} with role ${role} added sucessfully`)
+                await notification.addNotification(
+                    user_id,
+                    admin_role,
+                    `${adminData[0]?.ad_name} Added Subadmin`,
+                    `Subadmin ${name} with role ${role} added successfully`
+                );
 
                 return res.send({
                     result: true,
-                    message: "Subadmin added successfully"
-                })
+                    message: 'Subadmin added successfully'
+                });
             } else {
                 return res.send({
                     result: false,
-                    message: "Failed to add subadmin"
-                })
+                    message: 'Failed to add subadmin'
+                });
             }
         })
     } catch (error) {

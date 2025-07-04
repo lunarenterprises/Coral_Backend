@@ -32,44 +32,46 @@ module.exports.addStatus = async (req, res) => {
                 const writeFileAsync = util.promisify(fs.writeFile);
                 const oldPath = files.image.filepath;
                 const originalFilename = files.image.originalFilename;
-                const dirname = path.join(__dirname, "../uploads/status");
-                const newPath = path.join(dirname, originalFilename); // safer than using `process.cwd()`
 
-                // Ensure directory exists
-                if (!fs.existsSync(dirname)) {
-                    fs.mkdirSync(dirname, { recursive: true });
+                // Centralized EBS-mounted directory
+                const ebsDir = '/mnt/ebs500/uploads/status';
+                const newPath = path.join(ebsDir, originalFilename);
+
+                // Ensure the directory exists
+                if (!fs.existsSync(ebsDir)) {
+                    fs.mkdirSync(ebsDir, { recursive: true });
                 }
 
-                // Read and write file
+                // Read and write the file
                 const rawData = fs.readFileSync(oldPath);
-                await writeFileAsync(newPath, rawData); // use async/await style for consistency
+                await writeFileAsync(newPath, rawData);
 
-                const imagePath = "uploads/status/" + originalFilename;
+                // Store relative path (public URL will be resolved later)
+                const imagePath = `uploads/status/${originalFilename}`;
 
-                // Save in DB
+                // Save path in DB
                 await model.AddimageQuery(imagePath);
 
-        return res.send({
-            result: true,
-            message: "status added successfully"
+                return res.send({
+                    result: true,
+                    message: "status added successfully"
+                });
+            } else {
+                return res.send({
+                    result: false,
+                    message: "image required"
+                });
+            }
         })
-    }
-            else {
-        return res.send({
-            result: false,
-            message: "image required "
-        })
-    }
-})
 
     } catch (error) {
-    console.log(error);
-    return res.send({
-        result: false,
-        message: error.message,
-    })
+        console.log(error);
+        return res.send({
+            result: false,
+            message: error.message,
+        })
 
-}
+    }
 }
 
 module.exports.listStatus = async (req, res) => {

@@ -53,20 +53,38 @@ module.exports.ContractInvoice = async (req, res) => {
 
 
                 if (files.image) {
-                    var oldPath = files.image.filepath;
-                    var newPath =
-                        process.cwd() +
-                        "/uploads/invoice/" +
-                        files.image.originalFilename;
-                    let rawData = fs.readFileSync(oldPath);
-                    fs.writeFile(newPath, rawData, async function (err) {
-                        if (err) console.log(err);
-                        let filepathh =
-                            "/uploads/invoice/" + files.image.originalFilename;
-                        let AddContractInvoice = await model.AddContractInvoiceQuery(newInvoiceId, contract_id, filepathh)
-                        await notification.addNotification(user_id, admin_role, `Contract Invoice uploaded`, `Invoice uploaded for contract [${contract_id}] `)
+                    // Build the EBS upload path
+                    const invoiceDir = '/mnt/ebs500/uploads/invoice';
+                    const fileName = files.image.originalFilename.replace(/ /g, '_');
+                    const newPath = path.join(invoiceDir, fileName);
 
-                    })
+                    // Ensure directory exists
+                    if (!fs.existsSync(invoiceDir)) {
+                        fs.mkdirSync(invoiceDir, { recursive: true });
+                    }
+
+                    // Move the file
+                    const oldPath = files.image.filepath;
+                    const rawData = fs.readFileSync(oldPath);
+                    fs.writeFile(newPath, rawData, async function (err) {
+                        if (err) {
+                            console.error('Error writing invoice file:', err);
+                            return;
+                        }
+
+                        const filepathh = `/uploads/invoice/${fileName}`; // This is the relative path stored in DB
+
+                        // Save invoice path to DB
+                        await model.AddContractInvoiceQuery(newInvoiceId, contract_id, filepathh);
+
+                        // Send notification
+                        await notification.addNotification(
+                            user_id,
+                            admin_role,
+                            `Contract Invoice uploaded`,
+                            `Invoice uploaded for contract [${contract_id}] `
+                        );
+                    });
 
                     let transporter = nodemailer.createTransport({
                         host: "smtp.hostinger.com",

@@ -68,12 +68,13 @@ module.exports.InvestFututreOptions = async (req, res) => {
             }
         }
         let usernme = userdetails[0]?.u_name.toUpperCase().substring(0, 3)
-        var path1 = `${process.cwd()}/uploads/agreement/`;
-        var path = `${process.cwd()}/uploads/agreement/CON_${usernme}_${moddate}.pdf`;
+        const agreementDir = '/mnt/ebs500/uploads/agreement'; // Central EBS-mounted path
+        const filename = `CON_${usernme}_${moddate}.pdf`;
+        const fullPath = path.join(agreementDir, filename);
 
-
-        if (!fs.existsSync(path1)) {
-            fs.mkdirSync(path1, true);
+        // Ensure the agreement directory exists
+        if (!fs.existsSync(agreementDir)) {
+            fs.mkdirSync(agreementDir, { recursive: true });
         }
         let notarizationAgreement = `
         <!DOCTYPE html>
@@ -1651,12 +1652,16 @@ module.exports.InvestFututreOptions = async (req, res) => {
         var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId, "lock_invest")
         await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest future lock`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Future lock investment added successfully')
+        // Relative path used for public access (served via Express)
+        const relativeUrl = `/uploads/agreement/${filename}`;
+
+        // Send response
         return res.send({
             result: true,
             message: "order success",
             contract_id: saveInvest.insertId,
-            path: req.protocol + "://" + req.get("host") + path.replace(process.cwd(), '')
-        })
+            path: `${req.protocol}://${req.get("host")}${relativeUrl}`
+        });
     } catch (error) {
         return res.send({
             result: false,

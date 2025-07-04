@@ -40,7 +40,7 @@ module.exports.EditSubAdmin = async (req, res) => {
 
                 if (name) {
                     if (condition == '') {
-                        condition = `set ad_name ='${name}' `  				
+                        condition = `set ad_name ='${name}' `
                     } else {
                         condition += `,ad_name='${name}'`
                     }
@@ -82,29 +82,40 @@ module.exports.EditSubAdmin = async (req, res) => {
                 if (Editsubadmin) {
 
                     if (files.image) {
-                        var oldPath = files.image.filepath;
-                        var newPath =
-                            process.cwd() +
-                            "/uploads/profile/admin/" + files.image.originalFilename
-                        let rawData = fs.readFileSync(oldPath);
+                        const fs = require('fs');
+                        const path = require('path');
 
-                        fs.writeFileSync(newPath, rawData)
-                        var image = "uploads/profile/admin/" + files.image.originalFilename
+                        const oldPath = files.image.filepath;
+                        const originalFilename = files.image.originalFilename.replace(/\s+/g, '_'); // sanitize filename
+                        const imageDir = '/mnt/ebs500/uploads/profile/admin'; // Central EBS-mounted directory
+                        const newPath = path.join(imageDir, originalFilename); // Full disk path
 
-                        var Insertsubadminimage = await model.Updateimage(image, subadmin_id)
+                        // Ensure directory exists
+                        if (!fs.existsSync(imageDir)) {
+                            fs.mkdirSync(imageDir, { recursive: true });
+                        }
 
-                        if (Insertsubadminimage.affectedRows) {
+                        // Save the file
+                        const rawData = fs.readFileSync(oldPath);
+                        fs.writeFileSync(newPath, rawData);
+
+                        // Relative path to store in DB (used by Express for public access)
+                        const image = `uploads/profile/admin/${originalFilename}`;
+
+                        // Update image in DB
+                        const update = await model.Updateimage(image, subadmin_id);
+
+                        if (update.affectedRows > 0) {
                             return res.send({
                                 result: true,
-                                message: "subadmin updated successfully"
-                            })
+                                message: "Subadmin updated successfully"
+                            });
                         } else {
                             return res.send({
                                 result: false,
-                                message: "failed to update subadmin"
-                            })
+                                message: "Failed to update subadmin"
+                            });
                         }
-
                     }
                     return res.send({
                         result: true,

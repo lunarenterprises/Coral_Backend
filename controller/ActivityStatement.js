@@ -97,14 +97,17 @@ module.exports.downloadStatement = async (req, res) => {
             });
 
             let user = await userModel.getUser(user_id)
-            const dirname = path.join(__dirname, '../uploads/statements'); // Corrected path
-            const timestamp = Date.now(); // Get the current timestamp
-            const outputFilePath = path.join(dirname, `activity_statement_user_${user[0].u_name}_${timestamp}.xlsx`); // Full file path
+            // Set base uploads directory (EBS)
+            const baseUploadsDir = '/mnt/ebs500/uploads/statements';
 
             // Ensure the folder exists
-            if (!fs.existsSync(dirname)) {
-                fs.mkdirSync(dirname, { recursive: true }); // Create directories recursively
+            if (!fs.existsSync(baseUploadsDir)) {
+                fs.mkdirSync(baseUploadsDir, { recursive: true });
             }
+
+            const timestamp = Date.now();
+            const sanitizedUsername = user[0].u_name.replace(/\s+/g, '_'); // Ensure safe filename
+            const outputFilePath = path.join(baseUploadsDir, `activity_statement_user_${sanitizedUsername}_${timestamp}.xlsx`);
 
             // Create a new workbook and add a worksheet
             const workbook = new exceljs.Workbook();
@@ -264,14 +267,17 @@ module.exports.downloadStatementPdf = async (req, res) => {
                 return false; // Return false if it's neither
             });
             let user = await userModel.getUser(user_id)
-            const dirname = path.join(__dirname, '../uploads/statements'); // Corrected path
-            const timestamp = Date.now(); // Get the current timestamp
-            const outputFilePath = path.join(dirname, `activity_statement_user_${user[0].u_name}_${timestamp}.pdf`); // Full file path
+            // Use centralized EBS-mounted directory
+            const baseDir = '/mnt/ebs500/uploads/statements';
 
             // Ensure the folder exists
-            if (!fs.existsSync(dirname)) {
-                fs.mkdirSync(dirname, { recursive: true }); // Create directories recursively
+            if (!fs.existsSync(baseDir)) {
+                fs.mkdirSync(baseDir, { recursive: true });
             }
+
+            const timestamp = Date.now();
+            const sanitizedUsername = user[0].u_name.replace(/\s+/g, '_'); // Avoid spaces in filename
+            const outputFilePath = path.join(baseDir, `activity_statement_user_${sanitizedUsername}_${timestamp}.pdf`);
 
             let html = `<!DOCTYPE html>
 <html lang="en">
@@ -772,11 +778,12 @@ module.exports.downloadStatementPdf = async (req, res) => {
 </body>
 </html>`
             await createPdfWithPuppeteer(html, outputFilePath)
+            const publicUrlPath = `/uploads/statements/activity_statement_user_${sanitizedUsername}_${timestamp}.pdf`;
             return res.send({
                 result: true,
-                message: "Pdf generated succesfully",
-                file: req.protocol + "://" + req.get("host") + outputFilePath.replace(process.cwd(), '')
-            })
+                message: "PDF generated successfully",
+                file: `${req.protocol}://${req.get("host")}${publicUrlPath}`
+            });
         } else {
             return res.send({
                 result: false,
