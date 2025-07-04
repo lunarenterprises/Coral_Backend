@@ -14,8 +14,8 @@ module.exports.WithdrawHistory = async (req, res) => {
         if (format == 'excel') {
             let workbook = new exceljs.Workbook();
             let worksheet = workbook.addWorksheet(`HISTORY_${today}`)
-            let path1 = `${process.cwd()}/uploads/history`;
-            var path = `${process.cwd()}/uploads/history/history_${today}.xlsx`;
+            let path1 = `/mnt/ebs500/uploads/history`;
+            let path = `${path1}/history_${today}.xlsx`;
 
             if (!fs.existsSync(path1)) {
                 fs.mkdirSync(path1, true);
@@ -110,7 +110,7 @@ module.exports.WithdrawHistory = async (req, res) => {
             result: true,
             message: "data retrieved",
             total_amount: users[0]?.u_wallet,
-            file: format ? req.protocol + "://" + req.get("host") + path.replace(process.cwd(), '') : '',
+            file: format ? req.protocol + "://" + req.get("host") + path.replace('/mnt/ebs500', '') : '',
             withdrawhistory: withdrawhistory,
             investhistory: investhistory
         })

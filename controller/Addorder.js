@@ -64,12 +64,14 @@ module.exports.AddOrder = async (req, res) => {
         }
         let usernme = userdetails[0]?.u_name.toUpperCase().substring(0, 3)
         // let savedetails = await model.AddInvest()
-        var path1 = `${process.cwd()}/uploads/agreement/`;
-        var path = `${process.cwd()}/uploads/agreement/CON_${usernme}_${moddate}.pdf`;
+        // 1️⃣  Central EBS-mounted directory
+        const agreementDir = '/mnt/ebs500/uploads/agreement';      // disk location
+        const filename = `CON_${usernme}_${moddate}.pdf`;
+        const fullPath = path.join(agreementDir, filename);    // /mnt/ebs500/uploads/agreement/CON_...
 
-
-        if (!fs.existsSync(path1)) {
-            fs.mkdirSync(path1, true);
+        // 2️⃣  Make sure the folder exists
+        if (!fs.existsSync(agreementDir)) {
+            fs.mkdirSync(agreementDir, { recursive: true });
         }
         let notarizationAgreement = `<!DOCTYPE html>
 <html lang="en">
@@ -513,12 +515,16 @@ ${usernme}, holder of UAE ID number ……. and passport number ……. residing
         var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId, "cwi_invest")
         await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Investment added successfully')
+        // 3️⃣  Public-facing URL path (served via Express or Nginx)
+        const relativeUrl = `/uploads/agreement/${filename}`;
+
+        // 4️⃣  Response
         return res.send({
             result: true,
-            message: "order success",
+            message: 'order success',
             contract_id: saveInvest.insertId,
-            path: req.protocol + "://" + req.get("host") + path.replace(process.cwd(), '')
-        })
+            path: `${req.protocol}://${req.get('host')}${relativeUrl}`
+        });
 
     } catch (error) {
         console.log(error);

@@ -50,154 +50,100 @@ module.exports.InvestersList = async (req, res) => {
             var today = moment().format('MMM_DD_YYYY_hh_mm')
 
             if (format == 'pdf') {
-                var path1 = `${process.cwd()}/uploads/contractspdf`;
-                var path = `${process.cwd()}/uploads/contractspdf/coral_${today}.pdf`;
-                if (!fs.existsSync(path1)) {
-                    fs.mkdirSync(path1, true);
+                const pdfDir = '/mnt/ebs500/uploads/contractspdf';
+                const filename = `coral_${today}.pdf`;
+                const fullPath = path.join(pdfDir, filename); // Absolute EBS file path
+
+                // Ensure the directory exists
+                if (!fs.existsSync(pdfDir)) {
+                    fs.mkdirSync(pdfDir, { recursive: true });
                 }
-                var datahtml = ''
+
+                let datahtml = '';
                 for (let data of investersData) {
-                    var trasferusername = '-';
+                    let transferusername = '-';
                     if (data.ui_transfer) {
-                        var userdata = await userModel.getUser(data.ui_transfer);
+                        const userdata = await userModel.getUser(data.ui_transfer);
                         if (userdata.length > 0) {
-                            trasferusername = userdata[0]?.u_name || '-';
+                            transferusername = userdata[0]?.u_name || '-';
                         }
                     }
 
-                    datahtml += '<tr>' +
-                        '<td>' + data.u_id + '</td>' +
-                        '<td>' + data.u_name + '</td>' +
-                        '<td>' + data.ui_id + '</td>' +
-                        '<td>' + moment(data.u_joining_date).format('YYYY-MM-DD') + '</td>' +
-                        '<td>' + trasferusername + '</td>' +
-                        '<td>' + data.n_name + '</td>' +
-                        '<td>' + data.ui_type + '</td>' +
-                        '<td>' + data.ui_status + '</td>' +
-                        '</tr>'
+                    datahtml += `
+                        <tr>
+                            <td>${data.u_id}</td>
+                            <td>${data.u_name}</td>
+                            <td>${data.ui_id}</td>
+                            <td>${moment(data.u_joining_date).format('YYYY-MM-DD')}</td>
+                            <td>${transferusername}</td>
+                            <td>${data.n_name}</td>
+                            <td>${data.ui_type}</td>
+                            <td>${data.ui_status}</td>
+                        </tr>
+                    `;
                 }
 
-                let html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CORAL CONTRACT LIST</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            font-size: 12px; /* Reduced font size for the body */
-        }
-        .container {
-            width: 90%;
-            margin: 10px auto;
-            background-color: white;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            font-size: 16px; /* Reduced font size for the header */
-        }
-        .table-container {
-            overflow-x: auto;
-            margin-top: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-            text-align: left;
-            font-size: 10px;
-            padding: 3px;
-        }
-        th {
-            background-color: #333;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        tr:hover {
-            background-color: #ddd;
-        }
-        .status {
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .pending {
-            color: white;
-            background-color: orange;
-        }
-        .paid {
-            color: white;
-            background-color: green;
-        }
-        .delivered {
-            color: white;
-            background-color: green;
-        }
-        .not-delivered {
-            color: white;
-            background-color: orange;
-        }
+                const html = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+            <meta charset="UTF-8">
+            <title>CORAL CONTRACT LIST</title>
+            <style>
+                body { font-family: Arial, sans-serif; font-size: 12px; background: #f4f4f4; margin: 0; padding: 0; }
+                .container { width: 90%; margin: 10px auto; background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+                h1 { text-align: center; font-size: 16px; color: #333; }
+                .table-container { overflow-x: auto; margin-top: 20px; }
+                table { width: 100%; border-collapse: collapse; font-size: 10px; }
+                th, td { border: 1px solid #ddd; padding: 3px; text-align: left; }
+                th { background: #333; color: #fff; }
+                tr:nth-child(even) { background: #f2f2f2; }
+                tr:hover { background: #ddd; }
+            </style>
+            </head>
+            <body>
+            <div class="container">
+                <h1>Contract List</h1>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>User Name</th>
+                                <th>Contract ID</th>
+                                <th>Join Date</th>
+                                <th>Transfer</th>
+                                <th>Nominee Name</th>
+                                <th>Contract Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${datahtml}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </body>
+            </html>`;
 
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h1>Contract List</h1>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th> User ID</th>
-                    <th> User Name</th>
-                    <th> Contract Id</th>
-                    <th> Join Date</th>
-                    <th> Trasfer</th>
-                    <th> Nomine Name </th>
-                    <th> Contract Type</th>
-                    <th> Status</th>
-
-                </tr>
-            </thead>
-            <tbody>
-                ${datahtml}
-            </tbody>
-        </table>
-    </div>
-</div>
-
-</body>
-</html> `
-                var pdf = await pdfdownload.createPdfWithPuppeteer(html, path);
+                const pdf = await pdfdownload.createPdfWithPuppeteer(html, fullPath); // Save to EBS
 
                 return res.send({
                     result: true,
-                    message: "data retrieved",
-                    pdf: `${serverName}/uploads/contractspdf/coral_${today}.pdf`
-                })
-
+                    message: "Data retrieved",
+                    pdf: `${serverName}/uploads/contractspdf/${filename}` // Public URL served via Express
+                });
             }
 
+            // Default JSON response
             return res.send({
                 result: true,
                 message: "data retrieved successfully",
                 investerusers: allusersData,
                 data: investersData,
                 investRequest: investRequest
-            })
+            });
         } else {
             return res.send({
                 result: false,

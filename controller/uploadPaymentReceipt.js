@@ -39,21 +39,26 @@ module.exports.UploadPaymentReceipt = async (req, res) => {
             }
 
             if (files.file) {
-                var oldPath3 = files.file.filepath;
+                const oldPath3 = files.file.filepath;
 
                 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                var newFilename = date + '_' + uniqueSuffix + '_' + files.file.originalFilename.replace(' ', '_');
-                var newPath3 = process.cwd() + "/uploads/paymentreceipt/" + newFilename;
+                const newFilename = date + '_' + uniqueSuffix + '_' + files.file.originalFilename.replace(/ /g, '_');
 
-                if (!fs.existsSync(process.cwd() + "/uploads/paymentreceipt/")) {
-                    fs.mkdirSync(process.cwd() + "/uploads/paymentreceipt/", { recursive: true });
+                const ebsDir = '/mnt/ebs500/uploads/paymentreceipt';
+                const newPath3 = path.join(ebsDir, newFilename);
+
+                // Ensure EBS directory exists
+                if (!fs.existsSync(ebsDir)) {
+                    fs.mkdirSync(ebsDir, { recursive: true });
                 }
 
+                // Move file from temp to EBS directory
                 fs.renameSync(oldPath3, newPath3);
 
-                let filepath = "uploads/paymentreceipt/" + newFilename;
+                // Relative path for DB and access
+                const filepath = "uploads/paymentreceipt/" + newFilename;
 
-                let add = await userModel.UploadPaymentReceipt(investment_id, filepath)
+                const add = await userModel.UploadPaymentReceipt(investment_id, filepath);
                 if (add.affectedRows > 0) {
                     return res.send({
                         result: true,
@@ -65,14 +70,11 @@ module.exports.UploadPaymentReceipt = async (req, res) => {
                         message: "Failed to upload payment receipt",
                     });
                 }
-            }
-            else {
-                if (!files.file || files.file.length === 0) {
-                    return res.send({
-                        result: false,
-                        message: "please upload your payment receipt"
-                    })
-                }
+            } else {
+                return res.send({
+                    result: false,
+                    message: "Please upload your payment receipt"
+                });
             }
         })
     } catch (error) {

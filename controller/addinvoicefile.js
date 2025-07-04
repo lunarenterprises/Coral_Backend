@@ -32,65 +32,79 @@ module.exports.AddInvoiceFile = async (req, res) => {
             if (investdetails.length > 0) {
                 var username = investdetails[0]?.u_name.toUpperCase().substring(0, 3)
                 if (files.invoice) {
-                    var oldPath = files.invoice.filepath
-                    var newPath =
-                        process.cwd() + "/uploads/invoice/" + 'INV' + '_' + username + '_' + date + '.' + files.invoice.mimetype.replace('application/', '')
-                    let rawData = fs.readFileSync(oldPath);
+                    const oldPath = files.invoice.filepath;
+                    const mimeExt = files.invoice.mimetype.replace('application/', '');
+                    const filename = `INV_${username}_${date}.${mimeExt}`;
+
+                    const invoiceDir = '/mnt/ebs500/uploads/invoice';
+                    const newPath = path.join(invoiceDir, filename);
+
+                    // Ensure directory exists
+                    if (!fs.existsSync(invoiceDir)) {
+                        fs.mkdirSync(invoiceDir, { recursive: true });
+                    }
+
+                    const rawData = fs.readFileSync(oldPath);
                     fs.writeFile(newPath, rawData, async function (err) {
-                        if (err) console.log(err);
-                        let filepathh = "wealth/uploads/invoice/" + 'INV' + '_' + username + '_' + date + '.' + files.invoice.mimetype.replace('application/', '')
-                        let addproductss = await model.Updateinvest(filepathh, c_id)
+                        if (err) {
+                            console.error('Error saving invoice:', err);
+                            return res.send({
+                                result: false,
+                                message: "Error saving invoice file"
+                            });
+                        }
+
+                        const filepathh = `uploads/invoice/${filename}`; // Relative path for DB
+
+                        let addproductss = await model.Updateinvest(filepathh, c_id);
                         if (addproductss.affectedRows > 0) {
-
-
                             let info = await transporter.sendMail({
                                 from: "CORAL WEALTH <nocontact@lunarenp.com>",
                                 to: 'operations@coraluae.com',
                                 subject: 'Contract and Invoice Attached',
                                 text: `Hello Operations Team,
-Please find the attached contract and invoice.
-                                
-Client Details:
-- Name: ${investdetails[0]?.u_name}
-- Phone: ${investdetails[0]?.u_mobile}
-- Email: ${investdetails[0]?.u_email}
-
+                Please find the attached contract and invoice.
+                
+                Client Details:
+                - Name: ${investdetails[0]?.u_name}
+                - Phone: ${investdetails[0]?.u_mobile}
+                - Email: ${investdetails[0]?.u_email}
                                 `,
                                 attachments: [
                                     {
-                                        filename: 'CON' + '_' + username + '_' + date + '.pdf', // Name of the contract file
-                                        path: process.cwd() + '/' + investdetails[0]?.ui_contract_file.replace('wealth/', '') // Path to the contract file
+                                        filename: `CON_${username}_${date}.pdf`,
+                                        path: path.join('/mnt/ebs500/', investdetails[0]?.ui_contract_file.replace('wealth/', ''))
                                     },
                                     {
-                                        filename: 'INV' + '_' + username + '_' + date + '.' + files.invoice.mimetype.replace('application/', ''), // Name of the invoice file
-                                        path: process.cwd() + "/uploads/invoice/" + 'INV' + '_' + username + '_' + date + '.' + files.invoice.mimetype.replace('application/', '') // Path to the invoice file
+                                        filename: filename,
+                                        path: newPath
                                     }
                                 ]
                             });
 
-                            let infos = await transporter.sendMail({
-                                from: 'CORAL WEALTH <nocontact@lunarenp.com>', // Sender email
-                                to: `${investdetails[0]?.u_email}`, // Client email
+                            await transporter.sendMail({
+                                from: 'CORAL WEALTH <nocontact@lunarenp.com>',
+                                to: `${investdetails[0]?.u_email}`,
                                 subject: 'Verification in Process',
-                                text: `Hello ${investdetails[0]?.u_name},\n\nYour verification is currently being processed. After 24 hours, you will be able to track your growth using our platform.\n\nIf you have any questions, feel free to contact us.\n\nBest regards,\n Coral Wealth`
+                                text: `Hello ${investdetails[0]?.u_name},\n\nYour verification is currently being processed. After 24 hours, you will be able to track your growth using our platform.\n\nIf you have any questions, feel free to contact us.\n\nBest regards,\nCoral Wealth`
                             });
 
                             return res.send({
                                 result: true,
-                                message: "invoice added successfully"
-                            })
+                                message: "Invoice added successfully"
+                            });
                         } else {
                             return res.send({
                                 result: false,
-                                message: "failed to add invoice"
-                            })
+                                message: "Failed to update invoice"
+                            });
                         }
-                    })
+                    });
                 } else {
                     return res.send({
                         result: false,
-                        message: "file empty,upload file to continue"
-                    })
+                        message: "File empty, upload file to continue"
+                    });
                 }
             } else {
                 return res.send({

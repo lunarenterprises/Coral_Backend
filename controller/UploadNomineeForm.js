@@ -40,28 +40,30 @@ module.exports.uploadNomineeForm = async (req, res) => {
             var date = moment().format('YYYY_MM_DD')
 
             if (files.image) {
-                var oldPath3 = files.image.filepath;
+                const oldPath3 = files.image.filepath;
 
-                // Generate a unique filename to prevent overwriting
+                // Generate a unique filename
                 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                var newFilename = date + '_' + uniqueSuffix + '_' + files.image.originalFilename.replace(' ', '_');
-                var newPath3 = process.cwd() + "/uploads/nomineeForm/" + newFilename;
+                const newFilename = date + '_' + uniqueSuffix + '_' + files.image.originalFilename.replace(/ /g, '_');
 
-                // Ensure the directory exists
-                if (!fs.existsSync(process.cwd() + "/uploads/nomineeForm/")) {
-                    fs.mkdirSync(process.cwd() + "/uploads/nomineeForm/", { recursive: true });
+                const ebsDir = '/mnt/ebs500/uploads/nomineeForm';
+                const newPath3 = path.join(ebsDir, newFilename);
+
+                // Ensure EBS directory exists
+                if (!fs.existsSync(ebsDir)) {
+                    fs.mkdirSync(ebsDir, { recursive: true });
                 }
 
                 // Move the uploaded file
                 fs.renameSync(oldPath3, newPath3);
 
-                // Save the file path to store in the database
-                let form = "uploads/nomineeForm/" + newFilename;
+                // Save relative path for database and frontend access
+                const form = "uploads/nomineeForm/" + newFilename;
 
-                // Store nominee form in the database
-                let add = await model.uploadNomineeForm(id, form);
+                // Save in database
+                const add = await model.uploadNomineeForm(id, form);
                 if (add.affectedRows > 0) {
-                    await notification.addNotification(user_id,userData[0].u_role, "Nominee Form uploaded", "Nominee form uploaded successfully")
+                    await notification.addNotification(user_id, userData[0].u_role, "Nominee Form uploaded", "Nominee form uploaded successfully");
                     return res.send({
                         result: true,
                         message: "Nominee form uploaded successfully"
@@ -72,14 +74,11 @@ module.exports.uploadNomineeForm = async (req, res) => {
                         message: "Failed to upload nominee form"
                     });
                 }
-            }
-            else {
-                if (!files.image) {
-                    return res.send({
-                        result: false,
-                        message: "please upload your nominee form"
-                    })
-                }
+            } else {
+                return res.send({
+                    result: false,
+                    message: "Please upload your nominee form"
+                });
             }
         })
     } catch (error) {

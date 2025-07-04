@@ -75,68 +75,71 @@ module.exports.downloadStatement = async (req, res) => {
                 return false; // Return false if it's neither
             });
             let user = await userModel.getUser(user_id)
-            const dirname = path.join(__dirname, '../uploads/statements'); // Corrected path
-            const timestamp = Date.now(); // Get the current timestamp
-            const outputFilePath = path.join(dirname, `wallet_statement_user_${user[0].u_name}_${timestamp}.xlsx`); // Full file path
+            // ✅ With your EBS-mounted path:
+            const dirname = '/mnt/ebs500/uploads/statements';
 
-            // Ensure the folder exists
+            const timestamp = Date.now();
+            const filename = `wallet_statement_user_${user[0].u_name}_${timestamp}.xlsx`;
+            const outputFilePath = path.join(dirname, filename);
+
+            // Ensure the EBS directory exists
             if (!fs.existsSync(dirname)) {
-                fs.mkdirSync(dirname, { recursive: true }); // Create directories recursively
+                fs.mkdirSync(dirname, { recursive: true });
             }
 
-            // Create a new workbook and add a worksheet
+            // Create workbook and worksheet
             const workbook = new exceljs.Workbook();
             const worksheet = workbook.addWorksheet(`Wallet Statement ${user[0].u_name}`);
 
-            // Add headings and format the first section (similar to 'Withdraw Request' in previous code)
+            // Add heading
             let headingRow1 = worksheet.addRow(['Wallet Statement']);
-            worksheet.mergeCells('A1:D1');
+            worksheet.mergeCells('A1:E1');
             headingRow1.getCell(1).font = { bold: true, size: 16, name: 'Liberation Serif' };
             headingRow1.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
 
+            // Add column titles
             let headingRow2 = worksheet.addRow(["SL NO.", "CONTRACT NAME", "AMOUNT", "STATUS", "DATE"]);
-            headingRow2.getCell(1).font = { bold: true, size: 14, name: 'Liberation Serif' };
-            headingRow2.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+            headingRow2.font = { bold: true, size: 14, name: 'Liberation Serif' };
 
-            worksheet.addRow([]); // Empty row for spacing
-
+            // Define column structure
             worksheet.columns = [
                 { key: 'sl_no', width: 15 },
-                { key: 'type', width: 15 },
-                { key: 'amount', width: 15 },
-                { key: 'status', width: 15 },
-                { key: 'date', width: 15 },
+                { key: 'type', width: 20 },
+                { key: 'amount', width: 20 },
+                { key: 'status', width: 20 },
+                { key: 'date', width: 20 },
             ];
 
-            // Add data rows to the worksheet
+            // Fill worksheet rows
             filteredData.forEach((el, index) => {
                 if (el.wr_id) {
-                    // Add withdraw data to the worksheet
                     worksheet.addRow([
-                        index + 1, // Serial Number
-                        'Withdraw', // Type
-                        el.wr_amount, // Amount
-                        el.wr_status, // Status
-                        el.wr_date,   // Date
+                        index + 1,
+                        'Withdraw',
+                        el.wr_amount,
+                        el.wr_status,
+                        el.wr_date
                     ]);
                 } else if (el.ui_id) {
-                    // Add investment data to the worksheet
                     worksheet.addRow([
-                        index + 1, // Serial Number
-                        'Invest', // Type
-                        el.ui_amount, // Amount
-                        el.ui_status, // Status
-                        el.ui_date,   // Date
+                        index + 1,
+                        'Invest',
+                        el.ui_amount,
+                        el.ui_status,
+                        el.ui_date
                     ]);
                 }
             });
-            // Write the workbook to the file
-            workbook.xlsx.writeFile(outputFilePath)
+
+            // Save Excel file to EBS path
+            await workbook.xlsx.writeFile(outputFilePath);
+
+            // Send public file URL response
             return res.send({
                 result: true,
                 message: "data retrieved",
-                file: req.protocol + "://" + req.get("host") + outputFilePath.replace(process.cwd(), '')
-            })
+                file: req.protocol + "://" + req.get("host") + outputFilePath.replace('/mnt/ebs500', '')
+            });
         } else {
             return res.send({
                 result: false,
@@ -221,13 +224,13 @@ module.exports.downloadStatementPdf = async (req, res) => {
                 return false; // Return false if it's neither
             });
             let user = await userModel.getUser(user_id)
-            const dirname = path.join(__dirname, '../uploads/statements'); // Corrected path
-            const timestamp = Date.now(); // Get the current timestamp
-            const outputFilePath = path.join(dirname, `wallet_statement_user_${user[0].u_name}_${timestamp}.pdf`); // Full file path
+            const dirname = '/mnt/ebs500/uploads/statements'; // EBS path
+            const timestamp = Date.now();
+            const outputFilePath = path.join(dirname, `wallet_statement_user_${user[0].u_name}_${timestamp}.pdf`);
 
             // Ensure the folder exists
             if (!fs.existsSync(dirname)) {
-                fs.mkdirSync(dirname, { recursive: true }); // Create directories recursively
+                fs.mkdirSync(dirname, { recursive: true });
             }
             let html = `<!DOCTYPE html>
 <html lang="en">
@@ -725,9 +728,9 @@ module.exports.downloadStatementPdf = async (req, res) => {
             await createPdfWithPuppeteer(html, outputFilePath)
             return res.send({
                 result: true,
-                message: "Pdf generated succesfully",
-                file: req.protocol + "://" + req.get("host") + outputFilePath.replace(process.cwd(), '')
-            })
+                message: "Pdf generated successfully",
+                file: req.protocol + "://" + req.get("host") + outputFilePath.replace('/mnt/ebs500', '')
+            });
         } else {
             return res.send({
                 result: false,
