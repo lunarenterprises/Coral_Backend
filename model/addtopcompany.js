@@ -9,8 +9,8 @@ module.exports.getAdmin = async (user_id, admin_role) => {
     return data;
 };
 
-module.exports.AddTopCompanyQuery = async (tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage, tc_expected_CAGR, tc_current_CAGR) => {
-    var Query = `insert into top_company (tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage,tc_expected_CAGR, tc_current_CAGR) values (?,?,?,?,?,?)`;
-    var data = query(Query, [tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage, tc_expected_CAGR, tc_current_CAGR]);
+module.exports.AddTopCompanyQuery = async (tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage, tc_expected_CAGR, tc_current_CAGR, current_percentage, previous_percentage) => {
+    var Query = `insert into top_company (tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage,tc_expected_CAGR, tc_current_CAGR,tc_current_percentage,tc_previous_percentage) values (?,?,?,?,?,?,?,?)`;
+    var data = query(Query, [tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage, tc_expected_CAGR, tc_current_CAGR, current_percentage, previous_percentage]);
     return data;
 }
