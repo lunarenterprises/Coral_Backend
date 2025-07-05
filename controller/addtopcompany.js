@@ -12,14 +12,15 @@ module.exports.AddTopCompany = async (req, res) => {
                 message: "Access Denied,try with authorized account"
             })
         }
-        var { tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage, tc_expected_CAGR, tc_current_CAGR } = req.body
-        if (!tc_name || !tc_name || !tc_current_year || !tc_minimum_investment || !tc_growth_percentage) {
+        var { tc_name, tc_current_year, tc_minimum_investment, current_percentage, previous_percentage, tc_expected_CAGR, tc_current_CAGR } = req.body
+        if (!tc_name || !tc_current_year || !tc_minimum_investment || !current_percentage || !previous_percentage) {
             return res.send({
                 result: false,
-                message: "insufficent parameter"
+                message: "Company name, current year , minimum investment, current percentage and previous percentage are required"
             })
         }
-        let addTopCompany = await model.AddTopCompanyQuery(tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage, tc_expected_CAGR, tc_current_CAGR)
+        const growth = current_percentage - previous_percentage
+        let addTopCompany = await model.AddTopCompanyQuery(tc_name, tc_current_year, tc_minimum_investment, growth, tc_expected_CAGR, tc_current_CAGR)
 
         if (addTopCompany.affectedRows > 0) {
 
