@@ -230,10 +230,10 @@ ${usernme}, holder of UAE ID number ……. and passport number ……. residing
   <h2>Nominee Appointment Acknowledgment</h2>
   <p>I, ${usernme}, holder of UAE ID number … acknowledge and appoint the following nominee:</p>
   <ul>
-    <li>Full Name: ${nomineeData?nomineeData[0]?.n_name:""}</li>
-    <li>Relationship: ${nomineeData?nomineeData[0]?.n_relation:''}</li>
+    <li>Full Name: ${nomineeData ? nomineeData[0]?.n_name : ""}</li>
+    <li>Relationship: ${nomineeData ? nomineeData[0]?.n_relation : ''}</li>
     <li>ID/Passport: __________</li>
-    <li>Contact: ${nomineeData?nomineeData[0]?.n_mobile:''}</li>
+    <li>Contact: ${nomineeData ? nomineeData[0]?.n_mobile : ''}</li>
   </ul>
   <p>Candidate Rights: Receive profits, capital, and represent legally.</p>
   <p>Party One is not responsible for candidate actions. This follows UAE law.</p>
@@ -510,7 +510,7 @@ ${usernme}, holder of UAE ID number ……. and passport number ……. residing
         // var save = await model.getBankaccount(bankAccount)
         let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : notarizationAgreement
         console.log('before creating pdf ')
-        var pdf = await createPdfWithPuppeteer(html, path);
+        var pdf = await createPdfWithPuppeteer(html, fullPath);
         console.log('after creating pdf ')
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
         var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId, "cwi_invest")
