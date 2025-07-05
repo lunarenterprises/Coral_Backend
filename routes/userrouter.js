@@ -151,6 +151,8 @@ route.post('/upload/paymentreceipt', require('../controller/uploadPaymentReceipt
 
 route.post('/industry-growth', require('../controller/industryGrowth').GetIndustryGrowth)
 
+route.post('/list/status', require('../controller/status').ListAllStatus)
+
 
 /// Payment Routes
 route.post('/createPayment', require('../controller/payment').createClientSecret)
