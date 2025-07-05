@@ -16,14 +16,14 @@ module.exports.EditTopCompany = async (req, res) => {
             })
         }
 
-        let { tc_id, tc_name, tc_current_year, tc_minimum_investment, tc_growth_percentage, tc_current_CAGR, tc_expected_CAGR } = req.body
-
-        if (!tc_id) {
+        let { tc_id, tc_name, tc_current_year, tc_minimum_investment, current_percentage, previous_percentage, tc_current_CAGR, tc_expected_CAGR } = req.body
+        if (!tc_id || !tc_name || !current_percentage || !previous_percentage) {
             return res.send({
                 result: false,
-                messaage: "insufficient parameter"
+                messaage: "Company id, name, current percentage and previous percentage are required"
             })
         }
+        const growth = current_percentage - previous_percentage
         var checkTopCompany = await model.CheckTopCompanyQuery(tc_id)
 
         if (checkTopCompany.length > 0) {
@@ -54,9 +54,9 @@ module.exports.EditTopCompany = async (req, res) => {
 
             if (tc_growth_percentage) {
                 if (condition == '') {
-                    condition = `set tc_growth_percentage ='${tc_growth_percentage}' `
+                    condition = `set tc_growth_percentage ='${growth}' `
                 } else {
-                    condition += `,tc_growth_percentage='${tc_growth_percentage}' `
+                    condition += `,tc_growth_percentage='${growth}' `
                 }
             }
             if (tc_current_CAGR) {
@@ -96,8 +96,6 @@ module.exports.EditTopCompany = async (req, res) => {
                 message: "Current Investment does not exists"
             })
         }
-
-
     } catch
     (error) {
         return res.send({
