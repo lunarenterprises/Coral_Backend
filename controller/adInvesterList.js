@@ -2,6 +2,7 @@ var model = require('../model/adInvesterList')
 var userModel = require('../model/users')
 var moment = require('moment')
 var fs = require("fs");
+const path = require('path')
 var pdfdownload = require('../util/pdfGeneration')
 
 module.exports.InvestersList = async (req, res) => {
