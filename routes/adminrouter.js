@@ -83,15 +83,15 @@ route.post('/upload/current-investment/file', verifyToken, require('../controlle
 
 route.post('/upload/future-investment/file', verifyToken, require('../controller/uploadExcel').UploadFutureInvestmentExcel)
 
-route.post('/add/industry-growth', require('../controller/adIndustryGrowth').AddIndustryGrowth)
+route.post('/add/industry-growth',verifyToken, require('../controller/adIndustryGrowth').AddIndustryGrowth)
 
-route.post('/list/industry-growth', require('../controller/adIndustryGrowth').IndustryGrowthList)
+route.post('/list/industry-growth',verifyToken, require('../controller/adIndustryGrowth').IndustryGrowthList)
 
-route.post('/add/status', require('../controller/adStatus').addStatus)
+route.post('/add/status',verifyToken, require('../controller/adStatus').addStatus)
 
-route.post('/list/status', require('../controller/adStatus').listStatus)
+route.post('/list/status',verifyToken, require('../controller/adStatus').listStatus)
 
-route.post('/delete/status', require('../controller/adStatus').deleteStatus)
+route.post('/delete/status',verifyToken, require('../controller/adStatus').deleteStatus)
 
 
 
