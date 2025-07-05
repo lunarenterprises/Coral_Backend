@@ -52,7 +52,7 @@ module.exports.EditTopCompany = async (req, res) => {
                 }
             }
 
-            if (tc_growth_percentage) {
+            if (growth) {
                 if (condition == '') {
                     condition = `set tc_growth_percentage ='${growth}' `
                 } else {
