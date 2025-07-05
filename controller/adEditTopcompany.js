@@ -73,6 +73,20 @@ module.exports.EditTopCompany = async (req, res) => {
                     condition += `,tc_expected_CAGR='${tc_expected_CAGR}'`
                 }
             }
+            if (current_percentage) {
+                if (condition == '') {
+                    condition = `set tc_current_percentage ='${current_percentage}' `
+                } else {
+                    condition += `,tc_current_percentage='${current_percentage}'`
+                }
+            }
+            if (previous_percentage) {
+                if (condition == '') {
+                    condition = `set tc_previous_percentage ='${previous_percentage}' `
+                } else {
+                    condition += `,tc_previous_percentage='${previous_percentage}'`
+                }
+            }
 
             if (condition !== '') {
                 var EditTopCompany = await model.ChangeTopCompany(condition, tc_id)

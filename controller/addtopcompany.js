@@ -20,7 +20,7 @@ module.exports.AddTopCompany = async (req, res) => {
             })
         }
         const growth = current_percentage - previous_percentage
-        let addTopCompany = await model.AddTopCompanyQuery(tc_name, tc_current_year, tc_minimum_investment, growth, tc_expected_CAGR, tc_current_CAGR)
+        let addTopCompany = await model.AddTopCompanyQuery(tc_name, tc_current_year, tc_minimum_investment, growth, tc_expected_CAGR, tc_current_CAGR, current_percentage, previous_percentage)
 
         if (addTopCompany.affectedRows > 0) {
 
