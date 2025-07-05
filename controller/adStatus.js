@@ -105,8 +105,8 @@ module.exports.listStatus = async (req, res) => {
 
 module.exports.deleteStatus = async (req, res) => {
     try {
-
-        let user_id = req.user.admin_id;
+        console.log("req.user : ", req.user)
+        let user_id = req.user?.admin_id;
         let admin_role = req.user.role;
 
         var adminData = await model.getAdmin(user_id, admin_role);
