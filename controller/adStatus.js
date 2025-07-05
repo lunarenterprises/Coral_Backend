@@ -105,7 +105,6 @@ module.exports.listStatus = async (req, res) => {
 
 module.exports.deleteStatus = async (req, res) => {
     try {
-        console.log("req.user : ", req.user)
         let user_id = req.user?.admin_id;
         let admin_role = req.user.role;
 
