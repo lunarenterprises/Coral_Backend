@@ -52,10 +52,14 @@ module.exports.KycUpload = async (req, res) => {
                 const back_page = saveFile(files.back_page.filepath, 'kyc', `${datePrefix}_${files.back_page.originalFilename.replace(/ /g, '_')}`)
                 const profile = saveFile(files.image.filepath, 'profile', `${datePrefix}_${files.image.originalFilename.replace(/ /g, '_')}`)
                 const bank_file = saveFile(files.bank_file.filepath, 'bank_statements', `${datePrefix}_${files.bank_file.originalFilename.replace(/ /g, '_')}`)
-
+                console.log("Files saved:", { front_page, back_page, profile, bank_file });
                 const updateuser = await model.UpdateUser(profile, fields.wfa_password, user_id, fields.dob)
+                console.log("updateuser : ", updateuser);
                 const insertbank = await model.Addbank(fields.name_per_bank, fields.account_no, fields.ifsc_code, fields.swift_code, fields.bank_name, fields.branch_name, fields.currency, user_id)
+                console.log("insertbank : ", insertbank);
                 const insertdata = await model.AddUserKyc(user_id, fields.id_type, front_page, back_page, bank_file)
+                console.log("insertdata : ", insertdata);
+
 
                 if (insertdata.affectedRows > 0) {
                     const username = finduser[0]?.u_name.toUpperCase().substring(0, 3)
