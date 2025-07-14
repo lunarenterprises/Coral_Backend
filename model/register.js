@@ -4,7 +4,7 @@ const query = util.promisify(db.query).bind(db);
 
 module.exports.getUser = async (email) => {
     var Query = `select * from users where u_email = ? and u_status='active'`;
-    var data = await query(Query, [email]); 
+    var data = await query(Query, [email]);
     return data;
 };
 
@@ -85,3 +85,8 @@ module.exports.updateUserParent = async (user_id) => {
     var data = await query(Query, [user_id]);
     return data;
 };
+
+module.exports.UpdateOtp = async (email, otp) => {
+    let Query = `update users set u_token = ? where u_email = ?`;
+    return await query(Query, [otp, email]);
+}

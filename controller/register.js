@@ -28,7 +28,7 @@ module.exports.UserRegistration = async (req, res) => {
     }
     var token = loginToken();
     let checkuser = await model.getUser(email)
-    if (checkuser.length > 0) {
+    if (checkuser.length > 0 && checkuser[0].u_is_registered == 1) {
       return res.send({
         result: false,
         message: "User already registered with this email."
@@ -97,12 +97,16 @@ module.exports.UserRegistration = async (req, res) => {
 `
       })
       var hashedPassword = await bcrypt.hash(password, 10);
-      let user = await model.InsertUserQuery(name, email, mobile, hashedPassword, date, token, currency, verifyReferralCode);
-      console.warn("mail send info : ", info)
+      if (checkuser.length > 0 && checkuser[0].u_is_registered == 0) {
+        // Update existing user
+        await model.UpdateOtp(email, token);
+
+      } else {
+        await model.InsertUserQuery(name, email, mobile, hashedPassword, date, token, currency, verifyReferralCode);
+      }
       return res.send({
         status: true,
-        message: "registered successfully,otp send to your mail",
-        token: token
+        message: "registered successfully,otp send to your mail"
       });
     }
   } catch (error) {
