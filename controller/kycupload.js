@@ -11,6 +11,7 @@ const uploadRoot = '/mnt/ebs500/uploads'; // Centralized upload root path
 
 module.exports.KycUpload = async (req, res) => {
     try {
+        console.log("Kyc upload called")
         const transporter = nodemailer.createTransport({
             host: "smtp.hostinger.com",
             port: 587,
