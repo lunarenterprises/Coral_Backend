@@ -36,6 +36,7 @@ module.exports.KycUpload = async (req, res) => {
                 if (!fields[field]) return res.send({ result: false, message: `Missing field: ${field}` })
             }
 
+            console.log("files : ", files)
             const finduser = await model.GetUser(user_id)
             if (finduser[0]?.u_kyc === "active" || finduser[0]?.u_kyc === "pending")
                 return res.send({ result: false, message: "Kyc already submitted" })
