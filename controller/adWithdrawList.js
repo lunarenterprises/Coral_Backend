@@ -22,19 +22,23 @@ module.exports.WithdrawRequestList = async (req, res) => {
 
         var withdrawData = await model.GetUserWithdraw(condition)
 
-
-        if (withdrawData.length > 0) {
-            return res.send({
-                result: true,
-                message: "data retrieved successfully",
-                data: withdrawData
-            })
-        } else {
-            return res.send({
-                result: false,
-                message: "failed to get data"
-            })
-        }
+        return res.send({
+            result: true,
+            message: "data retrieved successfully",
+            data: withdrawData
+        })
+        // if (withdrawData.length > 0) {
+        //     return res.send({
+        //         result: true,
+        //         message: "data retrieved successfully",
+        //         data: withdrawData
+        //     })
+        // } else {
+        //     return res.send({
+        //         result: false,
+        //         message: "failed to get data"
+        //     })
+        // }
     } catch (error) {
         return res.send({
             result: false,
