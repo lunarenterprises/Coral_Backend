@@ -22,18 +22,23 @@ module.exports.NestEggList = async (req, res) => {
 
         var nestegglist = await model.GetNestEggList(condition)
 
-        if (nestegglist.length > 0) {
-            return res.send({
-                result: true,
-                message: "data retrieved successfully",
-                data: nestegglist
-            })
-        } else {
-            return res.send({
-                result: false,
-                message: "failed to get data"
-            })
-        }
+        return res.send({
+            result: true,
+            message: "data retrieved successfully",
+            data: nestegglist
+        })
+        // if (nestegglist.length > 0) {
+        //     return res.send({
+        //         result: true,
+        //         message: "data retrieved successfully",
+        //         data: nestegglist
+        //     })
+        // } else {
+        //     return res.send({
+        //         result: false,
+        //         message: "failed to get data"
+        //     })
+        // }
     } catch (error) {
         return res.send({
             result: false,
