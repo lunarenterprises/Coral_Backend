@@ -95,14 +95,18 @@ module.exports.KycUpload = async (req, res) => {
                     await model.UpdateUserKyc(user_id, fields.country, fields.currency)
                     await notifiaction.addNotification(user_id, finduser[0]?.u_role, "KYC Verification Request", "Your KYC verification request has been submitted successfully")
                     await sendNotificationToAdmins("KYC submitted", `${username} has submitted the KYC.`)
+                    console.log("KYC submitted successfully");
 
                     return res.send({ result: true, message: "Kyc submitted successfully, one of our representatives will contact you." })
                 } else {
+                    console.log("Failed to insert KYC data");
                     return res.send({ result: false, message: "Failed to upload KYC document, please try again" })
                 }
             } else if (fields.verification_type === 'video') {
+                console.log("Video verification type selected");
                 return res.send({ result: false, message: "Video verification is not available" })
             } else {
+                console.log("Invalid verification type");
                 return res.send({ result: false, message: "Invalid verification type" })
             }
         })
