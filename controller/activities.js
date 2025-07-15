@@ -66,7 +66,7 @@ module.exports.Activities = async (req, res) => {
                 return dateB - dateA;
             })
         } else {
-            res.send({ result: false, message: "Invalid type" })
+           return res.send({ result: false, message: "Invalid type" })
         }
         return res.send({
             result: true,
