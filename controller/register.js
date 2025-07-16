@@ -28,6 +28,7 @@ module.exports.UserRegistration = async (req, res) => {
     }
     var token = loginToken();
     let checkuser = await model.getUser(email)
+    console.log("checkuser : ", checkuser)
     if (checkuser.length > 0 && checkuser[0].u_is_registered == 1) {
       return res.send({
         result: false,
