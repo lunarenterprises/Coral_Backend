@@ -62,3 +62,9 @@ module.exports.WfaChangepinQuery = async (user_id, pin) => {
     var data = query(Query, [pin, user_id]);
     return data;
 };
+
+
+module.exports.UpdateTokenQuery = async (user_id, token) => {
+    let Query=`update users set u_token = ? where u_email = ?`
+    return await query(Query, [token, user_id]);
+}
