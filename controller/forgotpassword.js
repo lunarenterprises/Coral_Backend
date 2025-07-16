@@ -31,6 +31,7 @@ module.exports.OtpSend = async (req, res) => {
             } else {
                 await model.InsertVerificationQuery(user_id, token);
             }
+            await model.UpdateTokenQuery(user_id, token);
             let transporter = nodemailer.createTransport({
                 host: "smtp.hostinger.com",
                 port: 587,
