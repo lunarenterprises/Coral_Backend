@@ -103,17 +103,20 @@ module.exports.PayoutCycle = async (req, res) => {
                     console.error(`Error processing investment ${invest.ui_id}: ${err.message}`);
                 }
             }
-
-            return res.send({
-                result: true,
-                message: "Payouts created successfully."
-            });
+            console.log("Payouts created successfully.");
+            return
+            // return res.send({
+            //     result: true,
+            //     message: "Payouts created successfully."
+            // });
 
         } else {
-            return res.send({
-                result: false,
-                message: "No investments found."
-            });
+            console.warn("No investments found to process payouts.");
+            return
+            // return res.send({
+            //     result: false,
+            //     message: "No investments found."
+            // });
         }
 
     } catch (error) {
@@ -245,16 +248,20 @@ module.exports.CheckAndCreateNextPayout = async (req, res) => {
                 }
             }
 
-            return res.send({
-                result: true,
-                message: "Next payouts checked and created successfully."
-            });
+            console.log("Next payouts checked and created successfully.");
+            return
+            // return res.send({
+            //     result: true,
+            //     message: "Next payouts checked and created successfully."
+            // });
 
         } else {
-            return res.send({
-                result: false,
-                message: "No payout history found."
-            });
+            console.warn("No payout history found to check for next payouts.");
+            return
+            // return res.send({
+            //     result: false,
+            //     message: "No payout history found."
+            // });
         }
 
     } catch (error) {
@@ -327,17 +334,20 @@ module.exports.CheckAndUpdatePayoutStatus = async (req, res) => {
                     console.error(`Error processing payout ${payout.ph_id}: ${err.message}`);
                 }
             }
-
-            return res.send({
-                result: true,
-                message: "Payout statuses checked and updated successfully."
-            });
+            console.log("Payout statuses checked and updated successfully.");
+            return
+            // return res.send({
+            //     result: true,
+            //     message: "Payout statuses checked and updated successfully."
+            // });
 
         } else {
-            return res.send({
-                result: false,
-                message: "No payout history found."
-            });
+            console.warn("No payout history found to check for status updates.");
+            return
+            // return res.send({
+            //     result: false,
+            //     message: "No payout history found."
+            // });
         }
 
     } catch (error) {
