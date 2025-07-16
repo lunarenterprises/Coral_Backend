@@ -29,6 +29,7 @@ module.exports.UserRegistration = async (req, res) => {
     var token = loginToken();
     let checkuser = await model.getUser(email)
     if (checkuser.length > 0 && checkuser[0].u_is_registered == 1) {
+      console.log("User already registered with this email:", email);
       return res.send({
         result: false,
         message: "User already registered with this email."
@@ -98,10 +99,12 @@ module.exports.UserRegistration = async (req, res) => {
       })
       var hashedPassword = await bcrypt.hash(password, 10);
       if (checkuser.length > 0 && checkuser[0].u_is_registered == 0) {
+        console.log("User already exists, updating OTP for user:", email);
         // Update existing user
         await model.UpdateOtp(email, token);
 
       } else {
+        console.log("User not registered, inserting new user", email);
         await model.InsertUserQuery(name, email, mobile, hashedPassword, date, token, currency, verifyReferralCode);
       }
       return res.send({
