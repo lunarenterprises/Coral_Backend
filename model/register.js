@@ -9,7 +9,6 @@ module.exports.getUser = async (email) => {
 };
 
 
-
 module.exports.CheckUserQuery = async (email) => {
     var Query = `select * from users
     where u_email = ?`;
