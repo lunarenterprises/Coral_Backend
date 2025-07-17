@@ -3,7 +3,7 @@ var util = require("util")
 const query = util.promisify(db.query).bind(db);
 
 module.exports.CheckUserQuery = async (email) => {
-    var Query = `select * from users where u_email = ?`;
+    var Query = `select * from users where u_email = ? and u_status <> 'removed`;
     var data = query(Query, [email]);
     return data;
 };
@@ -65,6 +65,6 @@ module.exports.WfaChangepinQuery = async (user_id, pin) => {
 
 
 module.exports.UpdateTokenQuery = async (user_id, token) => {
-    let Query=`update users set u_token = ? where u_email = ?`
+    let Query = `update users set u_token = ? where u_email = ?`
     return await query(Query, [token, user_id]);
 }
