@@ -6,7 +6,7 @@ var moment = require('moment')
 var model = require("../model/forgotpassword");
 var bcrypt = require('bcrypt')
 
-let notification=require('../util/saveNotification')
+let notification = require('../util/saveNotification')
 
 module.exports.OtpSend = async (req, res) => {
     try {
@@ -31,7 +31,10 @@ module.exports.OtpSend = async (req, res) => {
             } else {
                 await model.InsertVerificationQuery(user_id, token);
             }
-            await model.UpdateTokenQuery(user_id, token);
+            let tokenUpdated = await model.UpdateTokenQuery(user_id, token);
+            console.log("user_id : ", user_id);
+            console.log("tokenUpdated : ", tokenUpdated);
+            console.log("token : ", token);
             let transporter = nodemailer.createTransport({
                 host: "smtp.hostinger.com",
                 port: 587,
@@ -137,7 +140,7 @@ module.exports.Emailverification = async (req, res) => {
         let user_id = checkuser[0].u_id
         let checkMailVerification = await model.getVerification(user_id, code)
         if (checkMailVerification.length > 0) {
-            await notification.addNotification(user_id,checkuser[0].u_role, "Email Verified", "Your email has been verified successfully")
+            await notification.addNotification(user_id, checkuser[0].u_role, "Email Verified", "Your email has been verified successfully")
             return res.send({
                 result: true,
                 message: "code successfully verified"
@@ -209,7 +212,7 @@ module.exports.ChangePin = async (req, res) => {
                 user_id,
                 pin
             );
-            await notification.addNotification(user_id,CheckUser[0].u_role, "Pin Changed", "Your pin has been changed successfully")
+            await notification.addNotification(user_id, CheckUser[0].u_role, "Pin Changed", "Your pin has been changed successfully")
             return res.send({
                 result: true,
                 message: "pin has been changed successfully",
@@ -246,7 +249,7 @@ module.exports.WfaChangePin = async (req, res) => {
                 user_id,
                 pin
             );
-            await notification.addNotification(user_id,CheckUser[0].u_role, "Pin Changed", "Your pin has been changed successfully")
+            await notification.addNotification(user_id, CheckUser[0].u_role, "Pin Changed", "Your pin has been changed successfully")
             return res.send({
                 result: true,
                 message: "pin has been changed successfully",
