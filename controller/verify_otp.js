@@ -27,7 +27,7 @@ module.exports.VerifyOtp = async (req, res) => {
                 message: "Invalid otp"
             })
         } else {
-            await model.VerifyOtp(email)
+            await model.VerifyOtp(checkEmail[0].u_id)
         }
         return res.send({
             result: true,
