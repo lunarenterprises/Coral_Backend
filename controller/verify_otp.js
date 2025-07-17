@@ -10,6 +10,8 @@ module.exports.VerifyOtp = async (req, res) => {
                 message: "Email and otp are required"
             })
         }
+        console.log("email : ", email);
+        console.log("otp : ", otp);
         let checkEmail = await model.CheckEmail(email)
         if (checkEmail.length === 0) {
             return res.send({
@@ -18,6 +20,7 @@ module.exports.VerifyOtp = async (req, res) => {
             })
         }
         let otpInDb = checkEmail[0]?.u_token
+        console.log("otpInDb : ", otpInDb);
         if (otpInDb != otp) {
             return res.send({
                 result: false,
