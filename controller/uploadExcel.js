@@ -123,7 +123,7 @@ module.exports.UploadHGFSExcel = async (req, res) => {
             try {
                 const filePath = file.filepath;
                 const workbook = XLSX.readFile(filePath);
-                const worksheet = workbook.Sheets[workbook.SheetNames[2]]; // Use first sheet
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]]; // Use first sheet
 
                 // Read and convert to JSON
                 const data = XLSX.utils.sheet_to_json(worksheet, { raw: false });
@@ -197,7 +197,7 @@ module.exports.UploadCurrentInvestmentExcel = async (req, res) => {
             try {
                 const filePath = file.filepath;
                 const workbook = XLSX.readFile(filePath);
-                const worksheet = workbook.Sheets[workbook.SheetNames[3]];
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
                 const data = XLSX.utils.sheet_to_json(worksheet, { raw: false });
 
@@ -275,7 +275,7 @@ module.exports.UploadFutureInvestmentExcel = async (req, res) => {
             try {
                 const filePath = file.filepath;
                 const workbook = XLSX.readFile(filePath);
-                const worksheet = workbook.Sheets[workbook.SheetNames[4]]; // Sheet 4
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]]; // Sheet 4
 
                 const data = XLSX.utils.sheet_to_json(worksheet, { raw: false });
 
