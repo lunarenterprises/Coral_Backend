@@ -109,7 +109,7 @@ module.exports.OtpSend = async (req, res) => {
             nodemailer.getTestMessageUrl(info);
             return res.send({
                 status: true,
-                message: "verification code sent to ur mail",
+                message: "verification code sent to your mail",
                 token: token
             });
         } else {
