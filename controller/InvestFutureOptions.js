@@ -1,6 +1,7 @@
 let model = require('../model/InvestFutureOptions')
 var moment = require('moment')
 var fs = require('fs');
+const path = require('path')
 const { createPdfWithPuppeteer } = require('../util/pdfGeneration');
 const notification = require('../util/saveNotification');
 const { sendNotificationToAdmins } = require('../util/firebaseConfig');
@@ -1645,8 +1646,9 @@ module.exports.InvestFututreOptions = async (req, res) => {
     </div>
 </body>
 </html>`
+        let insuranceAgreement = ``
         // var save = await model.getBankaccount(bankAccount)
-        let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : notarizationAgreement
+        let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : securityOption.toUpperCase() === "INSURANCE" ? insuranceAgreement: notarizationAgreement
         var pdf = await createPdfWithPuppeteer(html, path);
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
         var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId, "lock_invest")
