@@ -62,7 +62,9 @@ module.exports.AddNominee = async (req, res) => {
                     fs.mkdirSync(nomineeDir, { recursive: true });
                 }
 
-                fs.renameSync(oldPath3, newPath3); // Move the file
+                // ❗ Fix: Use copy + delete instead of rename to avoid EXDEV error
+                fs.copyFileSync(oldPath3, newPath3);
+                fs.unlinkSync(oldPath3); // Remove the temp file
 
                 const proof = `uploads/nomineeProof/${newFilename}`; // Relative path for DB
 

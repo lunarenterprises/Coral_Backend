@@ -507,8 +507,9 @@ ${usernme}, holder of UAE ID number ……. and passport number ……. residing
     </div>
 </body>
 </html>`
+        let insurance = ``
         // var save = await model.getBankaccount(bankAccount)
-        let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : notarizationAgreement
+        let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : securityOption.toUpperCase() === "INSURANCE" ? insurance : notarizationAgreement
         console.log('before creating pdf ')
         var pdf = await createPdfWithPuppeteer(html, fullPath);
         console.log('after creating pdf ')
