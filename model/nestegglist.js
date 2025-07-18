@@ -4,7 +4,7 @@ const query = util.promisify(db.query).bind(db);
 
 module.exports.GetNestegg = async (user_id) => {
     var Query = `select * from nestegg
-    left join wallet on ne_wallet = w_id where w_u_id = ?`;
+    left join wallet on ne_wallet = w_id where ne_u_id = ?`;
     var data = await query(Query, [user_id]);
     return data;
 };
