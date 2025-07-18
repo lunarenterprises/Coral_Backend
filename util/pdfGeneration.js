@@ -73,7 +73,8 @@ module.exports.createPdfWithPuppeteer = async (htmlContent, path) => {
         const page = await browser.newPage();
 
         await page.setContent(htmlContent, {
-            waitUntil: "networkidle0",
+            // waitUntil: "networkidle0",
+            waitUntil: "domcontentloaded",
             timeout: 120000
         });
 
