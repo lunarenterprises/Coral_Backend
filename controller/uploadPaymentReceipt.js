@@ -53,7 +53,10 @@ module.exports.UploadPaymentReceipt = async (req, res) => {
                 }
 
                 // Move file from temp to EBS directory
-                fs.renameSync(oldPath3, newPath3);
+                // fs.renameSync(oldPath3, newPath3);
+                // ❗ Fix: Use copy + delete instead of rename to avoid EXDEV error
+                fs.copyFileSync(oldPath3, newPath3);
+                fs.unlinkSync(oldPath3); // Remove the temp file
 
                 // Relative path for DB and access
                 const filepath = "uploads/paymentreceipt/" + newFilename;

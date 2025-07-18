@@ -55,7 +55,10 @@ module.exports.uploadNomineeForm = async (req, res) => {
                 }
 
                 // Move the uploaded file
-                fs.renameSync(oldPath3, newPath3);
+                // fs.renameSync(oldPath3, newPath3);
+                // ❗ Fix: Use copy + delete instead of rename to avoid EXDEV error
+                fs.copyFileSync(oldPath3, newPath3);
+                fs.unlinkSync(oldPath3); // Remove the temp file
 
                 // Save relative path for database and frontend access
                 const form = "uploads/nomineeForm/" + newFilename;
