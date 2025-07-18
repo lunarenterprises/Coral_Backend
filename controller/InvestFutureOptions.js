@@ -1648,14 +1648,19 @@ module.exports.InvestFututreOptions = async (req, res) => {
 </html>`
         let insuranceAgreement = ``
         // var save = await model.getBankaccount(bankAccount)
-        let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : securityOption.toUpperCase() === "INSURANCE" ? insuranceAgreement: notarizationAgreement
+        let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : securityOption.toUpperCase() === "INSURANCE" ? insuranceAgreement : notarizationAgreement
+        console.log("html")
         var pdf = await createPdfWithPuppeteer(html, fullPath);
+        console.log("pdf : ", pdf)
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
+        console.log("nomineeId : ", nomineeId)
         var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId, "lock_invest")
+        console.log("saveInvest : ", saveInvest)
         await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest future lock`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Future lock investment added successfully')
         // Relative path used for public access (served via Express)
         const relativeUrl = `/uploads/agreement/${filename}`;
+        console.log("relativeUrl : ", relativeUrl)
 
         // Send response
         return res.send({
