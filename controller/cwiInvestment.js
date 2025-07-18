@@ -3,6 +3,7 @@ let model = require('../model/cwiInvestment')
 var orderModel = require('../model/Addorder')
 let userModel = require('../model/users')
 var fs = require('fs');
+const path = require('path')
 const notification = require('../util/saveNotification');
 const { createPdfWithPuppeteer } = require('../util/pdfGeneration');
 const { SendMessage, sendNotificationToAdmins } = require('../util/firebaseConfig')
@@ -1674,10 +1675,10 @@ module.exports.cwiInvestment = async (req, res) => {
 </html>`
         let insuranceAgreement = ``
         // var save = await model.getBankaccount(bankAccount)
-        let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement :securityOption.toUpperCase() === "INSURANCE" ?insuranceAgreement: notarizationAgreement
+        let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : securityOption.toUpperCase() === "INSURANCE" ? insuranceAgreement : notarizationAgreement
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
         var saveInvest = await orderModel.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankaccount[0].b_id, nomineeId, "future_invest")
-        var pdf = await createPdfWithPuppeteer(html, path);
+        var pdf = await createPdfWithPuppeteer(html, fullPath);
         await SendMessage(user_id, "CWI Investment", "CWI Investment added successfully.!")
         await sendNotificationToAdmins("CWI Investment", `${userdetails[0].u_name} requested to invest in CWI Investment`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'CWI Investment', 'CWI Investment added successfully')
