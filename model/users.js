@@ -48,6 +48,11 @@ module.exports.updatePaymentStatus = async (investment_id, status) => {
 }
 
 module.exports.UploadPaymentReceipt = async (investment_id, filePath) => {
-    let Query=`update user_invest set ui_payment_receipt=? and ui_payment_type=? where ui_id=? `
+    let Query = `update user_invest set ui_payment_receipt=? and ui_payment_type=? where ui_id=? `
     return await query(Query, [filePath, "through_bank", investment_id])
+}
+
+module.exports.isReferralCodeExists = async (code) => {
+    let Query = `SELECT 1 FROM users WHERE u_referralCode = ?`
+    return await query(Query, [code])
 }

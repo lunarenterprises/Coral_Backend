@@ -3,6 +3,7 @@ var userModel = require('../model/users')
 var bcrypt = require("bcrypt");
 var moment = require('moment')
 var nodemailer = require('nodemailer')
+const { generateUniqueReferralCode } = require('../util/generateReferralCode')
 
 module.exports.UserRegistration = async (req, res) => {
   try {
@@ -26,7 +27,7 @@ module.exports.UserRegistration = async (req, res) => {
         message: "insufficient parameters",
       });
     }
-    email=email.toLowerCase().trim()
+    email = email.toLowerCase().trim()
     var token = loginToken();
     let checkuser = await model.getUser(email)
     if (checkuser.length > 0 && checkuser[0].u_is_registered == 1) {
@@ -36,15 +37,16 @@ module.exports.UserRegistration = async (req, res) => {
         message: "User already registered with this email."
       })
     } else {
-      let verifyReferralCode = null
+      let refferedUserId = null
       if (referralCode) {
-        verifyReferralCode = await userModel.verifyReferralCode(referralCode)
+        const verifyReferralCode = await userModel.verifyReferralCode(referralCode)
         if (verifyReferralCode.length == 0 || verifyReferralCode[0].u_id == user_id) {
           return res.send({
             result: false,
             message: "Invalid referral code"
           })
         }
+        refferedUserId = verifyReferralCode[0]?.u_id
       }
       let info = await transporter.sendMail({
         from: "CORAL WEALTH <nocontact@lunarenp.com>",
@@ -106,7 +108,8 @@ module.exports.UserRegistration = async (req, res) => {
 
       } else {
         console.log("User not registered, inserting new user", email);
-        await model.InsertUserQuery(name, email, mobile, hashedPassword, date, token, currency, verifyReferralCode);
+        const referralCode = await generateUniqueReferralCode(5)
+        await model.InsertUserQuery(name, email, mobile, hashedPassword, date, token, currency, referralCode, refferedUserId);
       }
       return res.send({
         status: true,
