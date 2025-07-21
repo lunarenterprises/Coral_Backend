@@ -41,7 +41,19 @@ module.exports.AddOrder = async (req, res) => {
         let nominee_residentialAddress = nomineeDetails.residentialAddress
         let percentage = investment.percentage
         let return_amount = investment.return_amount
+        if(!bankAccount){
+            return res.send({
+                result:false,
+                message:"Bank id is requried"
+            })
+        }
         let bankaccount = await model.getBankaccount(bankAccount)
+        if(!bankaccount||bankaccount.length===0){
+            return res.send({
+                result:false,
+                message:"Bank not found. Invalid bank id"
+            })
+        }
         let nomineeData = null
         let createdNominee = null
         if (nomineeFullName) {
