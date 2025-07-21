@@ -10,6 +10,7 @@ module.exports.VerifyOtp = async (req, res) => {
                 message: "Email and otp are required"
             })
         }
+        email=email.toLowerCase().trim()
         let checkEmail = await model.CheckEmail(email)
         if (checkEmail.length === 0) {
             return res.send({

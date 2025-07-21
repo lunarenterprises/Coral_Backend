@@ -19,6 +19,7 @@ module.exports.AddForm = async(req, res) => {
                 message: "Insufficient parameters"
             })
         }
+          email=email.toLowerCase().trim()
         let addform = await model.AddForm(name, email, number, inv_amount, inv_type, country);
         if(addform.affectedRows > 0){
             let data = [

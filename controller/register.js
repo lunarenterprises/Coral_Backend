@@ -26,6 +26,7 @@ module.exports.UserRegistration = async (req, res) => {
         message: "insufficient parameters",
       });
     }
+    email=email.toLowerCase().trim()
     var token = loginToken();
     let checkuser = await model.getUser(email)
     if (checkuser.length > 0 && checkuser[0].u_is_registered == 1) {
