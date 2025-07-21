@@ -20,6 +20,7 @@ module.exports.Login = async (req, res) => {
             });
         }
         email = email.toLowerCase().trim()
+        console.log("email : ", email)
         let CheckUser = await model.CheckUserQuery(email);
         if (CheckUser.length > 0) {
             if (CheckUser[0]?.u_is_registered === 0) {
