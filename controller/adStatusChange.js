@@ -273,14 +273,17 @@ module.exports.StatusChange = async (req, res) => {
             if (getuser.length > 0) {
                 var previous_status = getuser[0]?.u_kyc
 
-
+                console.log("kyc_status : ", kyc_status)
                 await notification.addNotification(admin_id, `${admin_role}`, `KYC status updated for user ${kyc_user_id} `, `KYC status updated from ${previous_status} to ${kyc_status}`)
                 if (kyc_status == 'verified') {
+                    console.log("if : ")
                     var changeBankstatus = await model.ChangeBankStatus(kyc_user_id)
 
                     var changekycstatus = await model.ChangeKycStatus(kyc_status, kyc_user_id)
 
                 } else {
+                    console.log("else : ")
+
                     var addkycmessage = await model.AddKycMessage(kyc_message, kyc_user_id)
 
                     var changekycstatus = await model.ChangeKycStatus(kyc_status, kyc_user_id)
