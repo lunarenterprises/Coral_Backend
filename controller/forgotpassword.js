@@ -18,6 +18,7 @@ module.exports.OtpSend = async (req, res) => {
                 message: "insufficient parameters",
             });
         }
+        email=email.toLowerCase().trim()
         let CheckUser = await model.CheckUserQuery(email);
         var token = randtoken.generate(4);
 
@@ -132,6 +133,7 @@ module.exports.Emailverification = async (req, res) => {
             message: "insufficient parameters"
         })
     }
+      email=email.toLowerCase().trim()
     let checkuser = await model.CheckUserQuery(email)
     if (checkuser.length > 0) {
         let user_id = checkuser[0].u_id
@@ -166,6 +168,7 @@ module.exports.ChangePassword = async (req, res) => {
                 message: "insufficient parameters",
             });
         }
+          email=email.toLowerCase().trim()
         let CheckUser = await model.CheckUserQuery(email);
         if (CheckUser.length > 0) {
             let user_id = CheckUser[0].u_id
@@ -202,6 +205,7 @@ module.exports.ChangePin = async (req, res) => {
                 message: "insufficient parameters",
             });
         }
+          email=email.toLowerCase().trim()
         let CheckUser = await model.CheckUserQuery(email);
         if (CheckUser.length > 0) {
             let user_id = CheckUser[0].u_id
@@ -239,6 +243,7 @@ module.exports.WfaChangePin = async (req, res) => {
                 message: "insufficient parameters",
             });
         }
+          email=email.toLowerCase().trim()
         let CheckUser = await model.CheckUserQuery(email);
         if (CheckUser.length > 0) {
             let user_id = CheckUser[0].u_id
