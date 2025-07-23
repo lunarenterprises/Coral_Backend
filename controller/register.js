@@ -108,7 +108,7 @@ module.exports.UserRegistration = async (req, res) => {
 
       } else {
         console.log("User not registered, inserting new user", email);
-        const referralCode = await generateUniqueReferralCode(5)
+        const referralCode = await generateUniqueReferralCode(4)
         await model.InsertUserQuery(name, email, mobile, hashedPassword, date, token, currency, referralCode, refferedUserId);
       }
       return res.send({
