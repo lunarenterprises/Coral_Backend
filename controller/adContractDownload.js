@@ -27,7 +27,7 @@ module.exports.ContractDownload = async (req, res) => {
             return res.send({
                 result: true,
                 message: "data retrived",
-                data: `${serverName}/${filename}`
+                data: `${serverName}${filename}`
             })
         } else {
             return res.send({
