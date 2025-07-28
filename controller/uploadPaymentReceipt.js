@@ -60,7 +60,7 @@ module.exports.UploadPaymentReceipt = async (req, res) => {
                 fs.unlinkSync(oldPath3); // Remove the temp file
 
                 // Relative path for DB and access
-                const filepath = "uploads/paymentreceipt/" + newFilename;
+                const filepath = "/uploads/paymentreceipt/" + newFilename;
 
                 const add = await userModel.UploadPaymentReceipt(investment_id, filepath);
                 if (add.affectedRows > 0) {
