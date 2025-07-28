@@ -15,9 +15,9 @@ module.exports.Calculator = async (req, res) => {
         let condition = ``
         if (amount) {
             if (condition !== '') {
-                condition += ` AND ri_amount_from < ${amount}`
+                condition += ` AND ri_amount_from <= ${amount}`
             } else {
-                condition += ` WHERE ri_amount_from < ${amount}`
+                condition += ` WHERE ri_amount_from <= ${amount}`
             }
             //             if (condition !== '') {
             //                 condition += ` AND ((ri_amount_to IS NOT NULL AND ${amount} BETWEEN ri_amount_from AND ri_amount_to)
