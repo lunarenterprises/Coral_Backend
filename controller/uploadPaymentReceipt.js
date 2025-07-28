@@ -2,6 +2,7 @@ var formidable = require('formidable')
 var moment = require('moment')
 var fs = require('fs')
 let userModel = require("../model/users")
+let path = require('path')
 
 
 module.exports.UploadPaymentReceipt = async (req, res) => {
