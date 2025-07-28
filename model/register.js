@@ -42,9 +42,9 @@ module.exports.UpdateVerificationQuery = async (user_id, token) => {
     return data;
 };
 
-module.exports.InsertUserQuery = async (name, email, mobile, hashedPassword, date, token, currency, referralCode, refferedUserId) => {
-    var Query = `insert into users(u_name,u_email,u_mobile,u_password,u_joining_date,u_token,u_currency,u_referralCode,u_referredCode)values(?,?,?,?,?,?,?,?,?)`;
-    var data = await query(Query, [name, email, mobile, hashedPassword, date, token, currency, referralCode, refferedUserId]);
+module.exports.InsertUserQuery = async (name, email, mobile, hashedPassword, date, token, token_expiry, currency, referralCode, refferedUserId) => {
+    var Query = `insert into users(u_name,u_email,u_mobile,u_password,u_joining_date,u_token,u_token_expiry,u_currency,u_referralCode,u_referredCode)values(?,?,?,?,?,?,?,?,?)`;
+    var data = await query(Query, [name, email, mobile, hashedPassword, date, token, token_expiry, currency, referralCode, refferedUserId]);
     return data;
 };
 
@@ -85,7 +85,7 @@ module.exports.updateUserParent = async (user_id) => {
     return data;
 };
 
-module.exports.UpdateOtp = async (email, otp) => {
-    let Query = `update users set u_token = ? where u_email = ?`;
-    return await query(Query, [otp, email]);
+module.exports.UpdateOtp = async (email, otp, otp_expiry) => {
+    let Query = `update users set u_token = ?,u_token_expiry=? where u_email = ?`;
+    return await query(Query, [otp, otp_expiry, email]);
 }

@@ -18,9 +18,10 @@ module.exports.OtpSend = async (req, res) => {
                 message: "insufficient parameters",
             });
         }
-        email=email.toLowerCase().trim()
+        email = email.toLowerCase().trim()
         let CheckUser = await model.CheckUserQuery(email);
         var token = randtoken.generate(4);
+        const tokenExpiry = moment().add(5, 'minutes').format('YYYY-MM-DD HH:mm:ss');
 
         if (CheckUser.length > 0) {
             let user_id = CheckUser[0].u_id
@@ -28,11 +29,11 @@ module.exports.OtpSend = async (req, res) => {
                 user_id
             );
             if (CheckVerificationCode.length > 0) {
-                await model.UpdateVerificationQuery(user_id, token);
+                await model.UpdateVerificationQuery(user_id, token, tokenExpiry);
             } else {
-                await model.InsertVerificationQuery(user_id, token);
+                await model.InsertVerificationQuery(user_id, token, tokenExpiry);
             }
-            let tokenUpdated = await model.UpdateTokenQuery(user_id, token);
+            let tokenUpdated = await model.UpdateTokenQuery(user_id, token, tokenExpiry);
             let transporter = nodemailer.createTransport({
                 host: "smtp.hostinger.com",
                 port: 587,
@@ -133,24 +134,29 @@ module.exports.Emailverification = async (req, res) => {
             message: "insufficient parameters"
         })
     }
-      email=email.toLowerCase().trim()
+    email = email.toLowerCase().trim()
     let checkuser = await model.CheckUserQuery(email)
     if (checkuser.length > 0) {
-        let user_id = checkuser[0].u_id
-        let checkMailVerification = await model.getVerification(user_id, code)
-        if (checkMailVerification.length > 0) {
-            await notification.addNotification(user_id, checkuser[0].u_role, "Email Verified", "Your email has been verified successfully")
-            return res.send({
-                result: true,
-                message: "code successfully verified"
-            })
-        } else {
+        let user_id = checkuser[0].user_email_verification_user_id
+        let now = moment(); // current time without formatting
+        let tokenTime = moment(checkuser[0]?.user_token_expiry, 'YYYY-MM-DD HH:mm:ss');
+        if (now.isAfter(tokenTime)) {
             return res.send({
                 result: false,
-                message: "entered code is incorrect ,pls check again"
+                message: "Token has expired. Try new one."
             })
         }
-
+        if (checkuser[0]?.user_email_verification_token != code) {
+            return res.send({
+                result: false,
+                message: "Invalid token. Please try again later"
+            })
+        }
+        await notification.addNotification(user_id, checkuser[0].u_role, "Email Verified", "Your email has been verified successfully")
+        return res.send({
+            result: true,
+            message: "code successfully verified"
+        })
     } else {
         return res.send({
             result: false,
@@ -168,7 +174,7 @@ module.exports.ChangePassword = async (req, res) => {
                 message: "insufficient parameters",
             });
         }
-          email=email.toLowerCase().trim()
+        email = email.toLowerCase().trim()
         let CheckUser = await model.CheckUserQuery(email);
         if (CheckUser.length > 0) {
             let user_id = CheckUser[0].u_id
@@ -205,7 +211,7 @@ module.exports.ChangePin = async (req, res) => {
                 message: "insufficient parameters",
             });
         }
-          email=email.toLowerCase().trim()
+        email = email.toLowerCase().trim()
         let CheckUser = await model.CheckUserQuery(email);
         if (CheckUser.length > 0) {
             let user_id = CheckUser[0].u_id
@@ -243,7 +249,7 @@ module.exports.WfaChangePin = async (req, res) => {
                 message: "insufficient parameters",
             });
         }
-          email=email.toLowerCase().trim()
+        email = email.toLowerCase().trim()
         let CheckUser = await model.CheckUserQuery(email);
         if (CheckUser.length > 0) {
             let user_id = CheckUser[0].u_id

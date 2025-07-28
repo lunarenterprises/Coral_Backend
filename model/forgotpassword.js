@@ -14,15 +14,15 @@ module.exports.CheckVerificationQuery = async (user_id) => {
     return data;
 };
 
-module.exports.InsertVerificationQuery = async (user_id, token) => {
-    var Query = `insert into user_email_verification(user_email_verification_user_id,user_email_verification_token)values(?,?)`;
-    var data = query(Query, [user_id, token]);
+module.exports.InsertVerificationQuery = async (user_id, token,tokenExpiry) => {
+    var Query = `insert into user_email_verification(user_email_verification_user_id,user_email_verification_token,user_token_expiry)values(?,?,?)`;
+    var data = query(Query, [user_id, token,tokenExpiry]);
     return data;
 };
 
-module.exports.UpdateVerificationQuery = async (user_id, token) => {
-    var Query = `update user_email_verification set user_email_verification_token = ? where user_email_verification_user_id = ?`;
-    var data = query(Query, [token, user_id]);
+module.exports.UpdateVerificationQuery = async (user_id, token,tokenExpiry) => {
+    var Query = `update user_email_verification set user_email_verification_token = ?,user_token_expiry=? where user_email_verification_user_id = ?`;
+    var data = query(Query, [token,tokenExpiry, user_id]);
     return data;
 };
 
@@ -64,7 +64,7 @@ module.exports.WfaChangepinQuery = async (user_id, pin) => {
 };
 
 
-module.exports.UpdateTokenQuery = async (user_id, token) => {
-    let Query = `update users set u_token = ? where u_id = ?`
-    return await query(Query, [token, user_id]);
+module.exports.UpdateTokenQuery = async (user_id, token, tokenExpiry) => {
+    let Query = `update users set u_token = ?,u_token_expiry=? where u_id = ?`
+    return await query(Query, [token, tokenExpiry, user_id]);
 }
