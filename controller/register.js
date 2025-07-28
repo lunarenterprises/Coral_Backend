@@ -109,7 +109,6 @@ module.exports.UserRegistration = async (req, res) => {
 
       } else {
         const referralCode = await generateUniqueReferralCode(4)
-        console.log("referralCode : ", referralCode)
         await model.InsertUserQuery(name, email, mobile, hashedPassword, date, token, tokenExpiry, currency, referralCode, refferedUserId);
       }
       return res.send({

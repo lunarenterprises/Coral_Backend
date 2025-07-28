@@ -7,7 +7,6 @@ module.exports.generateUniqueReferralCode = async (length = 5) => {
     for (let i = 0; i < length; i++) {
         code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    console.log("code : ", code)
     code += time
     return code;
 }
