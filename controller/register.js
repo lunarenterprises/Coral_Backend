@@ -28,7 +28,8 @@ module.exports.UserRegistration = async (req, res) => {
       });
     }
     email = email.toLowerCase().trim()
-    var token = loginToken();
+    const token = loginToken();
+    const tokenExpiry = moment().add(5, 'minutes').format('YYYY-MM-DD HH:mm:ss');
     let checkuser = await model.getUser(email)
     if (checkuser.length > 0 && checkuser[0].u_is_registered == 1) {
       console.log("User already registered with this email:", email);
@@ -104,12 +105,11 @@ module.exports.UserRegistration = async (req, res) => {
       if (checkuser.length > 0 && checkuser[0].u_is_registered == 0) {
         console.log("User already exists, updating OTP for user:", email);
         // Update existing user
-        await model.UpdateOtp(email, token);
+        await model.UpdateOtp(email, token, tokenExpiry);
 
       } else {
-        console.log("User not registered, inserting new user", email);
         const referralCode = await generateUniqueReferralCode(4)
-        await model.InsertUserQuery(name, email, mobile, hashedPassword, date, token, currency, referralCode, refferedUserId);
+        await model.InsertUserQuery(name, email, mobile, hashedPassword, date, token, tokenExpiry, currency, referralCode, refferedUserId);
       }
       return res.send({
         status: true,

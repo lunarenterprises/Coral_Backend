@@ -55,7 +55,7 @@ module.exports.Withdraw = async (req, res) => {
         <li><strong>Currency:</strong> ${bank_details[0]?.b_currency}</li>
     </ul>
     
-<p>pls contact for further details</p>
+<p>Please contact for further details</p>
 <p>
 Full Name:${user_details[0]?.u_name}<br>
 Mobile Number:${user_details[0]?.u_mobile}
