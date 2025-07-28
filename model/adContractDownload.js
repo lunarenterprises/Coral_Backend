@@ -9,7 +9,7 @@ module.exports.CheckAdmin = async (user_id, role) => {
 }
 
 module.exports.getcontact = async (contract_id) => {
-    var Query = `SELECT * FROM contract_invoice WHERE cni_contract_id =? `;
+    var Query = `SELECT ui_contract_file FROM user_invest WHERE ui_id =? `;
     var data = await query(Query, [contract_id]);
     return data;
 }
