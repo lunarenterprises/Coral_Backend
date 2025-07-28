@@ -49,6 +49,7 @@ module.exports.updatePaymentStatus = async (investment_id, status) => {
 
 module.exports.UploadPaymentReceipt = async (investment_id, filePath) => {
     let Query = `update user_invest set ui_payment_receipt=? and ui_payment_type=? where ui_id=? `
+    console.log("Query : ", query)
     return await query(Query, [filePath, "through_bank", investment_id])
 }
 
