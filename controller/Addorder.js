@@ -41,14 +41,12 @@ module.exports.AddOrder = async (req, res) => {
         let nominee_residentialAddress = nomineeDetails.residentialAddress
         let percentage = investment.percentage
         let return_amount = investment.return_amount
-        if (!bankAccount) {
             if (payment_method === "bank" && !bankAccount) {
                 return res.send({
                     result: false,
                     message: "Bank id is requried"
                 })
             }
-        }
         const userdetails = await model.getUser(user_id)
         if (userdetails.length === 0) {
             return res.send({
@@ -543,13 +541,13 @@ ${usernme}, holder of UAE ID number ……. and passport number ……. residing
         let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : securityOption.toUpperCase() === "INSURANCE" ? insuranceAgreement : notarizationAgreement
         var pdf = await createPdfWithPuppeteer(html, fullPath);
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
-        console.log("bankaccount : ", bankaccount)
+        let bankId=bankaccount[0]?.b_id
         let paymentMode = null
         if (payment_method === "wallet") {
             await model.UpdateWalletPayment(user_id, investment_amount)
             paymentMode = "through_wallet"
         }
-        var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankaccount, nomineeId, "cwi_invest", paymentMode)
+        var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankId, nomineeId, "cwi_invest", paymentMode)
         await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Investment added successfully')
         // 3️⃣  Public-facing URL path (served via Express or Nginx)
