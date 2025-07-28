@@ -543,6 +543,7 @@ ${usernme}, holder of UAE ID number ……. and passport number ……. residing
         let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : securityOption.toUpperCase() === "INSURANCE" ? insuranceAgreement : notarizationAgreement
         var pdf = await createPdfWithPuppeteer(html, fullPath);
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
+        console.log("bankaccount : ", bankaccount)
         let paymentMode = null
         if (payment_method === "wallet") {
             await model.UpdateWalletPayment(user_id, investment_amount)
