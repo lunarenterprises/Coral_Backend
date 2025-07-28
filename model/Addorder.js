@@ -25,3 +25,13 @@ module.exports.AddNominee = async (user_id, name, relation, mobile, address) => 
     var data = await query(Query, [user_id, name, relation, mobile, address]);
     return data;
 };
+
+module.exports.getUserBank = async (user_id) => {
+    let Query = `select * from bank where b_u_id=?`
+    return await query(Query, [user_id])
+}
+
+module.exports.UpdateWalletPayment = async (user_id, amount) => {
+    let Query = `update users set u_wallet=u_wallet-${amount} where u_id=?`
+    return await query(Query, [user_id])
+}

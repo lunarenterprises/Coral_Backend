@@ -22,7 +22,7 @@ module.exports.AddOrder = async (req, res) => {
                 message: "User id is required"
             })
         }
-        let { investment, securityOption, clientInfo, bankAccount, nomineeDetails } = req.body
+        let { investment, securityOption, clientInfo, bankAccount, nomineeDetails, payment_method } = req.body
         let futureDate = moment().add(parseFloat(investment.investment_duration), 'years');
         let investment_duration = futureDate.format('YYYY/MM/DD');
         let project_name = investment.project_name
@@ -41,18 +41,42 @@ module.exports.AddOrder = async (req, res) => {
         let nominee_residentialAddress = nomineeDetails.residentialAddress
         let percentage = investment.percentage
         let return_amount = investment.return_amount
-        if(!bankAccount){
+        if (payment_method === "bank" && !bankAccount) {
             return res.send({
-                result:false,
-                message:"Bank id is requried"
+                result: false,
+                message: "Bank id is requried"
             })
         }
-        let bankaccount = await model.getBankaccount(bankAccount)
-        if(!bankaccount||bankaccount.length===0){
+        const userdetails = await model.getUser(user_id)
+        if (userdetails.length === 0) {
             return res.send({
-                result:false,
-                message:"Bank not found. Invalid bank id"
+                result: false,
+                message: "User not found."
             })
+        }
+        if (payment_method === "wallet" && investment_amount > userdetails[0]?.u_wallet) {
+            return res.send({
+                result: false,
+                message: "Insufficient amount in wallet"
+            })
+        }
+        let bankaccount = null
+        if (bankAccount) {
+            bankaccount = await model.getBankaccount(bankAccount)
+            if (!bankaccount || bankaccount.length === 0) {
+                return res.send({
+                    result: false,
+                    message: "Bank not found. Invalid bank id"
+                })
+            }
+        } else {
+            bankaccount = await model.getUserBank(user_id)
+            if (!bankaccount || bankaccount.length === 0) {
+                return res.send({
+                    result: false,
+                    message: "You need to add your bank first"
+                })
+            }
         }
         let nomineeData = null
         let createdNominee = null
@@ -62,13 +86,7 @@ module.exports.AddOrder = async (req, res) => {
                 createdNominee = await model.AddNominee(user_id, nomineeFullName, relationship, contactNumber, nominee_residentialAddress)
             }
         }
-        var userdetails = await model.getUser(user_id)
-        if (userdetails.length === 0) {
-            return res.send({
-                result: false,
-                message: "User not found."
-            })
-        }
+
         if (!userdetails[0]?.u_kyc || userdetails[0]?.u_kyc !== "verified") {
             return res.send({
                 result: false,
@@ -527,6 +545,9 @@ ${usernme}, holder of UAE ID number ……. and passport number ……. residing
         console.log('after creating pdf ')
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
         var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId, "cwi_invest")
+        if (payment_method === "wallet") {
+            await model.UpdateWalletPayment(user_id, investment_amount)
+        }
         await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Investment added successfully')
         // 3️⃣  Public-facing URL path (served via Express or Nginx)
