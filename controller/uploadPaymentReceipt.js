@@ -21,7 +21,6 @@ module.exports.UploadPaymentReceipt = async (req, res) => {
                 message: "User not found"
             })
         }
-        console.log("userData : ", userData)
         var form = new formidable.IncomingForm({ multiples: true });
         form.parse(req, async function (err, fields, files) {
             if (err) {
