@@ -43,7 +43,7 @@ module.exports.UpdateVerificationQuery = async (user_id, token) => {
 };
 
 module.exports.InsertUserQuery = async (name, email, mobile, hashedPassword, date, token, token_expiry, currency, referralCode, refferedUserId) => {
-    var Query = `insert into users(u_name,u_email,u_mobile,u_password,u_joining_date,u_token,u_token_expiry,u_currency,u_referralCode,u_referredCode)values(?,?,?,?,?,?,?,?,?)`;
+    var Query = `insert into users(u_name,u_email,u_mobile,u_password,u_joining_date,u_token,u_token_expiry,u_currency,u_referralCode,u_referredCode)values(?,?,?,?,?,?,?,?,?,?)`;
     var data = await query(Query, [name, email, mobile, hashedPassword, date, token, token_expiry, currency, referralCode, refferedUserId]);
     return data;
 };
