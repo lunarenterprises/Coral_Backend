@@ -21,7 +21,7 @@ module.exports.InvestFututreOptions = async (req, res) => {
                 message: "User id is required. "
             })
         }
-        let { lp_id, securityOption, clientInfo, bankAccount, nomineeDetails } = req.body
+        let { lp_id, securityOption, clientInfo, bankAccount, nomineeDetails, payment_method } = req.body
         if (!lp_id) {
             return res.send({
                 result: false,
@@ -44,7 +44,8 @@ module.exports.InvestFututreOptions = async (req, res) => {
         }
         let project_name = lockData[0]?.lp_project
         let investment_amount = lockData[0]?.lp_amount
-        let investment_duration = lockData[0]?.lp_duration
+        let futureDate = moment().add(parseFloat(lockData[0]?.lp_duration), 'years');
+        let investment_duration = futureDate.format('YYYY/MM/DD')
         let profit_model = lockData[0]?.lp_profit_model
         let withdrawal_frequency = lockData[0]?.lp_wf
         let client_name = clientInfo.clientName

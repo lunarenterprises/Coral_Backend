@@ -26,3 +26,9 @@ module.exports.getnomineeDetails = async (ui_id) => {
     var data = await query(Query, [ui_id]);
     return data;
 }
+
+module.exports.getUser = async (user_id) => {
+    var Query = `select * from users where u_id = ?`;
+    var data = await query(Query, [user_id]);
+    return data;
+};

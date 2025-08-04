@@ -13,3 +13,13 @@ module.exports.uploadNomineeForm = async (id, form) => {
     var data = await query(Query, [form, id]);
     return data;
 }
+
+module.exports.CheckInvestment = async (investment_id, user_id) => {
+    let Query = `select * from user_invest where ui_id=? and ui_u_id=?`
+    return await query(Query, [investment_id, user_id])
+}
+
+module.exports.Assign = async (nomine_id, investment_id) => {
+    let Query = `update user_invest set ui_nominee_id=? where ui_id=?`
+    return await query(Query, [nomine_id, investment_id])
+}
