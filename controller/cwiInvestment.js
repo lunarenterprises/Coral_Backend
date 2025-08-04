@@ -23,7 +23,7 @@ module.exports.cwiInvestment = async (req, res) => {
                 message: "User id is required"
             })
         }
-        let { id, amount, securityOption, clientInfo, nomineeDetails, duration } = req.body
+        let { id, amount, securityOption, clientInfo, nomineeDetails, duration, payment_method } = req.body
 
         if (!id) {
             return res.send({
@@ -41,6 +41,12 @@ module.exports.cwiInvestment = async (req, res) => {
             return res.send({
                 result: false,
                 message: "Duration is reqired"
+            })
+        }
+        if (!payment_method) {
+            return res.send({
+                result: false,
+                message: "Payment method is required"
             })
         }
 
@@ -81,14 +87,32 @@ module.exports.cwiInvestment = async (req, res) => {
         let bankaccount = await model.getBankDetails(user_id)
         let nomineeData = null
         let createdNominee = null
+        if (payment_method === "bank" && bankaccount.length === 0) {
+            return res.send({
+                result: false,
+                message: "Bank account not found. Add bank first"
+            })
+        }
+        const userdetails = await model.getUser(user_id)
+        if (userdetails.length === 0) {
+            return res.send({
+                result: false,
+                message: "User not found."
+            })
+        }
+        if (payment_method === "wallet" && investment_amount > userdetails[0]?.u_wallet) {
+            return res.send({
+                result: false,
+                message: "Insufficient amount in wallet"
+            })
+        }
         if (nomineeFullName) {
             nomineeData = await model.getnomineeDetails(user_id)
             if (nomineeData.length === 0) {
                 createdNominee = await model.AddNominee(user_id, nomineeFullName, relationship, contactNumber, nominee_residentialAddress)
             }
         }
-        var userdetails = await userModel.getUser(user_id)
-        if (userdetails[0].u_kyc !== "verified") {
+        if (!userdetails[0]?.u_kyc || userdetails[0].u_kyc !== "verified") {
             return res.send({
                 result: false,
                 message: "KYC needs to be verified before investing"
@@ -1677,7 +1701,14 @@ module.exports.cwiInvestment = async (req, res) => {
         // var save = await model.getBankaccount(bankAccount)
         let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : securityOption.toUpperCase() === "INSURANCE" ? insuranceAgreement : notarizationAgreement
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
-        var saveInvest = await orderModel.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankaccount[0].b_id, nomineeId, "future_invest")
+        let paymentMode = null
+        if (payment_method === "wallet") {
+            await model.UpdateWalletPayment(user_id, investment_amount)
+            paymentMode = "through_wallet"
+        } else {
+            paymentMode = "through_bank"
+        }
+        var saveInvest = await orderModel.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankaccount[0].b_id, nomineeId, "future_invest", paymentMode)
         var pdf = await createPdfWithPuppeteer(html, fullPath);
         await SendMessage(user_id, "CWI Investment", "CWI Investment added successfully.!")
         await sendNotificationToAdmins("CWI Investment", `${userdetails[0].u_name} requested to invest in CWI Investment`)

@@ -95,3 +95,66 @@ module.exports.AddNominee = async (req, res) => {
         })
     }
 }
+
+module.exports.AssignNominee = async (req, res) => {
+    try {
+        let { user_id } = req.headers
+        if (!user_id) {
+            return res.send({
+                result: false,
+                message: "user_id is required"
+            })
+        }
+        let { investment_id } = req.body
+        if (!investment_id) {
+            return res.send({
+                result: false,
+                message: "Investment id is required"
+            })
+        }
+        const checkInvestment = await model.CheckInvestment(investment_id, user_id)
+        if (checkInvestment.length === 0) {
+            return res.send({
+                result: false,
+                message: "Investment not found. Invalid investment id"
+            })
+        }
+        if (checkInvestment[0]?.ui_nominee_id) {
+            return res.send({
+                result: false,
+                message: "Nominee already added to this invesment"
+            })
+        }
+        let userData = await userModel.getUser(user_id)
+        if (userData.length <= 0) {
+            return res.send({
+                result: false,
+                message: "Invalid user"
+            })
+        }
+        let nominee = await nomineeListModel.getnominee(user_id)
+        if (nominee.length === 0) {
+            return res.send({
+                result: true,
+                message: "nominee not found. Please add nominee first"
+            })
+        }
+        const assigned = await model.Assign(nominee[0]?.n_id, investment_id)
+        if (assigned.affectedRows > 0) {
+            return res.send({
+                result: true,
+                message: "Nominee added to the contract"
+            })
+        } else {
+            return res.send({
+                result: false,
+                message: "Failed to add nominee to the contract"
+            })
+        }
+    } catch (error) {
+        return res.send({
+            result: false,
+            message: error.message
+        })
+    }
+}

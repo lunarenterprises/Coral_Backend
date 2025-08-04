@@ -546,6 +546,8 @@ ${usernme}, holder of UAE ID number ……. and passport number ……. residing
         if (payment_method === "wallet") {
             await model.UpdateWalletPayment(user_id, investment_amount)
             paymentMode = "through_wallet"
+        }else{
+            paymentMode="through_bank"
         }
         var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankId, nomineeId, "cwi_invest", paymentMode)
         await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest`)
