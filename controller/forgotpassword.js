@@ -11,7 +11,6 @@ let notification = require('../util/saveNotification')
 module.exports.OtpSend = async (req, res) => {
     try {
         let { email } = req.body;
-        console.log("email : ", email)
         var year = moment().format("YYYY")
         if (!email) {
             return res.send({
