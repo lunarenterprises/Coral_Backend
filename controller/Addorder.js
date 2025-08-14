@@ -41,12 +41,12 @@ module.exports.AddOrder = async (req, res) => {
         let nominee_residentialAddress = nomineeDetails.residentialAddress
         let percentage = investment.percentage
         let return_amount = investment.return_amount
-            if (payment_method === "bank" && !bankAccount) {
-                return res.send({
-                    result: false,
-                    message: "Bank id is requried"
-                })
-            }
+        if (payment_method === "bank" && !bankAccount) {
+            return res.send({
+                result: false,
+                message: "Bank id is requried"
+            })
+        }
         const userdetails = await model.getUser(user_id)
         if (userdetails.length === 0) {
             return res.send({
@@ -536,24 +536,25 @@ ${usernme}, holder of UAE ID number ……. and passport number ……. residing
     </div>
 </body>
 </html>`
-        let insuranceAgreement = ``
         // var save = await model.getBankaccount(bankAccount)
-        let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : securityOption.toUpperCase() === "INSURANCE" ? insuranceAgreement : notarizationAgreement
-        var pdf = await createPdfWithPuppeteer(html, fullPath);
+        if (securityOption.toUpperCase() !== "INSURANCE") {
+            let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : notarizationAgreement
+            var pdf = await createPdfWithPuppeteer(html, fullPath);
+        }
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
-        let bankId=bankaccount[0]?.b_id
+        let bankId = bankaccount[0]?.b_id
         let paymentMode = null
         if (payment_method === "wallet") {
             await model.UpdateWalletPayment(user_id, investment_amount)
             paymentMode = "through_wallet"
-        }else{
-            paymentMode="through_bank"
+        } else {
+            paymentMode = "through_bank"
         }
         var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankId, nomineeId, "cwi_invest", paymentMode)
         await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Investment added successfully')
         // 3️⃣  Public-facing URL path (served via Express or Nginx)
-        const relativeUrl = `/uploads/agreement/${filename}`;
+        const relativeUrl = securityOption.toUpperCase() !== "INSURANCE" ? `/uploads/agreement/${filename}` : `/uploads/insurance/FI Application -A 10-50-11-16 V5.pdf`;
 
         // 4️⃣  Response
         return res.send({
@@ -564,8 +565,6 @@ ${usernme}, holder of UAE ID number ……. and passport number ……. residing
         });
 
     } catch (error) {
-        console.log(error);
-
         return res.send({
             result: false,
             message: error.message

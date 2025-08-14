@@ -28,13 +28,6 @@ module.exports.InvestFututreOptions = async (req, res) => {
                 message: "Future lock id is required."
             })
         }
-        var userdetails = await model.getUser(user_id)
-        if (userdetails[0].u_kyc !== "verified") {
-            return res.send({
-                result: false,
-                message: "KYC needs to be verified before investing"
-            })
-        }
         let lockData = await model.CheckLockData(lp_id, user_id)
         if (lockData.length === 0) {
             return res.send({
@@ -60,7 +53,43 @@ module.exports.InvestFututreOptions = async (req, res) => {
         let nominee_residentialAddress = nomineeDetails.residentialAddress
         let percentage = lockData[0]?.lp_percent
         let return_amount = lockData[0]?.lp_return
-        let bankaccount = await model.getBankaccount(bankAccount)
+        if (payment_method === "bank" && !bankAccount) {
+            return res.send({
+                result: false,
+                message: "Bank id is requried"
+            })
+        }
+        const userdetails = await model.getUser(user_id)
+        if (userdetails.length === 0) {
+            return res.send({
+                result: false,
+                message: "User not found."
+            })
+        }
+        if (payment_method === "wallet" && investment_amount > userdetails[0]?.u_wallet) {
+            return res.send({
+                result: false,
+                message: "Insufficient amount in wallet"
+            })
+        }
+        let bankaccount = null
+        if (bankAccount) {
+            bankaccount = await model.getBankaccount(bankAccount)
+            if (!bankaccount || bankaccount.length === 0) {
+                return res.send({
+                    result: false,
+                    message: "Bank not found. Invalid bank id"
+                })
+            }
+        } else {
+            bankaccount = await model.getUserBank(user_id)
+            if (!bankaccount || bankaccount.length === 0) {
+                return res.send({
+                    result: false,
+                    message: "You need to add your bank first"
+                })
+            }
+        }
         let nomineeData = null
         let createdNominee = null
         if (nomineeFullName) {
@@ -68,6 +97,12 @@ module.exports.InvestFututreOptions = async (req, res) => {
             if (nomineeData.length === 0) {
                 createdNominee = await model.AddNominee(user_id, nomineeFullName, relationship, contactNumber, nominee_residentialAddress)
             }
+        }
+        if (!userdetails[0]?.u_kyc || userdetails[0]?.u_kyc !== "verified") {
+            return res.send({
+                result: false,
+                message: "KYC needs to be verified before investing"
+            })
         }
         let usernme = userdetails[0]?.u_name.toUpperCase().substring(0, 3)
         const agreementDir = '/mnt/ebs500/uploads/agreement'; // Central EBS-mounted path
@@ -1647,20 +1682,24 @@ module.exports.InvestFututreOptions = async (req, res) => {
     </div>
 </body>
 </html>`
-        let insuranceAgreement = ``
         // var save = await model.getBankaccount(bankAccount)
-        let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : securityOption.toUpperCase() === "INSURANCE" ? insuranceAgreement : notarizationAgreement
-        console.log("html")
-        var pdf = await createPdfWithPuppeteer(html, fullPath);
-        console.log("pdf : ", pdf)
+        if (securityOption.toUpperCase() !== "INSURANCE") {
+            let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : notarizationAgreement
+            var pdf = await createPdfWithPuppeteer(html, fullPath);
+        }
+        if (payment_method === "wallet") {
+            await model.UpdateWalletPayment(user_id, investment_amount)
+            paymentMode = "through_wallet"
+        } else {
+            paymentMode = "through_bank"
+        }
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
-        console.log("nomineeId : ", nomineeId)
         var saveInvest = await model.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankAccount, nomineeId, "lock_invest")
-        console.log("saveInvest : ", saveInvest)
+
         await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest future lock`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Future lock investment added successfully')
         // Relative path used for public access (served via Express)
-        const relativeUrl = `/uploads/agreement/${filename}`;
+        const relativeUrl = securityOption.toUpperCase() !== "INSURANCE" ? `/uploads/agreement/${filename}` : `/uploads/insurance/FI Application -A 10-50-11-16 V5.pdf`;
         console.log("relativeUrl : ", relativeUrl)
 
         // Send response

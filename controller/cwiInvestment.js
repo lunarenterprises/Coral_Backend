@@ -1697,9 +1697,11 @@ module.exports.cwiInvestment = async (req, res) => {
     </div>
 </body>
 </html>`
-        let insuranceAgreement = ``
         // var save = await model.getBankaccount(bankAccount)
-        let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : securityOption.toUpperCase() === "INSURANCE" ? insuranceAgreement : notarizationAgreement
+        if (securityOption.toUpperCase() !== "INSURANCE") {
+            let html = securityOption.toUpperCase() === "SHARES" ? shareAgreement : notarizationAgreement
+            var pdf = await createPdfWithPuppeteer(html, fullPath);
+        }
         let nomineeId = nomineeData ? nomineeData[0]?.n_id : createdNominee?.insertId
         let paymentMode = null
         if (payment_method === "wallet") {
@@ -1709,11 +1711,10 @@ module.exports.cwiInvestment = async (req, res) => {
             paymentMode = "through_bank"
         }
         var saveInvest = await orderModel.AddInvest(user_id, date, investment_duration, investment_amount, percentage, return_amount, profit_model, securityOption, project_name, withdrawal_frequency, bankaccount[0].b_id, nomineeId, "future_invest", paymentMode)
-        var pdf = await createPdfWithPuppeteer(html, fullPath);
         await SendMessage(user_id, "CWI Investment", "CWI Investment added successfully.!")
         await sendNotificationToAdmins("CWI Investment", `${userdetails[0].u_name} requested to invest in CWI Investment`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'CWI Investment', 'CWI Investment added successfully')
-        const relativeUrl = `/uploads/agreement/${filename}`;
+        const relativeUrl = securityOption.toUpperCase()!=="INSURANCE"?`/uploads/agreement/${filename}`:`/uploads/insurance/FI Application -A 10-50-11-16 V5.pdf`;
 
         return res.send({
             result: true,
