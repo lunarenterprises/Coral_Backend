@@ -153,7 +153,7 @@ module.exports.Emailverification = async (req, res) => {
                 message: "Invalid token. Please try again later"
             })
         }
-        await notification.addNotification(user_id, checkuser[0].u_role, "Email Verified", "Your email has been verified successfully")
+        await notification.addNotification(user_id, userData[0].u_role, "Email Verified", "Your email has been verified successfully")
         return res.send({
             result: true,
             message: "code successfully verified"
