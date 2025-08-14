@@ -136,7 +136,7 @@ module.exports.Emailverification = async (req, res) => {
     }
     email = email.toLowerCase().trim()
     let userData = await model.CheckUserQuery(email)
-    if (checkuser.length > 0) {
+    if (userData.length > 0) {
         let checkuser = await model.CheckVerificationQuery(userData[0]?.u_id)
         let user_id = checkuser[0].user_email_verification_user_id
         let now = moment(); // current time without formatting
