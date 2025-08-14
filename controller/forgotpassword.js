@@ -11,7 +11,6 @@ let notification = require('../util/saveNotification')
 module.exports.OtpSend = async (req, res) => {
     try {
         let { email } = req.body;
-        console.log("email : ", email)
         var year = moment().format("YYYY")
         if (!email) {
             return res.send({
@@ -136,8 +135,9 @@ module.exports.Emailverification = async (req, res) => {
         })
     }
     email = email.toLowerCase().trim()
-    let checkuser = await model.CheckUserQuery(email)
+    let userData = await model.CheckUserQuery(email)
     if (checkuser.length > 0) {
+        let checkuser = await model.CheckVerificationQuery(userData[0]?.u_id)
         let user_id = checkuser[0].user_email_verification_user_id
         let now = moment(); // current time without formatting
         let tokenTime = moment(checkuser[0]?.user_token_expiry, 'YYYY-MM-DD HH:mm:ss');
