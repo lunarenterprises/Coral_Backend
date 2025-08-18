@@ -6,6 +6,7 @@ let notification = require('../util/saveNotification')
 module.exports.AddBank = async (req, res) => {
     try {
         let { user_id } = req.headers
+        console.log("AddBank called with data : ", req.body)
         let { account_no, ifsc_code, swift_code, bank_name, branch_name, currency } = req.body
         if (!account_no || !bank_name || !branch_name || !currency) {
             return res.send({ result: false, message: "Please fill all the fields" })
