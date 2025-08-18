@@ -3,7 +3,7 @@ var util = require("util")
 const query = util.promisify(db.query).bind(db);
 
 module.exports.CheckUserQuery = async (email) => {
-  var Query = `select * from users where u_email = ? and u_status <> 'removed`;
+  var Query = `select * from users where u_email = ? and u_status <> 'removed'`;
   var data = query(Query, [email]);
   return data;
 };
