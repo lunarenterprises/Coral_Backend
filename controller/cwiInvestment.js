@@ -1714,7 +1714,7 @@ module.exports.cwiInvestment = async (req, res) => {
         await SendMessage(user_id, "CWI Investment", "CWI Investment added successfully.!")
         await sendNotificationToAdmins("CWI Investment", `${userdetails[0].u_name} requested to invest in CWI Investment`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'CWI Investment', 'CWI Investment added successfully')
-        const relativeUrl = securityOption.toUpperCase()!=="INSURANCE"?`/uploads/agreement/${filename}`:`/uploads/insurance/FI Application -A 10-50-11-16 V5.pdf`;
+        const relativeUrl = securityOption.toUpperCase() !== "INSURANCE" ? `/uploads/agreement/${filename}` : `/uploads/insurance/Insurance _CWI.pdf`;
 
         return res.send({
             result: true,

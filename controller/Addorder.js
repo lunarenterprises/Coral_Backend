@@ -554,7 +554,7 @@ ${usernme}, holder of UAE ID number ……. and passport number ……. residing
         await sendNotificationToAdmins("investment", `${userdetails[0].u_name} requested to invest`)
         await notification.addNotification(user_id, userdetails[0].u_role, 'Investment', 'Investment added successfully')
         // 3️⃣  Public-facing URL path (served via Express or Nginx)
-        const relativeUrl = securityOption.toUpperCase() !== "INSURANCE" ? `/uploads/agreement/${filename}` : `/uploads/insurance/FI Application -A 10-50-11-16 V5.pdf`;
+        const relativeUrl = securityOption.toUpperCase() !== "INSURANCE" ? `/uploads/agreement/${filename}` : `/uploads/insurance/Insurance _CWI.pdf`;
 
         // 4️⃣  Response
         return res.send({
