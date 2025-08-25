@@ -20,7 +20,13 @@ module.exports.NestEggs = async (req, res) => {
                 message: "user not found"
             })
         }
-        var { w_id, amount, duration, wfa_password } = req.body
+        var { amount, duration, wfa_password } = req.body
+        if (!amount || !duration || !wfa_password) {
+            return res.send({
+                result: false,
+                message: "Amount, duration and wfa password are required "
+            })
+        }
         var checkwfa = await model.checkwfa(user_id, wfa_password)
         if (checkwfa.length == 0) {
             return res.send({
@@ -34,7 +40,7 @@ module.exports.NestEggs = async (req, res) => {
                     message: "Wallet doesn't sufficient amount"
                 })
             }
-            let insert = await model.AddNest(amount, w_id, duration, user_id, date)
+            let insert = await model.AddNest(amount, duration, user_id, date)
             if (insert.affectedRows > 0) {
                 let update = await model.UpdateUser(user_id, amount)
                 await notification.addNotification(user_id, userData[0].u_role, "Invested in nestegg", `You have invested ${amount} in nestegg`)
