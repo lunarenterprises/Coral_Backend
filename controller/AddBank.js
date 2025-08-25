@@ -26,7 +26,7 @@ module.exports.AddBank = async (req, res) => {
         let data = await model.Addbank(account_name, account_no, ifsc_code, swift_code, bank_name, branch_name, currency, user_id)
         if (data.affectedRows > 0) {
             await notification.addNotification(user_id, userData[0].u_role, "Bank Added", "Bank added successfully")
-            await sendNotificationToAdmins("Added bank", `${userdetails[0].u_name} added new bank`)
+            await sendNotificationToAdmins("Added bank", `${userData[0].u_name} added new bank`)
             return res.send({
                 result: true,
                 message: "Bank added successfully"
