@@ -29,3 +29,27 @@ module.exports.Users = async (req, res) => {
         })
     }
 }
+
+
+module.exports.GetReturnChart = async (req, res) => {
+    try {
+        let { user_id } = req.headers;
+        if (!user_id) {
+            return res.send({
+                result: false,
+                message: "user_id is required"
+            })
+        }
+        const returnData = await model.GetReturnChart()
+        return res.send({
+            result: true,
+            message: "Data retrieved successfully",
+            data: returnData
+        })
+    } catch (error) {
+        return res.send({
+            result: false,
+            message: error.message
+        })
+    }
+}
