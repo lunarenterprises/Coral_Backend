@@ -106,6 +106,13 @@ module.exports.UpdatePaymentStatus = async (req, res) => {
                 message: "User id is required"
             })
         }
+        let { payment_status } = req.body
+        if (!payment_status) {
+            return res.send({
+                result: false,
+                message: "Payment status is required"
+            })
+        }
         let userData = await userModel.getUser(user_id)
         if (userData.length === 0) {
             return res.send({
@@ -120,7 +127,7 @@ module.exports.UpdatePaymentStatus = async (req, res) => {
                 message: "Investment id is required"
             })
         }
-        let status = "success" ? "paid" : "failed"
+        const status = payment_status === "success" ? "paid" : "failed"
         let updatePaymentStatus = await userModel.updatePaymentStatus(investment_id, status)
         if (updatePaymentStatus.affectedRows > 0) {
             return res.send({
