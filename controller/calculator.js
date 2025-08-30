@@ -14,8 +14,8 @@ module.exports.Calculator = async (req, res) => {
         }
         const condition = `WHERE ri_amount_from <= ${amount} 
   AND (ri_amount_to IS NULL OR ${amount} <= ri_amount_to)
-  AND ri_project = '${project || 'Any'}';
-`
+  AND ri_project = '${project || 'Any'}'`
+        console.log("calculator : ", req.body)
         let rawData = await model.getinvest(condition)
         let returns_data = filterReturns(rawData, duration, wf);
         if (returns_data.length === 0) {
