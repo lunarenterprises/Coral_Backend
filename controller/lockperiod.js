@@ -1,6 +1,7 @@
 var model = require('../model/lockperiod')
 var moment = require('moment')
 let { matchesDuration } = require('../util/compareDuration')
+const { filterReturns } = require('../util/calculator')
 
 module.exports.LockPeriod = async (req, res) => {
     try {
@@ -26,71 +27,16 @@ module.exports.LockPeriod = async (req, res) => {
             })
         }
 
-        let condition = ``
-        if (amount) {
-            if (condition !== '') {
-                condition += ` AND ((ri_amount_to IS NOT NULL AND ${amount} BETWEEN ri_amount_from AND ri_amount_to)
-            OR (ri_amount_to IS NULL AND ${amount} >= ri_amount_from))
-          `
-            } else {
-                condition += ` WHERE 
-         ((ri_amount_to IS NOT NULL AND ${amount} BETWEEN ri_amount_from AND ri_amount_to)
-            OR (ri_amount_to IS NULL AND ${amount} >= ri_amount_from))
-          `
-            }
+        const condition = `WHERE ri_amount_from <= ${amount} 
+  AND (ri_amount_to IS NULL OR ${amount} <= ri_amount_to)
+  AND ri_project = '${project || 'Any'}'`
+        console.log("lockperiod : ", req.body)
+        let rawData = await model.getinvest(condition)
+        let returns_data = filterReturns(rawData, duration, wf);
+        if (returns_data.length === 0) {
+            return res.send({ result: false, message: "No matching slab found" });
         }
-        if (duration && amount >= 100000) {
-            if (project === "Any") {
-                if (amount >= 3000001) {
-                    if (condition !== '') {
-                        condition += ` AND ri_duration = '>=2.5' `
-                    } else {
-                        condition += ` where ri_duration = '>=2.5'`
-                    }
-                } else {
-                    if (duration > 3) {
-                        if (condition !== '') {
-                            condition += ` AND ri_duration = '>3' `
-                        } else {
-                            condition += ` where ri_duration = '>3'`
-                        }
-                    } else {
-                        if (condition !== '') {
-                            condition += ` AND ri_duration = ${duration} `
-                        } else {
-                            condition += ` where ri_duration = ${duration}`
-                        }
-                    }
-                }
-            } else {
-                if (condition !== '') {
-                    condition += ` AND ri_duration = '>=2' `
-                } else {
-                    condition += ` where ri_duration = '>=2'`
-                }
-            }
-        }
-        if (wf && amount > 100000 && amount < 3000001&& project==="Any") {
-            if (condition !== '') {
-                condition += ` AND ri_wf = '${wf}' `
-            } else {
-                condition += ` where ri_wf = '${wf}'`
-            }
-        }
-        if (project) {
-            if (condition !== '') {
-                condition += ` AND ri_project = '${project}' `
-            } else {
-                condition += ` where ri_project = '${project}'`
-            }
-        } else {
-            if (condition !== '') {
-                condition += ` AND ri_project = 'Any' `
-            } else {
-                condition += ` where ri_project = 'Any'`
-            }
-        }
-        let returns_data = await model.getinvest(condition)
+        console.log("filtered : ", returns_data)
         if (returns_data.length > 0) {
             if (returns_data[0]?.ri_duration && !matchesDuration(returns_data[0]?.ri_duration, duration)) {
                 return res.send({
