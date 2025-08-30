@@ -153,7 +153,9 @@ route.post('/industry-growth', require('../controller/industryGrowth').GetIndust
 
 route.post('/list/status', require('../controller/status').ListAllStatus)
 
-route.post('/assign/nominee',require('../controller/Addnominee').AssignNominee)
+route.post('/assign/nominee', require('../controller/Addnominee').AssignNominee)
+
+route.get('/return_chart', require('../controller/users').GetReturnChart)
 
 
 /// Payment Routes

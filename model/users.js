@@ -56,3 +56,9 @@ module.exports.isReferralCodeExists = async (code) => {
     let Query = `SELECT 1 FROM users WHERE u_referralCode = ?`
     return await query(Query, [code])
 }
+
+
+module.exports.GetReturnChart=async()=>{
+    let Query=`select ri_project,ri_amount_from, ri_amount_to,ri_wf,ri_duration,ri_security from return_invest`
+    return await query(Query)
+}
