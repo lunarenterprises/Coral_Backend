@@ -17,6 +17,7 @@ module.exports.Calculator = async (req, res) => {
   AND ri_project = '${project || 'Any'}'`
         console.log("calculator : ", req.body)
         let rawData = await model.getinvest(condition)
+        console.log("rawData : ", rawData)
         let returns_data = filterReturns(rawData, duration, wf);
         if (returns_data.length === 0) {
             return res.send({ result: false, message: "No matching slab found" });
