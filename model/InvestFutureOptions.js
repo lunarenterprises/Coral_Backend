@@ -48,3 +48,9 @@ module.exports.getnomineeDetails = async (ui_id) => {
     var data = await query(Query, [ui_id]);
     return data;
 }
+
+
+module.exports.UpdateWalletPayment = async (user_id, amount) => {
+    let Query = `update users set u_wallet=u_wallet-${amount} where u_id=?`
+    return await query(Query, [user_id])
+}
