@@ -2,7 +2,7 @@ var model = require('../model/users')
 
 module.exports.Users = async (req, res) => {
     try {
-        let { user_id } = req.headers;
+        let { user_id } = req.user;
         let userdata = await model.getUser(user_id)
         if (userdata.length > 0) {
             return res.send({

@@ -3,7 +3,7 @@ var moment = require('moment')
 
 module.exports.RecentTransaction = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let users = await model.getUsers(user_id)
         let withdrawhistory = await model.getWithdraw(user_id)
         withdrawhistory.forEach(element => {

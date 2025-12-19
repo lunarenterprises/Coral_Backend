@@ -5,7 +5,7 @@ const stripe = Stripe(process.env.STRIPE_SECRET);
 
 module.exports.createClientSecret = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,
@@ -59,7 +59,7 @@ module.exports.createClientSecret = async (req, res) => {
 
 module.exports.getPaymentDetails = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,
@@ -99,7 +99,7 @@ module.exports.getPaymentDetails = async (req, res) => {
 
 module.exports.UpdatePaymentStatus = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,

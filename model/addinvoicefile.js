@@ -16,3 +16,10 @@ module.exports.Updateinvest = async (file, c_id) => {
     var data = await query(Query, [file, c_id]);
     return data;
 };
+
+
+module.exports.checkContract = async (c_id, user_id) => {
+    var Query = `SELECT * FROM user_invest where ui_id = ? and ui_u_id = ?`;
+    var data = await query(Query, [c_id, user_id]);
+    return data;
+}

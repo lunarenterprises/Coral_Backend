@@ -11,7 +11,7 @@ let { createPdfWithPuppeteer } = require('../util/pdfGeneration')
 
 module.exports.downloadStatement = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({ result: false, message: "User id not found" })
         }
@@ -181,7 +181,7 @@ module.exports.downloadStatement = async (req, res) => {
 
 module.exports.downloadStatementPdf = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({ result: false, message: "User id not found" })
         }

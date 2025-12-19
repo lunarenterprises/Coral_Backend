@@ -3,7 +3,7 @@ var model = require('../model/UserContractList')
 
 module.exports.UserContractList = async (req, res) => {
     try {
-        var { user_id } = req.headers
+        var { user_id } = req.user
         var { type } = req.body
         if (!type) {
             return res.send({

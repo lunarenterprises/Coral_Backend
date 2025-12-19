@@ -9,7 +9,7 @@ const uploadRoot = '/mnt/ebs500/uploads';
 
 module.exports.downloadStatementExcel = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,
@@ -115,7 +115,7 @@ module.exports.downloadStatementExcel = async (req, res) => {
 
 module.exports.downloadStatementPdf = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,

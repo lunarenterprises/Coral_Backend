@@ -2,7 +2,7 @@ let model = require('../model/top_company')
 
 module.exports.ListTopCompany = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let { company_id } = req.body
         if (!user_id) {
             return res.send({

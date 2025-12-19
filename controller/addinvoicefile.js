@@ -7,6 +7,7 @@ var path = require('path')
 
 module.exports.AddInvoiceFile = async (req, res) => {
     try {
+        const { user_id } = req.user;
         let transporter = nodemailer.createTransport({
             host: "smtp.hostinger.com",
             port: 587,
@@ -28,6 +29,13 @@ module.exports.AddInvoiceFile = async (req, res) => {
                 });
             }
             var c_id = fields.c_id
+            const checkContract = await model.checkContract(c_id, user_id)
+            if (checkContract.length == 0) {
+                return res.send({
+                    result: false,
+                    message: "Invalid invest id",
+                });
+            }
             let investdetails = await model.getInvest(c_id)
             if (investdetails.length > 0) {
                 var username = investdetails[0]?.u_name.toUpperCase().substring(0, 3)

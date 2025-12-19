@@ -2,7 +2,7 @@ var model = require('../model/users')
 
 module.exports.Users = async (req, res) => {
     try {
-        let { user_id } = req.headers;
+        let { user_id } = req.user;
         if (!user_id) {
             return res.send({
                 result: false,
@@ -33,7 +33,7 @@ module.exports.Users = async (req, res) => {
 
 module.exports.GetReturnChart = async (req, res) => {
     try {
-        let { user_id } = req.headers;
+        let { user_id } = req.user;
         if (!user_id) {
             return res.send({
                 result: false,

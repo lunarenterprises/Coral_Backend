@@ -6,7 +6,7 @@ let userModel = require('../model/users')
 module.exports.NestEggs = async (req, res) => {
     try {
         var date = moment().format("YYYY-MM-DD")
-        var { user_id } = req.headers
+        var { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,

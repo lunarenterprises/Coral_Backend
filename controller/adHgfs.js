@@ -52,7 +52,7 @@ module.exports.AddHGFS = async (req, res) => {
 
 module.exports.HgfsList = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let own_shares = 0
         let share_prices = 0
         let hgfsList = await model.GetHgfs()

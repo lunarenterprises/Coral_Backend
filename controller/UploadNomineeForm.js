@@ -8,7 +8,8 @@ let userModel = require("../model/users")
 
 module.exports.uploadNomineeForm = async (req, res) => {
     try {
-        let { id, user_id } = req.headers
+        const { user_id } = req.user
+        let { id } = req.headers
         if (!id) {
             return res.send({
                 result: false,

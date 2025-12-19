@@ -3,7 +3,7 @@ let model = require('../model/industryGrowth')
 
 module.exports.GetIndustryGrowth = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,

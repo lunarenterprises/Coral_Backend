@@ -2,7 +2,7 @@ var model = require("../model/adPayoutHistory");
 
 module.exports.PayoutHistory = async (req, res) => {
   try {
-    let { user_id } = req.headers;
+    let { user_id } = req.user;
 
     let admin_id = req.user.admin_id;
     let admin_role = req.user.role;
