@@ -67,10 +67,9 @@ module.exports.Login = async (req, res) => {
                     role: CheckUser[0].u_role
 
                 };
-                console.log("secret key : ", process.env.SECRET_KEY)
                 const token = jwt.sign(
                     payload,
-                    process.env.SECRET_KEY,
+                    process.env.JWT_SECRET_KEY,
                     {}
                 );
                 await notifications.addNotification(CheckUser[0].u_id, CheckUser[0].u_role, 'User Login', `User ${CheckUser[0].u_name} logged in successfully`)
