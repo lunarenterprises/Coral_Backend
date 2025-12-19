@@ -16,7 +16,7 @@ module.exports.cwiInvestment = async (req, res) => {
         var year = moment().format('YYYY')
         var date = moment().format("YYYY-MM-DD")
         var moddate = moment().format("DD_MM_YYYY")
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,

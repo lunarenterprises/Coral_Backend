@@ -17,7 +17,7 @@ module.exports.Withdraw = async (req, res) => {
                 pass: 'Cwicoral@123',
             },
         });
-        let { user_id } = req.headers;
+        let { user_id } = req.user;
         let { amount, bank_id, wfa_password } = req.body;
         let bank_details = await model.getBank(bank_id)
         let user_details = await model.getUser(user_id)

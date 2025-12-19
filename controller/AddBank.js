@@ -5,7 +5,7 @@ let notification = require('../util/saveNotification')
 
 module.exports.AddBank = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         console.log("AddBank called with user_id : ", user_id)
         console.log("AddBank called with data : ", req.body)
         let { account_name, account_no, ifsc_code, swift_code, bank_name, branch_name, currency } = req.body

@@ -3,7 +3,7 @@ var moment = require('moment')
 
 module.exports.LockList = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let condition = ''
         if (user_id) {
             condition = `where lp_u_id ='${user_id}'`

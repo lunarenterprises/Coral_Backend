@@ -4,7 +4,7 @@ let userModel=require('../model/users')
 
 module.exports.UpdateLanguage = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let { u_language } = req.body
         if (!u_language || !user_id) {
             return res.send({

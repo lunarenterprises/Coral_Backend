@@ -3,7 +3,7 @@ let userModel = require('../model/users')
 
 module.exports.SendMessage = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let { ticket_id, admin_id, message } = req.body
         if (!ticket_id || !user_id || !message) {
             return res.send({
@@ -40,7 +40,7 @@ module.exports.SendMessage = async (req, res) => {
 
 module.exports.ListMessages = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let { ticket_id, admin_id } = req.body
         if (!ticket_id || !user_id) {
             return res.send({

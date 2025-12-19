@@ -4,7 +4,7 @@ let userModel = require('../model/users')
 
 module.exports.UpdateNotification = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let { u_isNotificationTrue } = req.body;
 
         if (u_isNotificationTrue === null || u_isNotificationTrue === undefined || !user_id) {

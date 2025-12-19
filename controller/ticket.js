@@ -5,7 +5,7 @@ let { sendNotificationToAdmins } = require('../util/firebaseConfig')
 
 module.exports.CreateTicket = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,
@@ -46,7 +46,7 @@ module.exports.CreateTicket = async (req, res) => {
 
 module.exports.ListTickets = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,
@@ -80,7 +80,7 @@ module.exports.ListTickets = async (req, res) => {
 
 module.exports.EditTicket = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,
@@ -130,7 +130,7 @@ module.exports.EditTicket = async (req, res) => {
 
 module.exports.DeleteTicket = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,

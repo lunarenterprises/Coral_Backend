@@ -5,7 +5,7 @@ var fs = require("fs");
 
 module.exports.WithdrawHistory = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let { format } = req.body
         var today = moment().format('MMM_DD_YYYY_hh_mm_ss')
         let users = await model.getUsers(user_id)

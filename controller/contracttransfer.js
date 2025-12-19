@@ -6,7 +6,7 @@ let notification = require('../util/saveNotification')
 
 module.exports.ContractTransfer = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let { ui_id, n_id } = req.body
         if (!user_id) {
             return res.send({

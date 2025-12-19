@@ -9,7 +9,7 @@ let userModel = require('../model/users')
 
 module.exports.AddNominee = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,
@@ -98,7 +98,7 @@ module.exports.AddNominee = async (req, res) => {
 
 module.exports.AssignNominee = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,

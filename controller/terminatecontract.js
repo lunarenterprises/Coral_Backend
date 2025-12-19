@@ -5,11 +5,19 @@ let notification = require('../util/saveNotification')
 
 module.exports.TerminateContract = async (req, res) => {
     try {
+        const { user_id } = req.user
         let { ui_id, reason } = req.body
         if (!ui_id || !reason) {
             return res.send({
                 result: false,
                 message: "ui_id and reason is required"
+            })
+        }
+        const checkContract = await model.checkContract(ui_id, user_id)
+        if (checkContract.length == 0) {
+            return res.send({
+                result: false,
+                message: "Contract not found for this user"
             })
         }
         let usersdata = await model.getusersdata(ui_id)

@@ -2,7 +2,7 @@ var model = require('../model/performance')
 
 module.exports.Performance = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let year = [2024, 2025, 2026, 2027, 2028, 2029, 2030]
 
         var array = await Promise.all(year.map(async (element) => {

@@ -24,7 +24,7 @@ module.exports.KycUpload = async (req, res) => {
         });
 
         const date = moment().format('YYYY_MM_DD')
-        const { user_id } = req.headers
+        const { user_id } = req.user
 
         if (!user_id) return res.send({ result: false, message: "User id is required" })
 
@@ -129,7 +129,7 @@ module.exports.KycReUpload = async (req, res) => {
         });
 
         const date = moment().format('YYYY_MM_DD');
-        const { user_id } = req.headers;
+        const { user_id } = req.user;
 
         if (!user_id) {
             return res.send({ result: false, message: "User id is required" });

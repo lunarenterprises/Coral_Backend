@@ -2,7 +2,7 @@ var model = require('../model/checkeasypin')
 
 module.exports.CheckEasyPin = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let { pin } = req.body
         let CheckUser = await model.getUser(user_id, pin)
         if (CheckUser.length > 0) {
@@ -33,7 +33,7 @@ module.exports.CheckEasyPin = async (req, res) => {
 
 module.exports.WfaCheckEasyPin = async (req, res) => {
     try {
-        let { user_id } = req.headers
+        let { user_id } = req.user
         let { pin } = req.body
         let CheckUser = await model.getUser1(user_id, pin)
         if (CheckUser.length > 0) {

@@ -6,7 +6,7 @@ const { filterReturns } = require('../util/calculator')
 module.exports.LockPeriod = async (req, res) => {
     try {
         var date = moment().format('YYYY-MM-DD')
-        let { user_id } = req.headers
+        let { user_id } = req.user
         if (!user_id) {
             return res.send({
                 result: false,

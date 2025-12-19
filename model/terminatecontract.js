@@ -16,3 +16,9 @@ module.exports.getusersdata = async (ui_id) => {
     return data;
 };
 
+module.exports.checkContract = async (ui_id, user_id) => {
+    var Query = `select * from user_invest where ui_id = ? and ui_u_id = ?`;
+    var data = await query(Query, [ui_id, user_id]);
+    return data;
+}
+

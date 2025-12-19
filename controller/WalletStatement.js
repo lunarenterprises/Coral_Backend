@@ -9,7 +9,7 @@ let { createPdfWithPuppeteer } = require('../util/pdfGeneration')
 
 module.exports.downloadStatement = async (req, res) => {
     try {
-        var { user_id } = req.headers
+        var { user_id } = req.user
         var { type, monthsAgo } = req.body
         if (!type || !monthsAgo) {
             return res.send({
@@ -157,7 +157,7 @@ module.exports.downloadStatement = async (req, res) => {
 
 module.exports.downloadStatementPdf = async (req, res) => {
     try {
-        var { user_id } = req.headers
+        var { user_id } = req.user
         var { type, monthsAgo } = req.body
         if (!type || !monthsAgo) {
             return res.send({
